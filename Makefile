@@ -19,8 +19,13 @@ Linux:
 Darwin:
 	#Not done
 
-run: install setup
-	python main.py
+run: install env setup
+	env/bin/python main.py
 
 setup:
 	ola_patch -d 1 -p 0 -u 0
+
+env:
+	virtualenv -p /usr/bin/python2.7 env
+	cp -r /usr/lib/python2.7/dist-packages/ola env/lib/python2.7
+	cp -r /usr/lib/python2.7/dist-packages/google env/lib/python2.7/
