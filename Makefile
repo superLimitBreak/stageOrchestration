@@ -18,3 +18,9 @@ Linux:
 
 Darwin:
 	#Not done
+
+run: install setup
+	python main.py
+
+setup:
+	ola_patch -d 1 -p 0 -u 0
