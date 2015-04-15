@@ -38,14 +38,45 @@ class PygameBase(object):
 
 # DMX Simulator ----------------------------------------------------------------
 
+
+class DXMLight(object):
+    size = 8
+
+    def __init__(self, x, y, size):
+        self.rect = pygame.Rect(x, y, size, size)
+        #self.func_get_data = func_get_data
+        self.func_get_data = lambda: []
+
+    @property
+    def data(self):
+        return self.func_get_data()
+
+    @property
+    def color(self):
+        data = self.data
+        return (data[0], data[1], data[2], 255)
+
+    def render(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+
 class DMXSimulator(PygameBase):
 
     def __init__(self):
         super().__init__()
-        self.state = array.array('B')
+        self._init_dmx_items(DMXLight(10, 10, 20), DMXLight(50, 50, 20), DMXLight(100, 100, 20))
+        self.state = [0] * 512
+
+    def _init_dmx_items(self, *dmx_items):
+        self.dmx_items = dmx_items
+        index = 0
+        for dmx_item in dmx_items:
+            dmx_item.func_get_data = lambda: self.state[index:index + dmx_item.size]
+            index += dmx_item.size
 
     def loop(self):
-        pass
+        for item in self.dmx_items:
+            item.render(self.screen)
 
     def update(self, state):
         self.state = state
