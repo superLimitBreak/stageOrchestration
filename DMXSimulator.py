@@ -15,7 +15,6 @@ class PygameBase(object):
         self.clock = pygame.time.Clock()
         self.running = True
         self.framerate = framerate
-        self.start()
 
     def start(self):
         while self.running:
@@ -39,7 +38,7 @@ class PygameBase(object):
 # DMX Simulator ----------------------------------------------------------------
 
 
-class DXMLight(object):
+class DMXLight(object):
     size = 8
 
     def __init__(self, x, y, size):
@@ -64,14 +63,22 @@ class DMXSimulator(PygameBase):
 
     def __init__(self):
         super().__init__()
-        self._init_dmx_items(DMXLight(10, 10, 20), DMXLight(50, 50, 20), DMXLight(100, 100, 20))
-        self.state = [0] * 512
+        self._init_dmx_items(
+            DMXLight(10, 10, 20),
+            DMXLight(50, 50, 20),
+            DMXLight(100, 100, 20),
+        )
+        self.state = [255] * 512
 
     def _init_dmx_items(self, *dmx_items):
         self.dmx_items = dmx_items
+
+        def func_get_data(index, size):  # By passing index and size to this function, the values become bound so they can be used in the lambda
+            return lambda: self.state[index:index + size]
+
         index = 0
         for dmx_item in dmx_items:
-            dmx_item.func_get_data = lambda: self.state[index:index + dmx_item.size]
+            dmx_item.func_get_data = func_get_data(index, dmx_item.size)
             index += dmx_item.size
 
     def loop(self):
@@ -81,5 +88,6 @@ class DMXSimulator(PygameBase):
     def update(self, state):
         self.state = state
 
+
 if __name__ == "__main__":
-    DMXSimulator()
+    DMXSimulator().start()
