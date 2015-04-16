@@ -1,5 +1,6 @@
 import pygame
 import array
+import random
 
 COLOR_BACKGROUND = (0, 0, 0, 255)
 
@@ -39,10 +40,13 @@ class PygameBase(object):
 
 
 class DMXLight(object):
-    size = 8
+    data_size = 8
 
     def __init__(self, x, y, size):
-        self.rect = pygame.Rect(x, y, size, size)
+        self.x = x
+        self.y = y
+        self.size = size
+        self.rect = pygame.Rect(self.x, self.y, self.size * 8, self.size * 5)
         #self.func_get_data = func_get_data
         self.func_get_data = lambda: []
 
@@ -52,11 +56,20 @@ class DMXLight(object):
 
     @property
     def color(self):
-        data = self.data
-        return (data[0], data[1], data[2], 255)
+        red, green, blue, white = (c//2 for c in self.data[0:4])
+        return (red + white, green + white, blue + white, 255)
 
     def render(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
+
+        red, green, blue, white = self.data[0:4]
+        def draw_led(value, color, y_offset):
+            for i in range(value//32):
+                pygame.draw.circle(screen, color, (self.size + self.x + i * self.size, self.size + self.y + y_offset * self.size), self.size//2)
+        draw_led(red, (255, 0, 0), 0)
+        draw_led(green, (0, 255, 0), 1)
+        draw_led(blue, (0, 0, 255), 2)
+        draw_led(white, (255, 255, 255), 3)
 
 
 class DMXSimulator(PygameBase):
@@ -64,22 +77,22 @@ class DMXSimulator(PygameBase):
     def __init__(self):
         super().__init__()
         self._init_dmx_items(
-            DMXLight(10, 10, 20),
-            DMXLight(50, 50, 20),
-            DMXLight(100, 100, 20),
+            DMXLight(10, 10, 8),
+            DMXLight(50, 50, 8),
+            DMXLight(100, 100, 8),
         )
-        self.state = [255] * 512
+        self.state = [random.randint(0, 255) for i in range(512)]
 
     def _init_dmx_items(self, *dmx_items):
         self.dmx_items = dmx_items
 
-        def func_get_data(index, size):  # By passing index and size to this function, the values become bound so they can be used in the lambda
-            return lambda: self.state[index:index + size]
+        def func_get_data(index, data_size):  # By passing index and size to this function, the values become bound so they can be used in the lambda
+            return lambda: self.state[index:index + data_size]
 
         index = 0
         for dmx_item in dmx_items:
-            dmx_item.func_get_data = func_get_data(index, dmx_item.size)
-            index += dmx_item.size
+            dmx_item.func_get_data = func_get_data(index, dmx_item.data_size)
+            index += dmx_item.data_size
 
     def loop(self):
         for item in self.dmx_items:
