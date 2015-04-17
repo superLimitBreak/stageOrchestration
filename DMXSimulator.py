@@ -1,14 +1,14 @@
-import pygame
 import array
 import random
-import socket
-import threading
-
-COLOR_BACKGROUND = (0, 0, 0, 255)
 
 
 # Pygame Helpers ---------------------------------------------------------------
 #  Try to keep underlying implementation/libs of grapics handling away from logic
+
+import pygame
+
+COLOR_BACKGROUND = (0, 0, 0, 255)
+
 
 class PygameBase(object):
 
@@ -42,6 +42,10 @@ class PygameBase(object):
 
 
 # UDP Mixin --------------------------------------------------------------------
+
+import socket
+import threading
+
 
 class UDPMixin(object):
     BUFFER_SIZE = 1024
@@ -139,7 +143,7 @@ class DMXSimulator(UDPMixin, PygameBase):
         self.update(data)
 
 
-# Notes ------------------------------------------------------------------------
+# UDP Packet Example -----------------------------------------------------------
 
 def send_example():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
