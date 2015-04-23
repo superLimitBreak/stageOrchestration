@@ -2,6 +2,7 @@
 
 from struct import Struct
 from collections import namedtuple
+import socket
 
 
 OpCodeDefinition = namedtuple('OpCodeDefinition', ('name', 'opcode', 'fields', 'struct'))
@@ -86,8 +87,8 @@ class ArtNe3tDatagram(Datagram):
 
     def decode(self, raw_data):
         r"""
-        >>> dmx = ArtNe3tDatagram()
-        >>> dmx.decode(b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00')
+        >>> datagram = ArtNe3tDatagram()
+        >>> datagram.decode(b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00')
         (TimeCode(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0), b'')
         """
         # Decode Header
@@ -108,8 +109,8 @@ class ArtNe3tDatagram(Datagram):
 
     def encode(self, opcode_namedtuple_data, data=b''):
         r"""
-        >>> dmx = ArtNe3tDatagram()
-        >>> dmx.encode(dmx.get_namedtuple('TimeCode')(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0))
+        >>> datagram = ArtNe3tDatagram()
+        >>> datagram.encode(datagram.get_namedtuple('TimeCode')(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0))
         b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18<<\x18\x00'
         """
         opcode = self.get_opcode(opcode_namedtuple_data.__class__)
@@ -129,3 +130,29 @@ class ArtNe3tDatagram(Datagram):
         payload_data = data_struct.pack(*opcode_namedtuple_data)
 
         return header_data + payload_data + data
+
+
+class ArtNet3(object):
+    DATAGRAM = ArtNe3tDatagram()
+    SOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    PORT = 0x1936
+
+    def __init__(self, host='127.0.0.1'):
+        self.host = host
+
+    def _send(self, raw_data):
+        self.SOCK.sendto(raw_data, (self.host, self.PORT))
+
+    def get_namedtuple(self, name):
+        return self.DATAGRAM.get_namedtuple(name)
+
+    def dmx(self, data):
+        output_data = self.get_namedtuple('Output')(
+            Sequence=0,
+            Physical=0,
+            SubUni=0,
+            Net=0,
+            LengthHi=0,  # len(data) << 8
+            Length=0,
+        )
+        self._send(self.DATAGRAM.encode(output_data, data))
