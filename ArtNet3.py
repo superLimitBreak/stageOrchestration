@@ -90,6 +90,8 @@ class DMXDatagram(Datagram):
         header_data = header_namedtuple._make(header_struct.unpack(raw_data[0:header_struct.size]))
         # Check Header
         assert header_data.ID == DMXDatagram.header_id
+        assert header_data.ProtVerHi == DMXDatagram.header_ProtVerHi
+        assert header_data.ProtVerLo == DMXDatagram.    header_ProtVerLo
 
         # Decode Structured Data (now we know what opcode is being performed)
         data_namedtuple = self.get_namedtuple(header_data.OpCode)
@@ -100,8 +102,9 @@ class DMXDatagram(Datagram):
 
     def encode(self, opcode_namedtuple_data, data=b''):
         r"""
-        >>> DMXDatagram().encode(TimeCode(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0), b'')
-        b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00'
+        >>> dmx = DMXDatagram()
+        >>> dmx.encode(dmx.get_namedtuple('TimeCode')(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0))
+        b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18<<\x18\x00'
         """
         opcode = self.get_opcode(opcode_namedtuple_data.__class__)
         data_struct = self.get_struct(opcode_namedtuple_data.__class__)
@@ -109,24 +112,14 @@ class DMXDatagram(Datagram):
         # Encode Header
         header_namedtuple = self.get_namedtuple('Header')
         header_struct = self.get_struct(header_namedtuple)
-        header_data = header_struct.pack(header_namedtuple(ID=DMXDatagram.header_id, OpCode=opcode, ))
+        header_data = header_struct.pack(*header_namedtuple(
+            ID=DMXDatagram.header_id,
+            OpCode=opcode,
+            ProtVerHi=DMXDatagram.header_ProtVerHi,
+            ProtVerLo=DMXDatagram.header_ProtVerLo,
+        ))
 
-        
-        
+        # Encode Data
+        payload_data = data_struct.pack(*opcode_namedtuple_data)
 
-
-
-
-
-
-#import traceback
-#import pdb
-#import sys
-#try:
-#    print(DMXDatagram.decode(b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00'))
-#except:
-#    type, value, tb = sys.exc_info()
-#    traceback.print_exc()
-#    pdb.post_mortem(tb)
-
-
+        return header_data + payload_data + data
