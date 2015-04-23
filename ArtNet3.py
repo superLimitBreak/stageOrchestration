@@ -33,7 +33,12 @@ class Datagram(object):
         return self.lookup_opcode[opcode_namedtuple]
 
 
-class DMXDatagram(Datagram):
+class ArtNe3tDatagram(Datagram):
+    """
+    A datagram handler that matches the spec at a binary level.
+    A separate layer should be implemented above this class to support more complex decoding and deriving fields:
+      e.g. calculating the payload length field OR combining Lo/Hi tuple items to form a single coheran value
+    """
     header_id = b'Art-Net\x00'
     header_ProtVerHi = 1
     header_ProtVerLo = 4
@@ -44,7 +49,7 @@ class DMXDatagram(Datagram):
         OpCodeDefinition('PollReply', 0x2100, (), ''),
         OpCodeDefinition('DiagData', 0x2300, (), ''),
         OpCodeDefinition('Command', 0x2400, (), ''),
-        OpCodeDefinition('Output', 0x5000, ('Sequence', 'Physical', 'SubUni', 'Net', 'LengthHi', 'Length', 'Data'), 'BBBBBB'),
+        OpCodeDefinition('Output', 0x5000, ('Sequence', 'Physical', 'SubUni', 'Net', 'LengthHi', 'Length'), 'BBBBBB'),
         OpCodeDefinition('Nzs', 0x5100, (), ''),
         OpCodeDefinition('Address', 0x6000, (), ''),
         OpCodeDefinition('Input', 0x7000, (), ''),
@@ -77,11 +82,12 @@ class DMXDatagram(Datagram):
     )
 
     def __init__(self):
-        Datagram.__init__(self, DMXDatagram.opcode_definitions)
+        Datagram.__init__(self, ArtNe3tDatagram.opcode_definitions)
 
     def decode(self, raw_data):
         r"""
-        >>> DMXDatagram().decode(b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00')
+        >>> dmx = ArtNe3tDatagram()
+        >>> dmx.decode(b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00')
         (TimeCode(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0), b'')
         """
         # Decode Header
@@ -89,9 +95,9 @@ class DMXDatagram(Datagram):
         header_struct = self.get_struct(header_namedtuple)
         header_data = header_namedtuple._make(header_struct.unpack(raw_data[0:header_struct.size]))
         # Check Header
-        assert header_data.ID == DMXDatagram.header_id
-        assert header_data.ProtVerHi == DMXDatagram.header_ProtVerHi
-        assert header_data.ProtVerLo == DMXDatagram.    header_ProtVerLo
+        assert header_data.ID == ArtNe3tDatagram.header_id
+        assert header_data.ProtVerHi == ArtNe3tDatagram.header_ProtVerHi
+        assert header_data.ProtVerLo == ArtNe3tDatagram.header_ProtVerLo
 
         # Decode Structured Data (now we know what opcode is being performed)
         data_namedtuple = self.get_namedtuple(header_data.OpCode)
@@ -102,7 +108,7 @@ class DMXDatagram(Datagram):
 
     def encode(self, opcode_namedtuple_data, data=b''):
         r"""
-        >>> dmx = DMXDatagram()
+        >>> dmx = ArtNe3tDatagram()
         >>> dmx.encode(dmx.get_namedtuple('TimeCode')(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0))
         b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18<<\x18\x00'
         """
@@ -113,10 +119,10 @@ class DMXDatagram(Datagram):
         header_namedtuple = self.get_namedtuple('Header')
         header_struct = self.get_struct(header_namedtuple)
         header_data = header_struct.pack(*header_namedtuple(
-            ID=DMXDatagram.header_id,
+            ID=ArtNe3tDatagram.header_id,
             OpCode=opcode,
-            ProtVerHi=DMXDatagram.header_ProtVerHi,
-            ProtVerLo=DMXDatagram.header_ProtVerLo,
+            ProtVerHi=ArtNe3tDatagram.header_ProtVerHi,
+            ProtVerLo=ArtNe3tDatagram.header_ProtVerLo,
         ))
 
         # Encode Data
