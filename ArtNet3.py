@@ -41,16 +41,15 @@ class ArtNe3tDatagram(Datagram):
       e.g. calculating the payload length field OR combining Lo/Hi tuple items to form a single coheran value
     """
     header_id = b'Art-Net\x00'
-    header_ProtVerHi = 1
-    header_ProtVerLo = 4
+    header_ProtVer = 14
 
     opcode_definitions = (
-        OpCodeDefinition('Header', None, ('ID', 'OpCode', 'ProtVerHi', 'ProtVerLo'), '>8sHBB'),
+        OpCodeDefinition('Header', None, ('ID', 'OpCode', 'ProtVer'), '>8sHxB'),  # The ProtVer in the spec is a differnt endian to the OpCode - as the Hi byte is never used I've skipped the hi bype with 'xB' rather than 'H'
         OpCodeDefinition('Poll', 0x2000, (), ''),
         OpCodeDefinition('PollReply', 0x2100, (), ''),
         OpCodeDefinition('DiagData', 0x2300, (), ''),
         OpCodeDefinition('Command', 0x2400, (), ''),
-        OpCodeDefinition('Output', 0x5000, ('Sequence', 'Physical', 'SubUni', 'Net', 'LengthHi', 'Length'), 'BBBBBB'),
+        OpCodeDefinition('Output', 0x5000, ('Sequence', 'Physical', 'SubUni', 'Net', 'Length'), '>BBBBH'),
         OpCodeDefinition('Nzs', 0x5100, (), ''),
         OpCodeDefinition('Address', 0x6000, (), ''),
         OpCodeDefinition('Input', 0x7000, (), ''),
@@ -88,7 +87,7 @@ class ArtNe3tDatagram(Datagram):
     def decode(self, raw_data):
         r"""
         >>> datagram = ArtNe3tDatagram()
-        >>> datagram.decode(b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18\x3C\x3C\x18\x00')
+        >>> datagram.decode(b'Art-Net\x00\x97\x00\x00\x0e\x00\x00\x18\x3C\x3C\x18\x00')
         (TimeCode(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0), b'')
         """
         # Decode Header
@@ -97,8 +96,8 @@ class ArtNe3tDatagram(Datagram):
         header_data = header_namedtuple._make(header_struct.unpack(raw_data[0:header_struct.size]))
         # Check Header
         assert header_data.ID == ArtNe3tDatagram.header_id
-        assert header_data.ProtVerHi == ArtNe3tDatagram.header_ProtVerHi
-        assert header_data.ProtVerLo == ArtNe3tDatagram.header_ProtVerLo
+        assert header_data.ProtVer == ArtNe3tDatagram.header_ProtVer
+        #assert header_data.ProtVerLo == ArtNe3tDatagram.header_ProtVerLo
 
         # Decode Structured Data (now we know what opcode is being performed)
         data_namedtuple = self.get_namedtuple(header_data.OpCode)
@@ -111,7 +110,7 @@ class ArtNe3tDatagram(Datagram):
         r"""
         >>> datagram = ArtNe3tDatagram()
         >>> datagram.encode(datagram.get_namedtuple('TimeCode')(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0))
-        b'Art-Net\x00\x97\x00\x01\x04\x00\x00\x18<<\x18\x00'
+        b'Art-Net\x00\x97\x00\x00\x0e\x00\x00\x18<<\x18\x00'
         """
         opcode = self.get_opcode(opcode_namedtuple_data.__class__)
         data_struct = self.get_struct(opcode_namedtuple_data.__class__)
@@ -122,8 +121,7 @@ class ArtNe3tDatagram(Datagram):
         header_data = header_struct.pack(*header_namedtuple(
             ID=ArtNe3tDatagram.header_id,
             OpCode=opcode,
-            ProtVerHi=ArtNe3tDatagram.header_ProtVerHi,
-            ProtVerLo=ArtNe3tDatagram.header_ProtVerLo,
+            ProtVer=ArtNe3tDatagram.header_ProtVer,
         ))
 
         # Encode Data
@@ -146,13 +144,21 @@ class ArtNet3(object):
     def get_namedtuple(self, name):
         return self.DATAGRAM.get_namedtuple(name)
 
-    def dmx(self, data):
+    def _dmx(self, data):
+        r"""
+        >>> art3 = ArtNet3()
+        >>> art3._dmx(b'\x00\x01\x02\x03')
+        b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03'
+        """
+        assert len(data) % 2 == 0, "data payload must be an even length"
         output_data = self.get_namedtuple('Output')(
             Sequence=0,
             Physical=0,
             SubUni=0,
             Net=0,
-            LengthHi=0,  # len(data) << 8
-            Length=0,
+            Length=len(data)
         )
-        self._send(self.DATAGRAM.encode(output_data, data))
+        return self.DATAGRAM.encode(output_data, data)
+
+    def dmx(self, data):
+        self._send(self._dmx(data))
