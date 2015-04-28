@@ -43,32 +43,21 @@ class PygameBase(object):
 
 # UDP Mixin --------------------------------------------------------------------
 
+from udp import UDPMixin
+
+class DMXUDPMixin(UDPMixin):
+    def _recieve(self, addr, data):
+        self.recieve_dmx(data)
+
+
+# UDP Packet Send Example ------------
+
 import socket
-import threading
 
-
-class UDPMixin(object):
-    BUFFER_SIZE = 1024
-
-    def __init__(self, ip='127.0.0.1', port=5005):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((ip, port))
-
-        self.thread = threading.Thread(target=self.recieve_loop, args=())
-        self.thread.daemon = True
-
-        self.running = True
-
-    def listen(self):
-        self.thread.start()
-
-    def recieve_loop(self):
-        while self.running:
-            data, addr = self.sock.recvfrom(UDPMixin.BUFFER_SIZE)
-            self.recieve(addr, data)
-
-    def recieve(self, addr, data):
-        print("received {0}: {1}".format(addr, data))
+def send_example():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.sendto(b'HelloWorld', ('127.0.0.1', 5005))
+    sock.sendto(b'\x00'*512, ('127.0.0.1', 5005))
 
 
 # DMX Simulator ----------------------------------------------------------------
@@ -106,10 +95,10 @@ class DMXLight(object):
         draw_led(white, (255, 255, 255), 3)
 
 
-class DMXSimulator(UDPMixin, PygameBase):
+class DMXSimulator(DMXUDPMixin, PygameBase):
 
     def __init__(self):
-        UDPMixin.__init__(self)
+        DMXUDPMixin.__init__(self)
         self.listen()
 
         PygameBase.__init__(self)
@@ -139,16 +128,8 @@ class DMXSimulator(UDPMixin, PygameBase):
     def update(self, state):
         self.state = state
 
-    def recieve(self, addr, data):
+    def recieve_dmx(self, data):
         self.update(data)
-
-
-# UDP Packet Example -----------------------------------------------------------
-
-def send_example():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(b'HelloWorld', ('127.0.0.1', 5005))
-    sock.sendto(b'\x00'*512, ('127.0.0.1', 5005))
 
 
 # Main -------------------------------------------------------------------------

@@ -3,6 +3,9 @@
 from struct import Struct
 from collections import namedtuple
 import socket
+import threading
+
+from udp import UDPMixin
 
 
 OpCodeDefinition = namedtuple('OpCodeDefinition', ('name', 'opcode', 'fields', 'struct'))
@@ -130,16 +133,29 @@ class ArtNe3tDatagram(Datagram):
         return header_data + payload_data + data
 
 
-class ArtNet3(object):
+class ArtNet3(UDPMixin):
     DATAGRAM = ArtNe3tDatagram()
-    SOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     PORT = 0x1936
 
-    def __init__(self, host='127.0.0.1'):
-        self.host = host
+    def __init__(self):
+        UDPMixin.__init__(self, port=ArtNet3.PORT)
 
-    def _send(self, raw_data):
-        self.SOCK.sendto(raw_data, (self.host, self.PORT))
+    # Recieve ----------
+
+    def _recieve(self, addr, raw_data):
+        data, payload = self.DATAGRAM.decode(raw_data)
+        if isinstance(data, self.get_namedtuple('Output')):
+            self.recieve_dmx(payload)
+        else:
+            self.recieve(data, payload)
+
+    def recieve(self, data, payload):
+        print('received {0}: {1}'.format(data, payload))
+
+    def recieve_dmx(self, data):
+        print(data)
+
+    # Data handling ------
 
     def get_namedtuple(self, name):
         return self.DATAGRAM.get_namedtuple(name)
@@ -150,7 +166,7 @@ class ArtNet3(object):
         >>> art3._dmx(b'\x00\x01\x02\x03')
         b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03'
         """
-        assert len(data) % 2 == 0, "data payload must be an even length"
+        assert len(data) % 2 == 0, "data payload must be an even length"  # Todo: padd data to an even length automatically
         output_data = self.get_namedtuple('Output')(
             Sequence=0,
             Physical=0,
