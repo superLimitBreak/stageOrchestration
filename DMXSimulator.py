@@ -58,6 +58,7 @@ def send_example():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(b'HelloWorld', ('127.0.0.1', 5005))
     sock.sendto(b'\x00'*512, ('127.0.0.1', 5005))
+    sock.sendto(b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03', ('127.0.0.1', 0x1936))
 
 
 # DMX Simulator ----------------------------------------------------------------
@@ -83,6 +84,9 @@ class DMXLight(object):
         return (red + white, green + white, blue + white, 255)
 
     def render(self, screen):
+        if len(self.data) < self.data_size:
+            return
+
         pygame.draw.rect(screen, self.color, self.rect)
 
         red, green, blue, white = self.data[0:4]
@@ -95,10 +99,12 @@ class DMXLight(object):
         draw_led(white, (255, 255, 255), 3)
 
 
-class DMXSimulator(DMXUDPMixin, PygameBase):
+from ArtNet3 import ArtNet3
+
+class DMXSimulator(ArtNet3, PygameBase):
 
     def __init__(self):
-        DMXUDPMixin.__init__(self)
+        ArtNet3.__init__(self)
         self.listen()
 
         PygameBase.__init__(self)
@@ -137,3 +143,16 @@ class DMXSimulator(DMXUDPMixin, PygameBase):
 if __name__ == "__main__":
     dmx = DMXSimulator()
     dmx.start()
+"""
+    import traceback
+    import pdb
+    import sys
+    try:
+
+    except:
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        pdb.post_mortem(tb)
+"""
+
+

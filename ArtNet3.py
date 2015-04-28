@@ -105,7 +105,7 @@ class ArtNe3tDatagram(Datagram):
         # Decode Structured Data (now we know what opcode is being performed)
         data_namedtuple = self.get_namedtuple(header_data.OpCode)
         data_struct = self.get_struct(data_namedtuple)
-        data = data_namedtuple._make(data_struct.unpack(raw_data[header_struct.size:]))
+        data = data_namedtuple._make(data_struct.unpack(raw_data[header_struct.size:header_struct.size+data_struct.size]))
 
         return data, raw_data[header_struct.size + data_struct.size:]
 

@@ -24,7 +24,7 @@ class UDPMixin(object):
 
     def recieve_loop(self):
         while self.running:
-            data, addr = self.sock.recvfrom(self.BUFFER_SIZE)
+            data, addr = self.sock.recvfrom(self.buffer_size)
             self._recieve(addr, data)
 
     def _recieve(self, addr, raw_data):
