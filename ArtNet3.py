@@ -119,9 +119,14 @@ class ArtNet3(UDPMixin):
         >>> art3 = ArtNet3()
         >>> art3._recieve(None, b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03')
         b'\x00\x01\x02\x03'
+
+        Todo: Disabled test, how do I check the assertion is raised? Do I need try:except:?
+        >> art3._recieve(None, b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03\x04')
+        AssertionError: Payload length should match length described in header
         """
         data, payload = self.DATAGRAM.decode(raw_data)
         if isinstance(data, self.get_namedtuple('Output')):
+            assert data.Length == len(payload), "Payload length should match length described in header"
             self.recieve_dmx(payload)
         else:
             self.recieve(data, payload)
