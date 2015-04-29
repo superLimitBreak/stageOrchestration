@@ -1,40 +1,5 @@
 ## -*- coding: utf-8 -*-
-
-from struct import Struct
-from collections import namedtuple
-import socket
-import threading
-
-from udp import UDPMixin
-
-
-OpCodeDefinition = namedtuple('OpCodeDefinition', ('name', 'opcode', 'fields', 'struct'))
-
-
-class Datagram(object):
-
-    def __init__(self,  opcode_defenitions):
-        self.lookup_opcode = {}
-        self.lookup_namedtuple = {}
-        self.lookup_struct = {}
-        for opcode in opcode_defenitions:
-            opcode_namedtuple = namedtuple(opcode.name, opcode.fields)
-            self.lookup_opcode[opcode.opcode] = opcode_namedtuple
-            self.lookup_opcode[opcode_namedtuple] = opcode.opcode
-            self.lookup_namedtuple[opcode.name] = opcode_namedtuple
-            self.lookup_struct[opcode_namedtuple] = Struct(opcode.struct)
-
-    def get_namedtuple(self, index):
-        if (isinstance(index, int)):
-            return self.lookup_opcode[index]
-        else:
-            return self.lookup_namedtuple[index]
-
-    def get_struct(self, opcode_namedtuple):
-        return self.lookup_struct[opcode_namedtuple]
-
-    def get_opcode(self, opcode_namedtuple):
-        return self.lookup_opcode[opcode_namedtuple]
+from udp import UDPMixin, Datagram
 
 
 class ArtNe3tDatagram(Datagram):
@@ -47,41 +12,41 @@ class ArtNe3tDatagram(Datagram):
     header_ProtVer = 14
 
     opcode_definitions = (
-        OpCodeDefinition('Header', None, ('ID', 'OpCode', 'ProtVer'), '>8sHxB'),  # The ProtVer in the spec is a differnt endian to the OpCode - as the Hi byte is never used I've skipped the hi bype with 'xB' rather than 'H'
-        OpCodeDefinition('Poll', 0x2000, (), ''),
-        OpCodeDefinition('PollReply', 0x2100, (), ''),
-        OpCodeDefinition('DiagData', 0x2300, (), ''),
-        OpCodeDefinition('Command', 0x2400, (), ''),
-        OpCodeDefinition('Output', 0x5000, ('Sequence', 'Physical', 'SubUni', 'Net', 'Length'), '>BBBBH'),
-        OpCodeDefinition('Nzs', 0x5100, (), ''),
-        OpCodeDefinition('Address', 0x6000, (), ''),
-        OpCodeDefinition('Input', 0x7000, (), ''),
-        OpCodeDefinition('TodRequest', 0x8000, (), ''),
-        OpCodeDefinition('TodData', 0x8100, (), ''),
-        OpCodeDefinition('TodControl', 0x8200, (), ''),
-        OpCodeDefinition('Rdm', 0x8300, (), ''),
-        OpCodeDefinition('RdmSub', 0x8400, (), ''),
-        OpCodeDefinition('VideoSetup', 0xa010, (), ''),
-        OpCodeDefinition('VideoPalette', 0xa020, (), ''),
-        OpCodeDefinition('VideoData', 0xa040, (), ''),
-        OpCodeDefinition('MacMaster', 0xf000, (), ''),
-        OpCodeDefinition('MacSlave', 0xf100, (), ''),
-        OpCodeDefinition('FirmwareMaster', 0xf200, (), ''),
-        OpCodeDefinition('FirmwareReply', 0xf300, (), ''),
-        OpCodeDefinition('FileTnMaster', 0xf400, (), ''),
-        OpCodeDefinition('FileFnMaster', 0xf500, (), ''),
-        OpCodeDefinition('FileFnReply', 0xf600, (), ''),
-        OpCodeDefinition('IpProg', 0xf800, (), ''),
-        OpCodeDefinition('IpProgReply', 0xf900, (), ''),
-        OpCodeDefinition('Media', 0x9000, (), ''),
-        OpCodeDefinition('MediaPatch', 0x9100, (), ''),
-        OpCodeDefinition('MediaControl', 0x9200, (), ''),
-        OpCodeDefinition('MediaContrlReply', 0x9300, (), ''),
-        OpCodeDefinition('TimeCode', 0x9700, ('Frames', 'Seconds', 'Minutes', 'Hours', 'Type'), 'xxBBBBB'),
-        OpCodeDefinition('TimeSync', 0x9800, (), ''),
-        OpCodeDefinition('Trigger', 0x9900, (), ''),
-        OpCodeDefinition('Directory', 0x9a00, (), ''),
-        OpCodeDefinition('DirectoryReply', 0x9b00, (), ''),
+        Datagram.OpCodeDefinition('Header', None, ('ID', 'OpCode', 'ProtVer'), '>8sHxB'),  # The ProtVer in the spec is a differnt endian to the OpCode - as the Hi byte is never used I've skipped the hi bype with 'xB' rather than 'H'
+        Datagram.OpCodeDefinition('Poll', 0x2000, (), ''),
+        Datagram.OpCodeDefinition('PollReply', 0x2100, (), ''),
+        Datagram.OpCodeDefinition('DiagData', 0x2300, (), ''),
+        Datagram.OpCodeDefinition('Command', 0x2400, (), ''),
+        Datagram.OpCodeDefinition('Output', 0x5000, ('Sequence', 'Physical', 'SubUni', 'Net', 'Length'), '>BBBBH'),
+        Datagram.OpCodeDefinition('Nzs', 0x5100, (), ''),
+        Datagram.OpCodeDefinition('Address', 0x6000, (), ''),
+        Datagram.OpCodeDefinition('Input', 0x7000, (), ''),
+        Datagram.OpCodeDefinition('TodRequest', 0x8000, (), ''),
+        Datagram.OpCodeDefinition('TodData', 0x8100, (), ''),
+        Datagram.OpCodeDefinition('TodControl', 0x8200, (), ''),
+        Datagram.OpCodeDefinition('Rdm', 0x8300, (), ''),
+        Datagram.OpCodeDefinition('RdmSub', 0x8400, (), ''),
+        Datagram.OpCodeDefinition('VideoSetup', 0xa010, (), ''),
+        Datagram.OpCodeDefinition('VideoPalette', 0xa020, (), ''),
+        Datagram.OpCodeDefinition('VideoData', 0xa040, (), ''),
+        Datagram.OpCodeDefinition('MacMaster', 0xf000, (), ''),
+        Datagram.OpCodeDefinition('MacSlave', 0xf100, (), ''),
+        Datagram.OpCodeDefinition('FirmwareMaster', 0xf200, (), ''),
+        Datagram.OpCodeDefinition('FirmwareReply', 0xf300, (), ''),
+        Datagram.OpCodeDefinition('FileTnMaster', 0xf400, (), ''),
+        Datagram.OpCodeDefinition('FileFnMaster', 0xf500, (), ''),
+        Datagram.OpCodeDefinition('FileFnReply', 0xf600, (), ''),
+        Datagram.OpCodeDefinition('IpProg', 0xf800, (), ''),
+        Datagram.OpCodeDefinition('IpProgReply', 0xf900, (), ''),
+        Datagram.OpCodeDefinition('Media', 0x9000, (), ''),
+        Datagram.OpCodeDefinition('MediaPatch', 0x9100, (), ''),
+        Datagram.OpCodeDefinition('MediaControl', 0x9200, (), ''),
+        Datagram.OpCodeDefinition('MediaContrlReply', 0x9300, (), ''),
+        Datagram.OpCodeDefinition('TimeCode', 0x9700, ('Frames', 'Seconds', 'Minutes', 'Hours', 'Type'), 'xxBBBBB'),
+        Datagram.OpCodeDefinition('TimeSync', 0x9800, (), ''),
+        Datagram.OpCodeDefinition('Trigger', 0x9900, (), ''),
+        Datagram.OpCodeDefinition('Directory', 0x9a00, (), ''),
+        Datagram.OpCodeDefinition('DirectoryReply', 0x9b00, (), ''),
     )
 
     def __init__(self):
@@ -140,9 +105,21 @@ class ArtNet3(UDPMixin):
     def __init__(self):
         UDPMixin.__init__(self, port=ArtNet3.PORT)
 
-    # Recieve ----------
+    # Utils ------------
+
+    def get_namedtuple(self, name):
+        return self.DATAGRAM.get_namedtuple(name)
+
+    # Recieve handling ----------
 
     def _recieve(self, addr, raw_data):
+        r"""
+        Called from UDPMixin with raw udp packet data
+
+        >>> art3 = ArtNet3()
+        >>> art3._recieve(None, b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03')
+        b'\x00\x01\x02\x03'
+        """
         data, payload = self.DATAGRAM.decode(raw_data)
         if isinstance(data, self.get_namedtuple('Output')):
             self.recieve_dmx(payload)
@@ -150,15 +127,20 @@ class ArtNet3(UDPMixin):
             self.recieve(data, payload)
 
     def recieve(self, data, payload):
+        """
+        Override
+        All messages (other than a dmx byte string) are collected here
+        """
         print('received {0}: {1}'.format(data, payload))
 
     def recieve_dmx(self, data):
+        """
+        Override
+        Reciving a dmx string is the primary use case for this class, so it has it's own default method
+        """
         print(data)
 
-    # Data handling ------
-
-    def get_namedtuple(self, name):
-        return self.DATAGRAM.get_namedtuple(name)
+    # Send handling ------
 
     def _dmx(self, data):
         r"""

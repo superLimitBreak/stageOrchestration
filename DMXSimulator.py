@@ -41,21 +41,25 @@ class PygameBase(object):
         assert False, 'loop must be overriden'
 
 
-# UDP Mixin --------------------------------------------------------------------
+# DMXUDPMixin ------------------------------------------------------------------
 
 from udp import UDPMixin
 
 class DMXUDPMixin(UDPMixin):
+    """
+    Passthrough to make UDPMixin behave like the ArtNet3 Mixin
+    This allows simple testing of just displaying a binary dmx string to the lights
+    without the need of real artnet packet complexity
+    """
     def _recieve(self, addr, data):
         self.recieve_dmx(data)
 
-
-# UDP Packet Send Example ------------
-
-import socket
-
-def send_example():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def _send_example():
+    """
+    DMXUDPMixin send example
+    Use these in a terminal for testing
+    """
+    import socket ; sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(b'HelloWorld', ('127.0.0.1', 5005))
     sock.sendto(b'\x00'*512, ('127.0.0.1', 5005))
     sock.sendto(b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03', ('127.0.0.1', 0x1936))
