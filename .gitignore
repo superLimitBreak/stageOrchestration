@@ -4,3 +4,5 @@ __pycache__
 *.pyc
 
 udp.py
+pygame_midi_wrapper.py
+pygame_midi_input.py
