@@ -6,10 +6,10 @@
 #import pdb ; pdb.set_trace()
 #midi_in = PygameMidiDeviceHelper.open_device('nanoKONTROL2 CTRL', io='input')
 
-from pygame_midi_input import MidiInputPlugin
+from pygame_midi_input import MidiInput
 
 
-class LightingControl(MidiInputPlugin):
+class LightingControl(MidiInput):
 
     def __init__(self):
         super().__init__('nanoKONTROL2')
@@ -19,15 +19,5 @@ class LightingControl(MidiInputPlugin):
         #log.debug(event)
         print('{0} {1} {2} {3}'.format(event, data1, data2, data3))
 
-def postmortem(func):
-    import traceback
-    import pdb
-    import sys
-    try:
-        func()
-    except:
-        type, value, tb = sys.exc_info()
-        traceback.print_exc()
-        pdb.post_mortem(tb)
 
 postmortem(LightingControl)
