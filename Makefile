@@ -36,6 +36,9 @@ Darwin:
 	#brew install python sdl sdl_image sdl_mixer sdl_ttf portmidi mercurial
 	#pip2 install hg+http://bitbucket.org/pygame/pygame
 
+udp.py:
+	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py --compressed -O
+
 
 run: install env setup
 	env/bin/python main.py
