@@ -107,11 +107,11 @@ from ArtNet3 import ArtNet3
 
 class DMXSimulator(ArtNet3, PygameBase):
 
-    def __init__(self):
+    def __init__(self, framerate=30):
         ArtNet3.__init__(self)
         self.listen()
 
-        PygameBase.__init__(self)
+        PygameBase.__init__(self, framerate=framerate)
 
         self._init_dmx_items(
             DMXLight(10, 10, 8),

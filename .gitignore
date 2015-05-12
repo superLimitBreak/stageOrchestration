@@ -7,3 +7,4 @@ udp.py
 pygame_midi_wrapper.py
 pygame_midi_input.py
 music.py
+loop.py

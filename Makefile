@@ -3,7 +3,7 @@ OS = $(shell uname -s)
 help:
 	@printf "To install run 'make install'\n"
 
-install: $(OS)
+install: $(OS) udp.py pygame_midi_wrapper.py pygame_midi_input.py music.py loop.py
 
 Linux:
 	@printf "Linux Install\n"
@@ -44,6 +44,8 @@ pygame_midi_input.py:
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py --compressed -O
 music.py:
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/music.py --compressed -O
+loop.py:
+	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py --compressed -O
 
 
 
