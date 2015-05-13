@@ -1,8 +1,6 @@
 from ArtNet3 import ArtNet3
-from DMXSimulator import DMXSimulator
 from loop import Loop
 from pygame_midi_input import MidiInput
-import threading
 
 import logging
 log = logging.getLogger(__name__)
@@ -10,41 +8,27 @@ log = logging.getLogger(__name__)
 VERSION = '0.01'
 
 
-class LightingControl(MidiInput):
-
-    def __init__(self):
-        super().__init__('nanoKONTROL2')
-
-    def midi_event(self, event, data1, data2, data3):
-        #log.debug(event)
-        print('{0} {1} {2} {3}'.format(event, data1, data2, data3))
-
-
 class LightingAutomation(Loop):
 
     def __init__(self, framerate=30):
         super().__init__(framerate)
-        self.simulator = DMXSimulator(framerate=framerate)
         self.artnet = ArtNet3()
-        self.midi_input = LightingControl()
-
-        self.input_thread = threading.Thread(target=self.midi_input.open)
-        self.input_thread.daemon = True
-        self.input_thread.start()
-
-        self.simulator_thread = threading.Thread(target=self.simulator.start)
-        self.simulator_thread.daemon = True
-        self.simulator_thread.start()
+        self.midi_input = MidiInput('nanoKONTROL2')
+        self.midi_input.init_pygame()
+        self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
 
         self.loop()
 
     def close(self):
-        self.midi_input.running = False
-        self.simulator.running = False
+        self.midi_input.close()
 
     def render(self, frame):
-        if frame > 400:
+        self.midi_input.process_events()
+
+    def midi_event(self, event, data1, data2, data3):
+        if data1 == 46:
             self.running = False
+        print('lights2 {0} {1} {2} {3}'.format(event, data1, data2, data3))
 
 
 def get_args():
