@@ -1,3 +1,5 @@
+import array
+
 from ArtNet3 import ArtNet3
 from loop import Loop
 from pygame_midi_input import MidiInput
@@ -12,7 +14,12 @@ class LightingAutomation(object):
 
     def __init__(self, framerate=30):
         super().__init__()
+
+        self.dmx_universe = array.array('B')
+        self.dmx_universe.frombytes(b'\xff'*256)
+
         self.artnet = ArtNet3()
+
         self.midi_input = MidiInput('nanoKONTROL2')
         self.midi_input.init_pygame()
         self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
@@ -27,6 +34,7 @@ class LightingAutomation(object):
 
     def render(self, frame):
         self.midi_input.process_events()
+        self.artnet.dmx(self.dmx_universe.tobytes())
 
     def midi_event(self, event, data1, data2, data3):
         if data1 == 46:
