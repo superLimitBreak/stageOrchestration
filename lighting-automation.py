@@ -8,16 +8,19 @@ log = logging.getLogger(__name__)
 VERSION = '0.01'
 
 
-class LightingAutomation(Loop):
+class LightingAutomation(object):
 
     def __init__(self, framerate=30):
-        super().__init__(framerate)
+        super().__init__()
         self.artnet = ArtNet3()
         self.midi_input = MidiInput('nanoKONTROL2')
         self.midi_input.init_pygame()
         self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
 
-        self.loop()
+        self.loop = Loop(30)
+        self.loop.render = self.render
+        self.loop.close = self.close
+        self.loop.run()
 
     def close(self):
         self.midi_input.close()
@@ -27,7 +30,7 @@ class LightingAutomation(Loop):
 
     def midi_event(self, event, data1, data2, data3):
         if data1 == 46:
-            self.running = False
+            self.loop.running = False
         print('lights2 {0} {1} {2} {3}'.format(event, data1, data2, data3))
 
 
