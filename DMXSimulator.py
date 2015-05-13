@@ -139,6 +139,8 @@ class DMXSimulator(ArtNet3, PygameBase):
         self.state = state
 
     def recieve_dmx(self, data):
+        #if (hasattr(self, 'state') and data != self.state):
+        #    print(data)
         self.update(data)
 
 

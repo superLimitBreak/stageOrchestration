@@ -11,12 +11,13 @@ VERSION = '0.01'
 
 
 class LightingAutomation(object):
+    CONTROL_OFFSET_JUMP = 8
 
     def __init__(self, framerate=30):
         super().__init__()
 
         self.dmx_universe = array.array('B')
-        self.dmx_universe.frombytes(b'\xff'*256)
+        self.dmx_universe.frombytes(b'\xff'*64)
 
         self.artnet = ArtNet3()
 
@@ -27,7 +28,17 @@ class LightingAutomation(object):
         self.loop = Loop(30)
         self.loop.render = self.render
         self.loop.close = self.close
+
+        self._control_offset = 0
+
         self.loop.run()
+
+    @property
+    def control_offset(self):
+        return self._control_offset
+    @control_offset.setter
+    def control_offset(self, value):
+        self._control_offset = min((max(0, int(value))), min(512, len(self.dmx_universe) - self.CONTROL_OFFSET_JUMP))
 
     def close(self):
         self.midi_input.close()
@@ -39,7 +50,15 @@ class LightingAutomation(object):
     def midi_event(self, event, data1, data2, data3):
         if data1 == 46:
             self.loop.running = False
-        print('lights2 {0} {1} {2} {3}'.format(event, data1, data2, data3))
+        if data1 == 59 and data2 == 127:
+            self.control_offset += self.CONTROL_OFFSET_JUMP
+            log.info('control_offset: {0}'.format(self.control_offset))
+        if data1 == 58 and data2 == 127:
+            self.control_offset += -self.CONTROL_OFFSET_JUMP
+            log.info('control_offset: {0}'.format(self.control_offset))
+        if data1 >= 0 and data1 < self.CONTROL_OFFSET_JUMP:
+            self.dmx_universe[self.control_offset + data1] = data2 * 2
+        #print('lights2 {0} {1} {2} {3}'.format(event, data1, data2, data3))
 
 
 def get_args():
