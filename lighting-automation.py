@@ -7,45 +7,69 @@ from pygame_midi_input import MidiInput
 import logging
 log = logging.getLogger(__name__)
 
-VERSION = '0.01'
+VERSION = '0.02'
 
 
-class LightingAutomation(object):
-    CONTROL_OFFSET_JUMP = 8
+class DMXRenderer(object):
+    DEFAULT_DMX_SIZE = 128
 
-    def __init__(self, framerate=30):
+    def __init__(self, dmx_size=DEFAULT_DMX_SIZE):
+        self.dmx_universe = array.array('B')
+        self.dmx_universe.frombytes(b'\xff'*dmx_size)
+
+    def render(self, frame):
+        """
+        Given a frame number (that can be ignored)
+        Return a dmx_universe byte array
+        """
+        raise Exception('should override')
+        return self.dmx_universe
+
+    def close(self):
+        raise Exception('should override')
+
+
+class LightingAutomation(DMXRenderer):
+
+    def __init__(self, framerate=30, renderers):
         super().__init__()
 
-        self.dmx_universe = array.array('B')
-        self.dmx_universe.frombytes(b'\xff'*64)
+        assert len(renderers)
+        self.renderers = renderers
 
         self.artnet = ArtNet3()
-
-        self.midi_input = MidiInput('nanoKONTROL2')
-        self.midi_input.init_pygame()
-        self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
 
         self.loop = Loop(30)
         self.loop.render = self.render
         self.loop.close = self.close
 
-        self._control_offset = 0
-
         self.loop.run()
 
-    @property
-    def control_offset(self):
-        return self._control_offset
-    @control_offset.setter
-    def control_offset(self, value):
-        self._control_offset = min((max(0, int(value))), min(512, len(self.dmx_universe) - self.CONTROL_OFFSET_JUMP))
-
     def close(self):
-        self.midi_input.close()
+        for renderer in self.renderers:
+            renderer.close()
+
+    def render(self, frame):
+        for index, values in enumerate(zip(*(renderer.render(frame) for renderer in self.renderers))):
+            # Perform mixing of this dmx byte across the renderers
+            dmx_universe[index] = max(*values)
+        self.artnet.dmx(self.dmx_universe.tobytes())
+
+
+class RenderPluginMidiInput(DMXRenderer):
+    CONTROL_OFFSET_JUMP = 8
+
+    def __init__(self):
+        super().__init__()
+
+        self.midi_input = MidiInput('nanoKONTROL2')
+        self.midi_input.init_pygame()
+        self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
+
+        self._control_offset = 0
 
     def render(self, frame):
         self.midi_input.process_events()
-        self.artnet.dmx(self.dmx_universe.tobytes())
 
     def midi_event(self, event, data1, data2, data3):
         if data1 == 46:
@@ -59,6 +83,16 @@ class LightingAutomation(object):
         if data1 >= 0 and data1 < self.CONTROL_OFFSET_JUMP:
             self.dmx_universe[self.control_offset + data1] = data2 * 2
         #print('lights2 {0} {1} {2} {3}'.format(event, data1, data2, data3))
+
+    def close(self):
+        self.midi_input.close()
+
+    @property
+    def control_offset(self):
+        return self._control_offset
+    @control_offset.setter
+    def control_offset(self, value):
+        self._control_offset = min((max(0, int(value))), min(512, len(self.dmx_universe) - self.CONTROL_OFFSET_JUMP))
 
 
 def get_args():
