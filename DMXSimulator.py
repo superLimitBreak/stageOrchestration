@@ -43,7 +43,7 @@ class PygameBase(object):
 
 # DMXUDPMixin ------------------------------------------------------------------
 
-from udp import UDPMixin
+from libs.udp import UDPMixin
 
 class DMXUDPMixin(UDPMixin):
     """
@@ -149,16 +149,3 @@ class DMXSimulator(ArtNet3, PygameBase):
 if __name__ == "__main__":
     dmx = DMXSimulator()
     dmx.start()
-"""
-    import traceback
-    import pdb
-    import sys
-    try:
-
-    except:
-        type, value, tb = sys.exc_info()
-        traceback.print_exc()
-        pdb.post_mortem(tb)
-"""
-
-

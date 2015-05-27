@@ -3,7 +3,7 @@ OS = $(shell uname -s)
 help:
 	@printf "To install run 'make install'\n"
 
-install: $(OS) udp.py pygame_midi_wrapper.py pygame_midi_input.py music.py loop.py
+install: $(OS) libs/udp.py libs/pygame_midi_wrapper.py libs/pygame_midi_input.py libs/music.py libs/loop.py
 
 Linux:
 	@printf "Linux Install\n"
@@ -36,15 +36,18 @@ Darwin:
 	#brew install python sdl sdl_image sdl_mixer sdl_ttf portmidi mercurial
 	#pip2 install hg+http://bitbucket.org/pygame/pygame
 
-udp.py:
+libs:
+	mkdir libs
+	touch libs/__init__.py
+libs/udp.py: libs
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py --compressed -O
-pygame_midi_wrapper.py:
+libs/pygame_midi_wrapper.py: libs
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py --compressed -O
-pygame_midi_input.py:
+libs/pygame_midi_input.py: libs
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py --compressed -O
-music.py:
+libs/music.py: libs
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/music.py --compressed -O
-loop.py:
+libs/loop.py: libs
 	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py --compressed -O
 
 

@@ -1,16 +1,19 @@
 import array
 
+from libs.loop import Loop
+from libs.pygame_midi_input import MidiInput
+
 from ArtNet3 import ArtNet3
-from loop import Loop
-from pygame_midi_input import MidiInput
 
 import logging
 log = logging.getLogger(__name__)
 
-VERSION = '0.02'
+VERSION = '0.03'
+
+DEFAULT_MIDI_PORT_NAME = 'nanoKONTROL2'
 
 
-class DMXRenderer(object):
+class AbstractDMXRenderer(object):
     DEFAULT_DMX_SIZE = 128
 
     def __init__(self, dmx_size=DEFAULT_DMX_SIZE):
@@ -29,12 +32,12 @@ class DMXRenderer(object):
         raise Exception('should override')
 
 
-class LightingAutomation(DMXRenderer):
+class DMXManager(AbstractDMXRenderer):
 
     def __init__(self, framerate=30, renderers):
         super().__init__()
 
-        assert len(renderers)
+        assert len(renderers), "Must provide renderers"
         self.renderers = renderers
 
         self.artnet = ArtNet3()
@@ -56,13 +59,13 @@ class LightingAutomation(DMXRenderer):
         self.artnet.dmx(self.dmx_universe.tobytes())
 
 
-class RenderPluginMidiInput(DMXRenderer):
+class RenderPluginMidiInput(AbstractDMXRenderer):
     CONTROL_OFFSET_JUMP = 8
 
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
 
-        self.midi_input = MidiInput('nanoKONTROL2')
+        self.midi_input = MidiInput(name)
         self.midi_input.init_pygame()
         self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
 
@@ -108,6 +111,8 @@ def get_args():
     )
     parser_input = parser
 
+    parser.add_argument('--midi_input', action='store', help='name of the midi input port to use', default=DEFAULT_MIDI_PORT_NAME)
+
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
     parser.add_argument('--version', action='version', version=VERSION)
 
@@ -120,4 +125,6 @@ if __name__ == "__main__":
     args = get_args()
     logging.basicConfig(level=args['log_level'])
 
-    LightingAutomation()
+    DMXManager((
+        RenderPluginMidiInput(args['midi_input']),
+    ))
