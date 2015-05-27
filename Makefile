@@ -40,15 +40,15 @@ libs:
 	mkdir libs
 	touch libs/__init__.py
 libs/udp.py: libs
-	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py --compressed -O
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py --compressed -O
 libs/pygame_midi_wrapper.py: libs
-	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py --compressed -O
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py --compressed -O
 libs/pygame_midi_input.py: libs
-	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py --compressed -O
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py --compressed -O
 libs/music.py: libs
-	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/music.py --compressed -O
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/music.py --compressed -O
 libs/loop.py: libs
-	curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py --compressed -O
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py --compressed -O
 
 
 
