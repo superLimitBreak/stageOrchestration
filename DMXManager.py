@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 VERSION = '0.03'
 
+DEFAULT_FRAMERATE = 30
 DEFAULT_MIDI_PORT_NAME = 'nanoKONTROL2'
 
 
@@ -34,7 +35,7 @@ class AbstractDMXRenderer(object):
 
 class DMXManager(AbstractDMXRenderer):
 
-    def __init__(self, framerate=30, renderers):
+    def __init__(self, renderers, framerate=DEFAULT_FRAMERATE):
         super().__init__()
 
         assert len(renderers), "Must provide renderers"
@@ -42,7 +43,7 @@ class DMXManager(AbstractDMXRenderer):
 
         self.artnet = ArtNet3()
 
-        self.loop = Loop(30)
+        self.loop = Loop(framerate)
         self.loop.render = self.render
         self.loop.close = self.close
 
@@ -55,11 +56,11 @@ class DMXManager(AbstractDMXRenderer):
     def render(self, frame):
         for index, values in enumerate(zip(*(renderer.render(frame) for renderer in self.renderers))):
             # Perform mixing of this dmx byte across the renderers
-            dmx_universe[index] = max(*values)
+            self.dmx_universe[index] = max(values)
         self.artnet.dmx(self.dmx_universe.tobytes())
 
 
-class RenderPluginMidiInput(AbstractDMXRenderer):
+class DMXRendererMidiInput(AbstractDMXRenderer):
     CONTROL_OFFSET_JUMP = 8
 
     def __init__(self, name):
@@ -73,6 +74,7 @@ class RenderPluginMidiInput(AbstractDMXRenderer):
 
     def render(self, frame):
         self.midi_input.process_events()
+        return self.dmx_universe
 
     def midi_event(self, event, data1, data2, data3):
         if data1 == 46:
@@ -103,7 +105,7 @@ def get_args():
 
     parser = argparse.ArgumentParser(
         prog=__name__,
-        description="""Lighting Automation
+        description="""DMXManager - Lighting Automation Framework
 
         """,
         epilog="""
@@ -111,6 +113,7 @@ def get_args():
     )
     parser_input = parser
 
+    parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', default=DEFAULT_FRAMERATE)
     parser.add_argument('--midi_input', action='store', help='name of the midi input port to use', default=DEFAULT_MIDI_PORT_NAME)
 
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
@@ -125,6 +128,9 @@ if __name__ == "__main__":
     args = get_args()
     logging.basicConfig(level=args['log_level'])
 
-    DMXManager((
-        RenderPluginMidiInput(args['midi_input']),
-    ))
+    DMXManager(
+        renderers = (
+            DMXRendererMidiInput(args['midi_input']),
+        ),
+        framerate = args['framerate'],
+    )
