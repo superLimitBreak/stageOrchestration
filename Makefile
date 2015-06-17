@@ -1,9 +1,13 @@
 OS = $(shell uname -s)
+ENV_OLA = env_ola
 
 help:
 	@printf "To install run 'make install'\n"
 
-install: $(OS) libs/udp.py libs/pygame_midi_wrapper.py libs/pygame_midi_input.py libs/music.py libs/loop.py
+install: $(OS) python_libs
+
+
+# OS Depenendencys -------------------------------------------------------------
 
 Linux:
 	@printf "Linux Install\n"
@@ -36,6 +40,10 @@ Darwin:
 	#brew install python sdl sdl_image sdl_mixer sdl_ttf portmidi mercurial
 	#pip2 install hg+http://bitbucket.org/pygame/pygame
 
+
+# Python Dependencys -----------------------------------------------------------
+
+python_libs: libs/udp.py libs/pygame_midi_wrapper.py libs/pygame_midi_input.py libs/music.py libs/loop.py
 libs:
 	mkdir libs
 	touch libs/__init__.py
@@ -51,14 +59,21 @@ libs/loop.py: libs
 	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py --compressed -O
 
 
+# Old OLA Demo -----------------------------------------------------------------
 
-run: install env setup
-	env/bin/python main.py
+run_ola: install env setup_ola
+	$ENV_OLA/bin/python main.py
 
-setup:
+setup_ola:
 	ola_patch -d 1 -p 0 -u 0
 
-env:
-	virtualenv -p /usr/bin/python2.7 env
-	cp -r /usr/lib/python2.7/dist-packages/ola env/lib/python2.7
-	cp -r /usr/lib/python2.7/dist-packages/google env/lib/python2.7/
+$(ENV_OLA):
+	virtualenv -p /usr/bin/python2.7 $ENV_OLA
+	cp -r /usr/lib/python2.7/dist-packages/ola $ENV_OLA/lib/python2.7
+	cp -r /usr/lib/python2.7/dist-packages/google $ENV_OLA/lib/python2.7/
+
+
+# Run --------------------------------------------------------------------------
+
+run: python_libs
+	python3 DMXManager.py
