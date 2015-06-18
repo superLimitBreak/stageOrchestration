@@ -1,0 +1,40 @@
+0:
+    reset:
+        all
+    state:
+        light1: [1,1,1,1]
+1:
+    reset:
+        all
+    state:
+        light2: [1,1,1,1]
+2:
+    reset:
+        all
+    state:
+        light3: [1,1,1,1]
+3:
+    reset:
+        all
+    state:
+        light4: [1,1,1,1]
+4:
+    reset:
+        all
+    state:
+        light5: [1,1,1,1]
+5:
+    reset:
+        all
+    state:
+        light6: [1,1,1,1]
+6:
+    reset:
+        all
+    state:
+        light7: [1,1,1,1]
+7:
+    reset:
+        all
+    state:
+        light8: [1,1,1,1]

@@ -12,7 +12,7 @@ VERSION = '0.03'
 
 DEFAULT_FRAMERATE = 30
 DEFAULT_MIDI_PORT_NAME = 'nanoKONTROL2'
-
+DEFAULT_LIGHTING_DESCRIPTIONS_FOLDER = 'lighting_descriptions'
 
 class DMXManager(AbstractDMXRenderer):
 
@@ -58,6 +58,7 @@ def get_args():
 
     parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', default=DEFAULT_FRAMERATE)
     parser.add_argument('--midi_input', action='store', help='name of the midi input port to use', default=DEFAULT_MIDI_PORT_NAME)
+    parser.add_argument('--lighting_descriptions', action='store', help='folder where the lighting descriptions are to be loaded', default=DEFAULT_LIGHTING_DESCRIPTIONS_FOLDER)
 
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
     parser.add_argument('--version', action='version', version=VERSION)
