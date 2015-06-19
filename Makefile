@@ -49,6 +49,8 @@ libs:
 	touch libs/__init__.py
 libs/udp.py: libs
 	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py --compressed -O
+libs/network_display_event.py: libs
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/network_display_event.py --compressed -O
 libs/pygame_midi_wrapper.py: libs
 	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py --compressed -O
 libs/pygame_midi_input.py: libs
