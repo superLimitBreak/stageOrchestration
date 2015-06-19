@@ -1,6 +1,6 @@
 from libs.loop import Loop
 
-from DMXBase import AbstractDMXRenderer
+from DMXBase import AbstractDMXRenderer, mix
 from DMXRendererMidiInput import DMXRendererMidiInput
 from DMXRendererLightTiming import DMXRendererLightTiming
 from ArtNet3 import ArtNet3
@@ -35,9 +35,7 @@ class DMXManager(AbstractDMXRenderer):
             renderer.close()
 
     def render(self, frame):
-        for index, values in enumerate(zip(*(renderer.render(frame) for renderer in self.renderers))):
-            # Perform mixing of this dmx byte across the renderers
-            self.dmx_universe[index] = max(values)
+        mix(self.dmx_universe, (renderer.render(frame) for renderer in self.renderers))
         self.artnet.dmx(self.dmx_universe.tobytes())
 
 

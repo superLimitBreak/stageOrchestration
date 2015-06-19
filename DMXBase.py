@@ -19,3 +19,8 @@ class AbstractDMXRenderer(object):
     def close(self):
         #raise Exception('should override')
         pass
+
+
+def mix(destination, *sources):
+    for index, values in enumerate(zip(*sources)):
+        destination[index] = max(values)
