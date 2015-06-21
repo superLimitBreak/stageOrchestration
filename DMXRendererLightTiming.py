@@ -5,5 +5,10 @@ log = logging.getLogger(__name__)
 
 
 class DMXRendererLightTiming(AbstractDMXRenderer):
-    def event(self, data):
-        print('Netowork event: ', data)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+    def network_event(self, data):
+        print('DMXRendererLightTiming YEE HAW!', data)

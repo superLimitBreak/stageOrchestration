@@ -1,5 +1,6 @@
 from libs.loop import Loop
 
+from libs.misc import get_obj, null_function
 from libs.network_display_event import DisplayEventHandler as SocketHandler # Name to change! refactor this poo!
 
 from DMXBase import AbstractDMXRenderer, mix
@@ -40,13 +41,23 @@ class DMXManager(AbstractDMXRenderer):
             renderer.close()
 
     def render(self, frame):
+        """
+        Frame Event
+        Render all registered renderers
+        Mix all rendered bytestreams into a single bytestream
+        Send DMX display command over network
+        """
         mix(self.dmx_universe, *(renderer.render(frame) for renderer in self.renderers))
         self.artnet.dmx(self.dmx_universe.tobytes())
 
     def recive(self, data):
-        for renderer in self.renderers:
-            if type(renderer).__name__ == data.get('func'):
-                renderer.event(data)
+        """
+        Network Event
+        Trigger the correct network event to the correct renderer
+        """
+        obj = get_obj(self.renderers, data.get('func', ''))
+        network_event_func = getattr(obj, 'network_event', null_function)
+        network_event_func(data)
 
 
 def get_args():
