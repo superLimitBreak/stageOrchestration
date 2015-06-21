@@ -44,8 +44,9 @@ class DMXManager(AbstractDMXRenderer):
         self.artnet.dmx(self.dmx_universe.tobytes())
 
     def recive(self, data):
-        # TODO: Implement network triggers
-        print("Network event", data)
+        for renderer in self.renderers:
+            if type(renderer).__name__ == data.get('func'):
+                renderer.event(data)
 
 
 def get_args():

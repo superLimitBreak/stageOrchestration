@@ -5,4 +5,5 @@ log = logging.getLogger(__name__)
 
 
 class DMXRendererLightTiming(AbstractDMXRenderer):
-    pass
+    def event(self, data):
+        print('Netowork event: ', data)

@@ -20,6 +20,10 @@ class AbstractDMXRenderer(object):
         #raise Exception('should override')
         pass
 
+    def event(self, data):
+        #raise Exception('should override')
+        pass
+
 
 def mix(destination, *sources):
     for index, values in enumerate(zip(*sources)):
