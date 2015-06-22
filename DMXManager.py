@@ -90,7 +90,7 @@ if __name__ == "__main__":
     DMXManager(
         renderers=(
             DMXRendererMidiInput(args['midi_input']),
-            DMXRendererLightTiming(),
+            DMXRendererLightTiming(args['lighting_descriptions']),
         ),
         framerate = args['framerate'],
     )
