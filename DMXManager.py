@@ -15,7 +15,8 @@ VERSION = '0.03'
 
 DEFAULT_FRAMERATE = 30
 DEFAULT_MIDI_PORT_NAME = 'nanoKONTROL2'
-DEFAULT_LIGHTING_DESCRIPTIONS_FOLDER = 'lighting_descriptions'
+DEFAULT_LIGHTING_SCENES_FOLDER = 'data/scenes'
+DEFAULT_LIGHTING_TRACKS_FOLDER = 'data/tracks'
 
 
 class DMXManager(AbstractDMXRenderer):
@@ -73,7 +74,8 @@ def get_args():
 
     parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', default=DEFAULT_FRAMERATE)
     parser.add_argument('--midi_input', action='store', help='name of the midi input port to use', default=DEFAULT_MIDI_PORT_NAME)
-    parser.add_argument('--lighting_descriptions', action='store', help='folder where the lighting descriptions are to be loaded', default=DEFAULT_LIGHTING_DESCRIPTIONS_FOLDER)
+    parser.add_argument('--lighting_scenes', action='store', help='folder where the lighting descriptions are to be loaded', default=DEFAULT_LIGHTING_SCENES_FOLDER)
+    parser.add_argument('--lighting_tracks', action='store', help='tracks', default=DEFAULT_LIGHTING_TRACKS_FOLDER)
 
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
     parser.add_argument('--version', action='version', version=VERSION)
@@ -90,7 +92,7 @@ if __name__ == "__main__":
     DMXManager(
         renderers=(
             DMXRendererMidiInput(args['midi_input']),
-            DMXRendererLightTiming(args['lighting_descriptions']),
+            DMXRendererLightTiming(args['lighting_scenes'], args['lighting_tracks']),
         ),
         framerate = args['framerate'],
     )
