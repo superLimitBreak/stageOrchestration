@@ -25,14 +25,14 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.bpm = None
 
     @staticmethod
-    def _open_path(path, target=None):
+    def _open_path(path, target_class=None):
         """
         Open all yamls in a path by constructing an object for each file based on the 'target' class
         """
         objs = {}
         for file_info in file_scan(path, r'.*\.yaml$'):
             with open(file_info.absolute, 'rb') as file_handle:
-                objs[file_info.file_no_ext] = target(yaml.load(file_handle))
+                objs[file_info.file_no_ext] = target_class(yaml.load(file_handle))
         return objs
 
     def start(self, data):
@@ -41,14 +41,16 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         if data.get('sequence'):
             self.sequence = self.sequences[data.get('sequence')]
         if data.get('scene'):
-            self.sequence = None #[self.scenes.get(data.get('scene', DEFAULT_SCENE_NAME))]
+            self.sequence = None  #[self.scenes.get(data.get('scene', DEFAULT_SCENE_NAME))]
 
     def stop(self, data):
         self.time_start = None
 
     def render(self, frame):
+        if not self.time_start:
+            return self.dmx_universe
         current_beat = ((time.time() - self.time_start) / 60) * self.bpm
-        self.getScene(current_beat)
+        self.get_scene(current_beat)
         return self.dmx_universe
 
     def get_scene(self, target_beat):
@@ -62,10 +64,10 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
 class Scene(object):
     def __init__(self, data):
-        pass
+        print("Scene", data)
 
 
 class Sequence(object):
     def __init__(self, data):
-        pass
+        print("Sequence", data)
 
