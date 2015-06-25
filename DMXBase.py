@@ -21,6 +21,6 @@ class AbstractDMXRenderer(object):
         pass
 
 
-def mix(destination, *sources):
+def mix(destination, sources, mix_func=max):
     for index, values in enumerate(zip(*sources)):
-        destination[index] = max(values)
+        destination[index] = mix_func(values)

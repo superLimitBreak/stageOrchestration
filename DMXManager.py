@@ -48,7 +48,7 @@ class DMXManager(AbstractDMXRenderer):
         Mix all rendered bytestreams into a single bytestream
         Send DMX display command over network
         """
-        mix(self.dmx_universe, *tuple(renderer.render(frame) for renderer in self.renderers))
+        mix(self.dmx_universe, (renderer.render(frame) for renderer in self.renderers))
         self.artnet.dmx(self.dmx_universe.tobytes())
 
     def recive(self, data):

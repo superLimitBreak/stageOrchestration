@@ -10,6 +10,22 @@ log = logging.getLogger(__name__)
 
 
 class DMXRendererLightTiming(AbstractDMXRenderer):
+    """
+    Load a dataset of scenes and seqeucnes as dictionarys
+
+    Scene = A lighting scene that has a duration in beats that can render it's state to a dmx_universe
+    Sequence = A plain list of scenes to be played in order
+    These are loaded from YAML datasets
+
+    start/stop can be triggeded from an external system and reference any of the sequenes or scenes by name
+
+    example start({'sequence':'THE YAML SEQUENCE FILENAME', 'bpm': 120})
+
+    When start is called a start_time is recorded.
+    Every time 'render' is called it gets the current time and works out the current 'beat' from the start time
+    The correct scene is found in the sequence.
+    The scenes 'render' method is called with the current 'beat' into the scene
+    """
 
     DEFAULT_SCENE_NAME = 'none'
     DEFAULT_SEQUENCE_NAME = 'none'
