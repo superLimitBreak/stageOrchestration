@@ -22,7 +22,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.sequences = self._open_path(path_sequences)
 
         self.time_start = 0
-        self.bpm = 0.0
+        self.bpm = self.DEFAULT_BPM
         self.sequence = ()
 
     @staticmethod
@@ -38,7 +38,10 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return objs
 
     def start(self, data):
-        self.time_start = time.time()
+        """
+        Originates from external call from trigger system
+        """
+        self.time_start = time.time() + data.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
         if data.get('sequence'):
             self.sequence = self.sequences[data.get('sequence')]
@@ -46,7 +49,10 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
             self.sequence = (self.scenes.get(data.get('scene', self.DEFAULT_SCENE_NAME)), )
 
     def stop(self, data):
-        self.time_start = None
+        """
+        Originates from external call from trigger system
+        """
+        self.time_start = 0
 
     @property
     def default_scene(self):
@@ -58,7 +64,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     @property
     def current_beat(self):
-        return ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0
+        return min(0.0, ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0)
 
     @property
     def current_sequence(self):
