@@ -97,16 +97,50 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
             if target_beat > current_beat and target_beat < current_beat + scene.total_beats:
                 return scene, target_beat - current_beat
             current_beat += scene.total_beats
-        return self.default_scene, current_beat - target_beat % self.default_scene.total_beats
+        return self.default_scene, (target_beat - current_beat) % self.default_scene.total_beats
 
 
 class Scene(object):
+
+    #DURATION_PROCESSORS = {
+    #    'auto'      : lambda index, key, keys, data: float(keys[index+1]) - float(key)
+    #    'match_next': lambda index, key, keys, data: float(getDuration(data[keys[index+1]]))
+    #    'match_prev': lambda index, key, keys, data: float(keys[index+1]) - float(key)
+    #}
+
     def __init__(self, data):
+        print()
+        print("------------------------")
         print("Scene", data)
 
-    @property
-    def total_beats(self):
-        return 1
+        self.process_data(data)
+
+    def process_data(self, data):
+        self.calculate_durations(data)
+
+    def calculate_durations(self, data):
+        data_float_indexed = {float(k): v for k, v in data.items()}
+        sorted_keys = sorted(data_float_indexed.keys())
+        def get_duration(index):
+            key = sorted_keys[index]
+            item = data_float_indexed[key]
+            duration = item.get('duration')
+            try:
+                duration = float(duration)
+            except ValueError:
+                pass
+            if duration == 'auto':
+                return sorted_keys[index+1] - key
+            if duration == 'match_next':
+                duration = get_duration(index+1)
+            if duration == 'match_prev':
+                duration = get_duration(index-1)
+            if isinstance(duration, str) and duration.startswith('match '):
+                duration = get_duration(sorted_keys.index(float(duration.strip('match '))))
+            if duration != item.get('duration'):
+                item['duration'] = duration
+            return duration
+        self.total_beats = sum((get_duration(index) for index in range(len(sorted_keys))))
 
     def render(self, dmx_universe, beat):
         pass
