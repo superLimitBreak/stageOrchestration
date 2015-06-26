@@ -39,7 +39,7 @@
         light7: [0,1,0,0]
         light8: [0,1,0,0]
 24:
-    duration: match_previous
+    duration: match_prev
     tween:
         transition_to_state
     state:

@@ -24,3 +24,13 @@ class AbstractDMXRenderer(object):
 def mix(destination, sources, mix_func=max):
     for index, values in enumerate(zip(*sources)):
         destination[index] = mix_func(values)
+
+
+def get_value_at(sequence, target, get_value_item_func):
+    current = 0
+    for item in sequence:
+        item_value = get_value_item_func(item)
+        if target >= current and target < current + item_value:
+            return item, target - current
+        current += item_value
+    return None, target - current

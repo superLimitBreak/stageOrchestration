@@ -1,9 +1,10 @@
 import time
 import yaml
+import operator
 
 from libs.misc import file_scan
 
-from DMXBase import AbstractDMXRenderer
+from DMXBase import AbstractDMXRenderer, get_value_at
 
 import logging
 log = logging.getLogger(__name__)
@@ -92,21 +93,15 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return self.dmx_universe
 
     def get_scene_beat(self, target_beat):
-        current_beat = 0
-        for scene in self.current_sequence:
-            if target_beat > current_beat and target_beat < current_beat + scene.total_beats:
-                return scene, target_beat - current_beat
-            current_beat += scene.total_beats
-        return self.default_scene, (target_beat - current_beat) % self.default_scene.total_beats
+        scene, beats_into_scene = get_value_at(self.current_sequence, target_beat, operator.attrgetter('total_beats'))
+        if not scene:
+            scene = self.default_scene
+            beats_into_scene = beats_into_scene % self.default_scene.total_beats
+        return scene, beats_into_scene
 
 
 class Scene(object):
-
-    #DURATION_PROCESSORS = {
-    #    'auto'      : lambda index, key, keys, data: float(keys[index+1]) - float(key)
-    #    'match_next': lambda index, key, keys, data: float(getDuration(data[keys[index+1]]))
-    #    'match_prev': lambda index, key, keys, data: float(keys[index+1]) - float(key)
-    #}
+    DEFAULT_DURATION = 4.0
 
     def __init__(self, data):
         print()
@@ -116,9 +111,9 @@ class Scene(object):
         self.process_data(data)
 
     def process_data(self, data):
-        self.calculate_durations(data)
+        self.parse_durations(data)
 
-    def calculate_durations(self, data):
+    def parse_durations(self, data):
         data_float_indexed = {float(k): v for k, v in data.items()}
         sorted_keys = sorted(data_float_indexed.keys())
         def get_duration(index):
@@ -126,8 +121,10 @@ class Scene(object):
             item = data_float_indexed[key]
             duration = item.get('duration')
             try:
+                # TODO:  parse the string as "1.1.1" with subbeats.
+                # It might also be worth considering a timesigniture in the 'start' method
                 duration = float(duration)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
             if duration == 'auto':
                 return sorted_keys[index+1] - key
@@ -137,11 +134,21 @@ class Scene(object):
                 duration = get_duration(index-1)
             if isinstance(duration, str) and duration.startswith('match '):
                 duration = get_duration(sorted_keys.index(float(duration.strip('match '))))
+            if not duration:
+                log.info('Unknown duration. Fallback to default')
+                duration = self.DEFAULT_DURATION
+            if not isinstance(duration, float):
+                log.info('Unparsed duration: {0}'.format(duration))
             if duration != item.get('duration'):
                 item['duration'] = duration
             return duration
         self.total_beats = sum((get_duration(index) for index in range(len(sorted_keys))))
+        self.scene_order = [data_float_indexed[key] for key in sorted_keys]
+
+    def get_scene_item_beat(self, target_beat):
+        return get_value_at(self.scene_order, target_beat, operator.itemgetter('duration'))
 
     def render(self, dmx_universe, beat):
-        pass
-
+        scene_item, beat_in_item = self.get_scene_item_beat(beat)
+        progress_in_item = beat_in_item / scene_item['duration']
+        print(progress_in_item, scene_item)

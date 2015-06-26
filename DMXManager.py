@@ -1,6 +1,6 @@
 from libs.loop import Loop
 
-from libs.misc import run_func
+from libs.misc import run_func, postmortem
 from libs.network_display_event import DisplayEventHandler as SocketHandler # Name to change! refactor this poo!
 
 from DMXBase import AbstractDMXRenderer, mix
@@ -48,7 +48,7 @@ class DMXManager(AbstractDMXRenderer):
         Mix all rendered bytestreams into a single bytestream
         Send DMX display command over network
         """
-        mix(self.dmx_universe, (renderer.render(frame) for renderer in self.renderers))
+        mix(self.dmx_universe, tuple(renderer.render(frame) for renderer in self.renderers))
         self.artnet.dmx(self.dmx_universe.tobytes())
 
     def recive(self, data):
@@ -85,14 +85,19 @@ def get_args():
     return vars(args)
 
 
-if __name__ == "__main__":
+def main():
     args = get_args()
     logging.basicConfig(level=args['log_level'])
 
     DMXManager(
         renderers=(
-            DMXRendererMidiInput(args['midi_input']),
+            #DMXRendererMidiInput(args['midi_input']),
             DMXRendererLightTiming(args['lighting_scenes'], args['lighting_sequence']),
         ),
         framerate = args['framerate'],
     )
+
+
+if __name__ == "__main__":
+    postmortem(main)
+
