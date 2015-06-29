@@ -30,7 +30,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     DEFAULT_SCENE_NAME = 'none'
     DEFAULT_SEQUENCE_NAME = 'none'
-    DEFAULT_BPM = 120.0
+    DEFAULT_BPM = 60.0
 
     def __init__(self, path_scenes, path_sequences, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,6 +58,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         """
         Originates from external call from trigger system
         """
+        print(data)
         self.time_start = time.time() + data.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
         if data.get('sequence'):
@@ -81,7 +82,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     @property
     def current_beat(self):
-        return min(0.0, ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0)
+        return max(0.0, ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0)
 
     @property
     def current_sequence(self):
@@ -104,10 +105,6 @@ class Scene(object):
     DEFAULT_DURATION = 4.0
 
     def __init__(self, data):
-        print()
-        print("------------------------")
-        print("Scene", data)
-
         self.process_data(data)
 
     def process_data(self, data):
@@ -127,7 +124,7 @@ class Scene(object):
             except (ValueError, TypeError):
                 pass
             if duration == 'auto':
-                return sorted_keys[index+1] - key
+                duration = sorted_keys[index+1] - key
             if duration == 'match_next':
                 duration = get_duration(index+1)
             if duration == 'match_prev':
