@@ -1,6 +1,7 @@
 import time
 import yaml
 import operator
+import copy
 
 from libs.misc import file_scan
 
@@ -41,6 +42,9 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.time_start = 0
         self.bpm = self.DEFAULT_BPM
         self.sequence = ()
+
+        self.scene_index = None
+        self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
     @staticmethod
     def _open_path(path, target_class=None):
@@ -89,16 +93,19 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return (self.scenes.get(scene_name, ) for scene_name in self.sequence) if self.sequence else self.default_sequence
 
     def render(self, frame):
-        scene, scene_beat = self.get_scene_beat(self.current_beat)
-        scene.render(self.dmx_universe, scene_beat)
+        scene, scene_beat, scene_index = self.get_scene_beat(self.current_beat)
+        if scene_index is not self.scene_index:
+            self.scene_index = scene_index
+            self.dmx_universe_previous = copy.copy(self.dmx_universe)
+        scene.render(self.dmx_universe, self.dmx_universe_previous, scene_beat)
         return self.dmx_universe
 
     def get_scene_beat(self, target_beat):
-        scene, beats_into_scene = get_value_at(self.current_sequence, target_beat, operator.attrgetter('total_beats'))
+        scene, beats_into_scene, scene_index = get_value_at(self.current_sequence, target_beat, operator.attrgetter('total_beats'))
         if not scene:
             scene = self.default_scene
             beats_into_scene = beats_into_scene % self.default_scene.total_beats
-        return scene, beats_into_scene
+        return scene, beats_into_scene, scene_index
 
 
 class Scene(object):
@@ -145,7 +152,7 @@ class Scene(object):
     def get_scene_item_beat(self, target_beat):
         return get_value_at(self.scene_order, target_beat, operator.itemgetter('duration'))
 
-    def render(self, dmx_universe, beat):
-        scene_item, beat_in_item = self.get_scene_item_beat(beat)
+    def render(self, dmx_universe, dmx_universe_previous, beat):
+        scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
         progress_in_item = beat_in_item / scene_item['duration']
         print(progress_in_item, scene_item)
