@@ -3,7 +3,7 @@ import yaml
 import operator
 import copy
 
-from libs.misc import file_scan
+from libs.misc import file_scan, list_neighbor_generator
 
 from DMXBase import AbstractDMXRenderer, get_value_at
 
@@ -37,7 +37,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         super().__init__(*args, **kwargs)
 
         self.config = self._open_yaml(path_config)
-        self.scenes = self._open_path(path_scenes, Scene)
+        self.scenes = self._open_path(path_scenes, SceneFactory(self.config).create_scene)
         self.sequences = self._open_path(path_sequences)
 
         self.time_start = 0
@@ -113,18 +113,25 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return scene, beats_into_scene, scene_index
 
 
-class Scene(object):
+class SceneFactory(object):
+    """
+    This factory creates a Scene from a plain YAML data structure
+    Separate out the YAML parsing and interpritation from the functional use of Scene
+    """
     DEFAULT_DURATION = 4.0
 
-    def __init__(self, data):
-        self.process_data(data)
+    def __init__(self, config):
+        self.config = config
 
-    def process_data(self, data):
-        self.parse_durations(data)
-        for scene_item in self.scene_order:
+    def create_scene(self, data):
+        scene_order = self.parse_scene_order(data)
+        for scene_item in scene_order:
             self.pre_render_target(scene_item)
+        for prev_scene, current_scene, next_scene in list_neighbor_generator(scene_order):
+            self.set_start_state_for_scene_item(current_scene, prev_scene)
+        return Scene(scene_order)
 
-    def parse_durations(self, data):
+    def parse_scene_order(self, data):
         data_float_indexed = {float(k): v for k, v in data.items()}
         sorted_keys = sorted(data_float_indexed.keys())
         def get_duration(index):
@@ -153,13 +160,32 @@ class Scene(object):
             if duration != item.get('duration'):
                 item['duration'] = duration
             return duration
-        self.total_beats = sum((get_duration(index) for index in range(len(sorted_keys))))
-        self.scene_order = [data_float_indexed[key] for key in sorted_keys]
+        for index in range(len(sorted_keys)):
+            get_duration(index)
+        return [data_float_indexed[key] for key in sorted_keys]
 
     def pre_render_target(self, scene_item):
         dmx_universe_target = AbstractDMXRenderer.new_dmx_array()
         target_state_dict = scene_item.get('state')
-        scene_item['dmx_universe_target'] = dmx_universe_target
+        scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target'] = dmx_universe_target
+
+        for key, values in target_state_dict.items():
+            dmx_alias = self.config[key]
+            if dmx_alias['type'] == 'lightRGBW':
+                for index, value in enumerate(values):
+                    dmx_universe_target[index+dmx_alias['index']] = min(255, int(value * 255))
+
+    def set_start_state_for_scene_item(self, scene_item, previous_scene_item):
+        if scene_item and previous_scene_item:
+            scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['previous'] = previous_scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target']
+
+
+class Scene(object):
+    SCENE_ITEM_DMX_STATE_KEY = 'dmx'
+
+    def __init__(self, scene_order):
+        self.scene_order = scene_order
+        self.total_beats = sum(scene_item['duration'] for scene_item in self.scene_order)
 
     def get_scene_item_beat(self, target_beat):
         return get_value_at(self.scene_order, target_beat, operator.itemgetter('duration'))
@@ -167,4 +193,6 @@ class Scene(object):
     def render(self, dmx_universe, dmx_universe_previous, beat):
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
         progress_in_item = beat_in_item / scene_item['duration']
-        print(progress_in_item, scene_item)
+        previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous') or dmx_universe_previous
+        target = scene_item[Scene.SCENE_ITEM_DMX_STATE_KEY]['target']
+        print(progress_in_item, previous, target)
