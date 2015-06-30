@@ -33,9 +33,10 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     DEFAULT_SEQUENCE_NAME = 'none'
     DEFAULT_BPM = 60.0
 
-    def __init__(self, path_scenes, path_sequences, *args, **kwargs):
+    def __init__(self, path_config, path_scenes, path_sequences, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.config = self._open_yaml(path_config)
         self.scenes = self._open_path(path_scenes, Scene)
         self.sequences = self._open_path(path_sequences)
 
@@ -47,15 +48,19 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
     @staticmethod
+    def _open_yaml(path, target_class=None):
+        with open(path, 'rb') as file_handle:
+            obj_data = yaml.load(file_handle)
+            return target_class(obj_data) if target_class else obj_data
+
+    @staticmethod
     def _open_path(path, target_class=None):
         """
         Open all yamls in a path by constructing an object for each file based on the 'target' class
         """
         objs = {}
         for file_info in file_scan(path, r'.*\.yaml$'):
-            with open(file_info.absolute, 'rb') as file_handle:
-                obj_data = yaml.load(file_handle)
-                objs[file_info.file_no_ext] = target_class(obj_data) if target_class else obj_data
+            objs[file_info.file_no_ext] = DMXRendererLightTiming._open_yaml(file_info.absolute, target_class)
         return objs
 
     def start(self, data):
@@ -116,6 +121,8 @@ class Scene(object):
 
     def process_data(self, data):
         self.parse_durations(data)
+        for scene_item in self.scene_order:
+            self.pre_render_target(scene_item)
 
     def parse_durations(self, data):
         data_float_indexed = {float(k): v for k, v in data.items()}
@@ -148,6 +155,11 @@ class Scene(object):
             return duration
         self.total_beats = sum((get_duration(index) for index in range(len(sorted_keys))))
         self.scene_order = [data_float_indexed[key] for key in sorted_keys]
+
+    def pre_render_target(self, scene_item):
+        dmx_universe_target = AbstractDMXRenderer.new_dmx_array()
+        target_state_dict = scene_item.get('state')
+        scene_item['dmx_universe_target'] = dmx_universe_target
 
     def get_scene_item_beat(self, target_beat):
         return get_value_at(self.scene_order, target_beat, operator.itemgetter('duration'))

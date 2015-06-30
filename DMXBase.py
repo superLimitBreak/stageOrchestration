@@ -4,9 +4,13 @@ import array
 class AbstractDMXRenderer(object):
     DEFAULT_DMX_SIZE = 128
 
+    @staticmethod
+    def new_dmx_array(dmx_size=DEFAULT_DMX_SIZE):
+        dmx_universe = array.array('B')
+        return dmx_universe.frombytes(b'\xff'*dmx_size)
+
     def __init__(self, dmx_size=DEFAULT_DMX_SIZE):
-        self.dmx_universe = array.array('B')
-        self.dmx_universe.frombytes(b'\xff'*dmx_size)
+        self.dmx_universe = self.new_dmx_array(dmx_size)
 
     def render(self, frame):
         """
