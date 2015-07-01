@@ -76,7 +76,7 @@
         light7: [1,0,0,0]
         light8: [0,0,0,0]
 7:
-    duration: match_previous
+    duration: match_prev
     tween: linear
     state:
         light1: [0,0,0,0]
