@@ -1,0 +1,89 @@
+0:
+    tween: linear
+    state:
+        light1: [1,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
+1:
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [1,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
+2:
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [1,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
+3:
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [1,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
+4:
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [1,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
+5:
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [1,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
+6:
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [1,0,0,0]
+        light8: [0,0,0,0]
+7:
+    duration: match_previous
+    tween: linear
+    state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [1,0,0,0]

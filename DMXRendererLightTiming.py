@@ -134,6 +134,8 @@ class SceneFactory(object):
         return Scene(scene_order)
 
     def parse_scene_order(self, data):
+        if not data:
+            return ()
         data_float_indexed = {float(k): v for k, v in data.items()}
         sorted_keys = sorted(data_float_indexed.keys())
         def get_duration(index):
@@ -146,19 +148,17 @@ class SceneFactory(object):
                 duration = float(duration)
             except (ValueError, TypeError):
                 pass
-            if duration == 'auto':
-                duration = sorted_keys[index+1] - key
             if duration == 'match_next':
                 duration = get_duration(index+1)
             if duration == 'match_prev':
                 duration = get_duration(index-1)
             if isinstance(duration, str) and duration.startswith('match '):
                 duration = get_duration(sorted_keys.index(float(duration.strip('match '))))
-            if not duration:
-                log.info('Unknown duration. Fallback to default')
-                duration = self.DEFAULT_DURATION
+            if (not duration or duration == 'auto') and index < len(sorted_keys)-1:
+                duration = sorted_keys[index+1] - key
             if not isinstance(duration, float):
                 log.info('Unparsed duration: {0}'.format(duration))
+                duration = self.DEFAULT_DURATION
             if duration != item.get('duration'):
                 item['duration'] = duration
             return duration
