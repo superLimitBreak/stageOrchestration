@@ -3,6 +3,8 @@ import yaml
 import operator
 import copy
 
+import pytweening
+
 from libs.misc import file_scan, list_neighbor_generator
 
 from DMXBase import AbstractDMXRenderer, get_value_at
@@ -192,7 +194,15 @@ class Scene(object):
 
     def render(self, dmx_universe, dmx_universe_previous, beat):
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
-        progress_in_item = beat_in_item / scene_item['duration']
+        progress = beat_in_item / scene_item['duration']
         previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous') or dmx_universe_previous
         target = scene_item[Scene.SCENE_ITEM_DMX_STATE_KEY]['target']
-        print(progress_in_item, previous, target)
+        tween_function = getattr(pytweening, scene_item.get('tween', ''), lambda n: 1)
+
+        assert len(dmx_universe) >= len(previous) and len(dmx_universe) >= len(target)
+        for index in range(len(dmx_universe)):
+            target_value = target[index]
+            previous_value = previous[index]
+            dmx_universe[index] = previous_value + int((tween_function(progress) * (target_value - previous_value)))
+
+        print(dmx_universe)
