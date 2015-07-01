@@ -1,40 +1,80 @@
 0:
-    reset:
-        all
     state:
         light1: [1,1,1,1]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
 1:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
         light2: [1,1,1,1]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
 2:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
         light3: [1,1,1,1]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
 3:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
         light4: [1,1,1,1]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
 4:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
         light5: [1,1,1,1]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
 5:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
         light6: [1,1,1,1]
+        light7: [0,0,0,0]
+        light8: [0,0,0,0]
 6:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
         light7: [1,1,1,1]
+        light8: [0,0,0,0]
 7:
-    reset:
-        all
     state:
+        light1: [0,0,0,0]
+        light2: [0,0,0,0]
+        light3: [0,0,0,0]
+        light4: [0,0,0,0]
+        light5: [0,0,0,0]
+        light6: [0,0,0,0]
+        light7: [0,0,0,0]
         light8: [1,1,1,1]

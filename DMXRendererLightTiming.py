@@ -33,7 +33,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     DEFAULT_SCENE_NAME = 'none'
     DEFAULT_SEQUENCE_NAME = 'none'
-    DEFAULT_BPM = 60.0
+    DEFAULT_BPM = 120.0
 
     def __init__(self, path_config, path_scenes, path_sequences, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -201,8 +201,7 @@ class Scene(object):
 
         assert len(dmx_universe) >= len(previous) and len(dmx_universe) >= len(target)
         for index in range(len(dmx_universe)):
-            target_value = target[index]
-            previous_value = previous[index]
-            dmx_universe[index] = previous_value + int((tween_function(progress) * (target_value - previous_value)))
+            dmx_universe[index] = self._get_byte_tween_value(progress, previous[index], target[index], tween_function)
 
-        print(dmx_universe)
+    def _get_byte_tween_value(self, progress, previous_value, target_value, tween_function):
+        return max(0, min(255, previous_value + int((tween_function(progress) * (target_value - previous_value)))))

@@ -114,9 +114,14 @@ class DMXSimulator(ArtNet3, PygameBase):
         PygameBase.__init__(self, framerate=framerate)
 
         self._init_dmx_items(
-            DMXLight(10, 10, 8),
-            DMXLight(50, 50, 8),
-            DMXLight(100, 100, 8),
+            DMXLight(0, 180, 8),
+            DMXLight(0, 100, 8),
+            DMXLight(0, 0, 8),
+            DMXLight(64, 0, 8),
+            DMXLight(128, 0, 8),
+            DMXLight(184, 0, 8),
+            DMXLight(256, 0, 8),
+            DMXLight(284, 100, 8),
         )
         self.state = [random.randint(0, 255) for i in range(512)]
 
