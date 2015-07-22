@@ -1,6 +1,6 @@
 from libs.loop import Loop
 
-from libs.misc import run_func, postmortem
+from libs.misc import run_funcs, postmortem
 from libs.network_display_event import DisplayEventHandler as SocketHandler # Name to change! refactor this poo!
 
 from DMXBase import AbstractDMXRenderer, mix
@@ -57,7 +57,7 @@ class DMXManager(AbstractDMXRenderer):
         Network Event
         Trigger the correct network event to the correct renderer
         """
-        run_func(self.renderers, data)
+        run_funcs(data, self.renderers)
 
 
 def get_args():
