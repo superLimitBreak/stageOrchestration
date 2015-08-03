@@ -6,6 +6,7 @@ import copy
 import pytweening
 
 from libs.misc import file_scan, list_neighbor_generator
+from libs.music import parse_timesigniture
 
 from DMXBase import AbstractDMXRenderer, get_value_at
 
@@ -34,6 +35,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     DEFAULT_SCENE_NAME = 'none'
     DEFAULT_SEQUENCE_NAME = 'none'
     DEFAULT_BPM = 120.0
+    DEFAULT_TIMESIGNITURE = "4:4"
 
     def __init__(self, path_config, path_scenes, path_sequences, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -72,6 +74,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         print(data)
         self.time_start = time.time() + data.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
+        self.timesigniture = parse_timesigniture(data.get('timesigniture', self.DEFAULT_TIMESIGNITURE))
         if data.get('sequence'):
             self.sequence = self.sequences[data.get('sequence')]
         if data.get('scene'):
