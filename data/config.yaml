@@ -1,24 +1,37 @@
-light1:
-    type: lightRGBW
-    index: 0
-light2:
-    type: lightRGBW
-    index: 8
-light3:
-    type: lightRGBW
-    index: 16
-light4:
-    type: lightRGBW
-    index: 24
-light5:
-    type: lightRGBW
-    index: 32
-light6:
-    type: lightRGBW
-    index: 40
-light7:
-    type: lightRGBW
-    index: 48
-light8:
-    type: lightRGBW
-    index: 56
+dmx_alias:
+    light1:
+        type: lightRGBW
+        index: 0
+    light2:
+        type: lightRGBW
+        index: 8
+    light3:
+        type: lightRGBW
+        index: 16
+    light4:
+        type: lightRGBW
+        index: 24
+    light5:
+        type: lightRGBW
+        index: 32
+    light6:
+        type: lightRGBW
+        index: 40
+    light7:
+        type: lightRGBW
+        index: 48
+    light8:
+        type: lightRGBW
+        index: 56
+color_alias:
+    off  : [0,0,0,0]
+    black: [0,0,0,0]
+    full : [1,1,1,1]
+    red  : [1,0,0,0]
+    green: [0,1,0,0]
+    blue : [0,0,1,0]
+    white: [0,0,0,1]
+    yellow: [1,1,0,0]
+    purple: [1,0,1,0]
+    orange: [1,0.5,0,0]
+    cyan  : [0,1,1,0]

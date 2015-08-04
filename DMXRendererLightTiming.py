@@ -5,8 +5,8 @@ import copy
 
 import pytweening
 
-from libs.misc import file_scan, list_neighbor_generator
-from libs.music import parse_timesigniture
+from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color
+from libs.music import parse_timesigniture, parse_timecode
 
 from DMXBase import AbstractDMXRenderer, get_value_at
 
@@ -146,10 +146,13 @@ class SceneFactory(object):
             item = data_float_indexed[key]
             duration = item.get('duration')
             try:
-                # TODO:  parse the string as "1.1.1" with subbeats.
-                # It might also be worth considering a timesigniture in the 'start' method
                 duration = float(duration)
             except (ValueError, TypeError):
+                pass
+            try:
+                # TODO: get the timesigniture here? How? What should do this?
+                duration = parse_timecode(duration)
+            except (AssertionError, ValueError, AttributeError):
                 pass
             if duration == 'match_next':
                 duration = get_duration(index+1)
@@ -170,15 +173,22 @@ class SceneFactory(object):
         return [data_float_indexed[key] for key in sorted_keys]
 
     def pre_render_target(self, scene_item):
+        """
+        Once the order of the items is known, we can iterate over the scenes
+        calculating/prerendering the dmx state for each section
+        This make seeking much faster
+        """
         dmx_universe_target = AbstractDMXRenderer.new_dmx_array()
         target_state_dict = scene_item.get('state')
         scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target'] = dmx_universe_target
 
-        for key, values in target_state_dict.items():
-            dmx_alias = self.config[key]
+        for key, color_value in target_state_dict.items():
+            dmx_alias = self.config['dmx_alias'][key]
+            # Have separate type parsers in a dict and/or class .. this code could get out of hand quickly
             if dmx_alias['type'] == 'lightRGBW':
-                for index, value in enumerate(values):
-                    dmx_universe_target[index+dmx_alias['index']] = min(255, int(value * 255))
+                color_value = self.config['color_alias'].get(color_value, parse_rgb_color(color_value))
+                for index, rgb_value in enumerate(color_value):
+                    dmx_universe_target[index+dmx_alias['index']] = min(255, int(rgb_value * 255))
 
     def set_start_state_for_scene_item(self, scene_item, previous_scene_item):
         if scene_item and previous_scene_item:
