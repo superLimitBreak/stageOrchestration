@@ -1,43 +1,43 @@
 0:
     state:
-        light1: [1,1,1,1]
-        light2: [0,0,0,0]
-        light3: [0,0,0,0]
-        light4: [0,0,0,0]
-        light5: [0,0,0,0]
-        light6: [0,0,0,0]
-        light7: [0,0,0,0]
-        light8: [0,0,0,0]
+        light1: full
+        light2: off
+        light3: off
+        light4: off
+        light5: off
+        light6: off
+        light7: off
+        light8: off
 1:
     state:
-        light1: [0,0,0,0]
-        light2: [1,1,1,1]
-        light3: [0,0,0,0]
-        light4: [0,0,0,0]
-        light5: [0,0,0,0]
-        light6: [0,0,0,0]
-        light7: [0,0,0,0]
-        light8: [0,0,0,0]
+        light1: off
+        light2: full
+        light3: off
+        light4: off
+        light5: off
+        light6: off
+        light7: off
+        light8: off
 2:
     state:
-        light1: [0,0,0,0]
-        light2: [0,0,0,0]
+        light1: off
+        light2: off
         light3: [1,1,1,1]
-        light4: [0,0,0,0]
-        light5: [0,0,0,0]
-        light6: [0,0,0,0]
-        light7: [0,0,0,0]
-        light8: [0,0,0,0]
+        light4: off
+        light5: off
+        light6: off
+        light7: off
+        light8: off
 3:
     state:
-        light1: [0,0,0,0]
-        light2: [0,0,0,0]
-        light3: [0,0,0,0]
+        light1: off
+        light2: off
+        light3: off
         light4: [1,1,1,1]
-        light5: [0,0,0,0]
-        light6: [0,0,0,0]
-        light7: [0,0,0,0]
-        light8: [0,0,0,0]
+        light5: off
+        light6: off
+        light7: off
+        light8: off
 4:
     state:
         light1: [0,0,0,0]

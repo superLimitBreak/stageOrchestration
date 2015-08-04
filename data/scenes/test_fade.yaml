@@ -3,48 +3,26 @@
     duration: auto
     tween: linear
     state:
-        light1: [1,1,1,1]
-        light2: [1,1,1,1]
-        light3: [1,1,1,1]
-        light4: [1,1,1,1]
-        light5: [1,1,1,1]
-        light6: [1,1,1,1]
-        light7: [1,1,1,1]
-        light8: [1,1,1,1]
+        all: full
 8:
     duration: match_next
     tween: easeOutBounce
     state:
-        light1: [1,0,0,0]
-        light2: [1,0,0,0]
-        light3: [1,0,0,0]
-        light4: [1,0,0,0]
-        light5: [1,0,0,0]
-        light6: [1,0,0,0]
-        light7: [1,0,0,0]
-        light8: [1,0,0,0]
+        light1: red
+        light2: red
+        light3: red
+        light4: red
+        light5: red
+        light6: red
+        light7: red
+        light8: red
 16:
     duration: auto
     tween: easeInOutElastic
     state:
-        light1: [0,1,0,0]
-        light2: [0,1,0,0]
-        light3: [0,1,0,0]
-        light4: [0,1,0,0]
-        light5: [0,1,0,0]
-        light6: [0,1,0,0]
-        light7: [0,1,0,0]
-        light8: [0,1,0,0]
+        all: green
 24:
     duration: match_prev
     tween: easeOutCirc
     state:
-        light1: [0,0,1,0]
-        light2: [0,0,1,0]
-        light3: [0,0,1,0]
-        light4: [0,0,1,0]
-        light5: [0,0,1,0]
-        light6: [0,0,1,0]
-        light7: [0,0,1,0]
-        light8: [0,0,1,0]
-    
+        all: blue

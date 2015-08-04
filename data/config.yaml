@@ -1,4 +1,4 @@
-dmx_alias:
+dmx_devices:
     light1:
         type: lightRGBW
         index: 0
@@ -23,7 +23,10 @@ dmx_alias:
     light8:
         type: lightRGBW
         index: 56
-color_alias:
+    all:
+        type: group
+        group: [light1, light2, light3, light4, light5, light6, light7, light8]
+colors:
     off  : [0,0,0,0]
     black: [0,0,0,0]
     full : [1,1,1,1]

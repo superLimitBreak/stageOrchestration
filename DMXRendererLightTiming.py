@@ -179,16 +179,32 @@ class SceneFactory(object):
         This make seeking much faster
         """
         dmx_universe_target = AbstractDMXRenderer.new_dmx_array()
-        target_state_dict = scene_item.get('state')
         scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target'] = dmx_universe_target
+        self.render_state_dict(scene_item.get('state'), dmx_universe_target)
 
-        for key, color_value in target_state_dict.items():
-            dmx_alias = self.config['dmx_alias'][key]
-            # Have separate type parsers in a dict and/or class .. this code could get out of hand quickly
-            if dmx_alias['type'] == 'lightRGBW':
-                color_value = self.config['color_alias'].get(color_value, parse_rgb_color(color_value))
+
+    def render_state_dict(self, target_state_dict, dmx_universe_target):
+        """
+        Given a state dict in the form of
+        {alias_name: value, alias_name2: value}
+        and render that to a DMX array
+        """
+        # Render item
+        def render_state_item(dmx_device_name, color_value):
+            dmx_device = self.config['dmx_devices'].get(dmx_device_name)
+            # Single light
+            if dmx_device.get('type') == 'lightRGBW':
+                color_value = self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
                 for index, rgb_value in enumerate(color_value):
-                    dmx_universe_target[index+dmx_alias['index']] = min(255, int(rgb_value * 255))
+                    dmx_universe_target[index+dmx_device['index']] = min(255, int(rgb_value * 255))
+            # Group alias
+            elif dmx_device.get('type') == 'group':
+                for group_item_dmx_device_name in dmx_device['group']:
+                    render_state_item(group_item_dmx_device_name, color_value)
+
+        # Render dict
+        for dmx_device_name, color_value in target_state_dict.items():
+            render_state_item(dmx_device_name, color_value)
 
     def set_start_state_for_scene_item(self, scene_item, previous_scene_item):
         if scene_item and previous_scene_item:

@@ -1,7 +1,7 @@
 0:
     tween: linear
     state:
-        light1: [1,0,0,0]
+        light1: red
         light2: [0,0,0,0]
         light3: [0,0,0,0]
         light4: [0,0,0,0]
@@ -13,7 +13,7 @@
     tween: linear
     state:
         light1: [0,0,0,0]
-        light2: [1,0,0,0]
+        light2: red
         light3: [0,0,0,0]
         light4: [0,0,0,0]
         light5: [0,0,0,0]
@@ -25,7 +25,7 @@
     state:
         light1: [0,0,0,0]
         light2: [0,0,0,0]
-        light3: [1,0,0,0]
+        light3: red
         light4: [0,0,0,0]
         light5: [0,0,0,0]
         light6: [0,0,0,0]
@@ -37,7 +37,7 @@
         light1: [0,0,0,0]
         light2: [0,0,0,0]
         light3: [0,0,0,0]
-        light4: [1,0,0,0]
+        light4: red
         light5: [0,0,0,0]
         light6: [0,0,0,0]
         light7: [0,0,0,0]
@@ -49,7 +49,7 @@
         light2: [0,0,0,0]
         light3: [0,0,0,0]
         light4: [0,0,0,0]
-        light5: [1,0,0,0]
+        light5: red
         light6: [0,0,0,0]
         light7: [0,0,0,0]
         light8: [0,0,0,0]
@@ -61,7 +61,7 @@
         light3: [0,0,0,0]
         light4: [0,0,0,0]
         light5: [0,0,0,0]
-        light6: [1,0,0,0]
+        light6: red
         light7: [0,0,0,0]
         light8: [0,0,0,0]
 6:
@@ -73,7 +73,7 @@
         light4: [0,0,0,0]
         light5: [0,0,0,0]
         light6: [0,0,0,0]
-        light7: [1,0,0,0]
+        light7: red
         light8: [0,0,0,0]
 7:
     duration: match_prev
@@ -86,4 +86,4 @@
         light5: [0,0,0,0]
         light6: [0,0,0,0]
         light7: [0,0,0,0]
-        light8: [1,0,0,0]
+        light8: red

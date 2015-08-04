@@ -6,6 +6,7 @@ from libs.network_display_event import DisplayEventHandler as SocketHandler # Na
 from DMXBase import AbstractDMXRenderer, mix
 from DMXRendererMidiInput import DMXRendererMidiInput
 from DMXRendererLightTiming import DMXRendererLightTiming
+#from DMXRendererPentatonicHero import DMXRendererPentatonicHero
 from ArtNet3 import ArtNet3
 
 import logging
@@ -95,6 +96,7 @@ def main():
         renderers=(
             #DMXRendererMidiInput(args['midi_input']),
             DMXRendererLightTiming(args['lighting_config'], args['lighting_scenes'], args['lighting_sequence']),
+            #DMXRendererPentatonicHero(),
         ),
         framerate = args['framerate'],
     )
