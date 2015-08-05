@@ -99,23 +99,25 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return max(0.0, ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0)
 
     @property
-    def current_sequence(self):
+    def current_sequence_of_scenes(self):
         return (self.scenes.get(scene_name, ) for scene_name in self.sequence) if self.sequence else self.default_sequence
 
     def render(self, frame):
-        scene, scene_beat, scene_index = self.get_scene_beat(self.current_beat)
+        scene, scene_beat, scene_index = self.get_scene_at_beat(self.current_beat)
         if scene_index is not self.scene_index:
             self.scene_index = scene_index
             self.dmx_universe_previous = copy.copy(self.dmx_universe)
+            #if self.sequence and scene_index >= 0:
+            #    log.info('Rendering scene: {0}'.format(self.sequence[scene_index]))
         scene.render(self.dmx_universe, self.dmx_universe_previous, scene_beat)
         return self.dmx_universe
 
-    def get_scene_beat(self, target_beat):
-        scene, beats_into_scene, scene_index = get_value_at(self.current_sequence, target_beat, operator.attrgetter('total_beats'))
-        if not scene:
-            scene = self.default_scene
+    def get_scene_at_beat(self, current_beat):
+        current_scene, beats_into_scene, scene_index = get_value_at(self.current_sequence_of_scenes, current_beat, operator.attrgetter('total_beats'))
+        if not current_scene:
+            current_scene = self.default_scene
             beats_into_scene = beats_into_scene % self.default_scene.total_beats
-        return scene, beats_into_scene, scene_index
+        return current_scene, beats_into_scene, scene_index
 
 
 class SceneFactory(object):
@@ -129,19 +131,28 @@ class SceneFactory(object):
         self.config = config
 
     def create_scene(self, data):
-        scene_order = self.parse_scene_order(data)
-        for scene_item in scene_order:
-            self.pre_render_target(scene_item)
-        for prev_scene, current_scene, next_scene in list_neighbor_generator(scene_order):
+        scene_items = self.parse_scene_order(data)
+        for scene_item in scene_items:
+            self.pre_render_scene_item(scene_item)
+        for prev_scene, current_scene, next_scene in list_neighbor_generator(scene_items):
             self.set_start_state_for_scene_item(current_scene, prev_scene)
-        return Scene(scene_order)
+        return Scene(scene_items)
 
     def parse_scene_order(self, data):
+        """
+        Durations are 'dict string keys'. The keys need to be converted to floats.
+        The keys need to be ordered and the scenes returned with calculated durations
+        """
         if not data:
             return ()
         data_float_indexed = {float(k): v for k, v in data.items()}
         sorted_keys = sorted(data_float_indexed.keys())
-        def get_duration(index):
+        def normalise_duration(index):
+            """
+            Convert any time code or alias to a linear float value. e.g.
+            '1.2' -> 1.5
+            'match_next' -> 4.0
+            """
             key = sorted_keys[index]
             item = data_float_indexed[key]
             duration = item.get('duration')
@@ -155,11 +166,11 @@ class SceneFactory(object):
             except (AssertionError, ValueError, AttributeError):
                 pass
             if duration == 'match_next':
-                duration = get_duration(index+1)
+                duration = normalise_duration(index+1)
             if duration == 'match_prev':
-                duration = get_duration(index-1)
+                duration = normalise_duration(index-1)
             if isinstance(duration, str) and duration.startswith('match '):
-                duration = get_duration(sorted_keys.index(float(duration.strip('match '))))
+                duration = normalise_duration(sorted_keys.index(float(duration.strip('match '))))
             if (not duration or duration == 'auto') and index < len(sorted_keys)-1:
                 duration = sorted_keys[index+1] - key
             if not isinstance(duration, float):
@@ -169,10 +180,10 @@ class SceneFactory(object):
                 item['duration'] = duration
             return duration
         for index in range(len(sorted_keys)):
-            get_duration(index)
+            normalise_duration(index)
         return [data_float_indexed[key] for key in sorted_keys]
 
-    def pre_render_target(self, scene_item):
+    def pre_render_scene_item(self, scene_item):
         """
         Once the order of the items is known, we can iterate over the scenes
         calculating/prerendering the dmx state for each section
@@ -214,12 +225,16 @@ class SceneFactory(object):
 class Scene(object):
     SCENE_ITEM_DMX_STATE_KEY = 'dmx'
 
-    def __init__(self, scene_order):
-        self.scene_order = scene_order
-        self.total_beats = sum(scene_item['duration'] for scene_item in self.scene_order)
+    def __init__(self, scene_items):
+        """
+        Given a list of parsed scene_items (a plain list of dicts)
+        Provide methods for redering that data
+        """
+        self.scene_items = scene_items
+        self.total_beats = sum(scene_item['duration'] for scene_item in self.scene_items)
 
     def get_scene_item_beat(self, target_beat):
-        return get_value_at(self.scene_order, target_beat, operator.itemgetter('duration'))
+        return get_value_at(self.scene_items, target_beat, operator.itemgetter('duration'))
 
     def render(self, dmx_universe, dmx_universe_previous, beat):
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
