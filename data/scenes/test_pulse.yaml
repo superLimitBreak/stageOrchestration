@@ -1,43 +1,43 @@
 0:
     state:
         light1: full
-        light2: off
-        light3: off
-        light4: off
-        light5: off
-        light6: off
-        light7: off
-        light8: off
+        light2: black
+        light3: black
+        light4: black
+        light5: black
+        light6: black
+        light7: black
+        light8: black
 1:
     state:
-        light1: off
+        light1: black
         light2: full
-        light3: off
-        light4: off
-        light5: off
-        light6: off
-        light7: off
-        light8: off
+        light3: black
+        light4: black
+        light5: black
+        light6: black
+        light7: black
+        light8: black
 2:
     state:
-        light1: off
-        light2: off
+        light1: black
+        light2: black
         light3: [1,1,1,1]
-        light4: off
-        light5: off
-        light6: off
-        light7: off
-        light8: off
+        light4: black
+        light5: black
+        light6: black
+        light7: black
+        light8: black
 3:
     state:
-        light1: off
-        light2: off
-        light3: off
+        light1: black
+        light2: black
+        light3: black
         light4: [1,1,1,1]
-        light5: off
-        light6: off
-        light7: off
-        light8: off
+        light5: black
+        light6: black
+        light7: black
+        light8: black
 4:
     state:
         light1: [0,0,0,0]
