@@ -48,7 +48,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.bpm = self.DEFAULT_BPM
         self.sequence = ()
 
-        self.scene_index = None
+        self.sequence_index = None
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
     @staticmethod
@@ -79,12 +79,22 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
             self.sequence = self.sequences[data.get('sequence')]
         if data.get('scene'):
             self.sequence = (self.scenes.get(data.get('scene', self.DEFAULT_SCENE_NAME)), )
+        self.sequence_index = 0
 
     def stop(self, data):
         """
         Originates from external call from trigger system
         """
         self.time_start = 0
+
+    @property
+    def sequence_index(self):
+        return self._sequence_index
+    @sequence_index.setter
+    def sequence_index(self, index):
+        self._sequence_index = index
+        if self.sequence and self.sequence_index is not None:
+            log.info('Rendering scene: {0}'.format(self.sequence[self.sequence_index]))
 
     @property
     def default_scene(self):
@@ -103,21 +113,19 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return (self.scenes.get(scene_name, ) for scene_name in self.sequence) if self.sequence else self.default_sequence
 
     def render(self, frame):
-        scene, scene_beat, scene_index = self.get_scene_at_beat(self.current_beat)
-        if scene_index is not self.scene_index:
-            self.scene_index = scene_index
+        scene, scene_beat, sequence_index = self.get_scene_at_beat(self.current_beat)
+        if sequence_index is not self.sequence_index:
+            self.sequence_index = sequence_index
             self.dmx_universe_previous = copy.copy(self.dmx_universe)
-            #if self.sequence and scene_index >= 0:
-            #    log.info('Rendering scene: {0}'.format(self.sequence[scene_index]))
         scene.render(self.dmx_universe, self.dmx_universe_previous, scene_beat)
         return self.dmx_universe
 
     def get_scene_at_beat(self, current_beat):
-        current_scene, beats_into_scene, scene_index = get_value_at(self.current_sequence_of_scenes, current_beat, operator.attrgetter('total_beats'))
+        current_scene, beats_into_scene, sequence_index = get_value_at(self.current_sequence_of_scenes, current_beat, operator.attrgetter('total_beats'))
         if not current_scene:
             current_scene = self.default_scene
             beats_into_scene = beats_into_scene % self.default_scene.total_beats
-        return current_scene, beats_into_scene, scene_index
+        return current_scene, beats_into_scene, sequence_index
 
 
 class SceneFactory(object):
