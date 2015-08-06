@@ -44,12 +44,10 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.scenes = self._open_path(path_scenes, SceneFactory(self.config).create_scene)
         self.sequences = self._open_path(path_sequences)
 
-        self.time_start = 0
         self.bpm = self.DEFAULT_BPM
-        self.sequence = ()
-
-        self.sequence_index = None
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
+
+        self.stop()
 
     @staticmethod
     def _open_yaml(path, target_class=None):
@@ -72,20 +70,23 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         Originates from external call from trigger system
         """
         print(data)
-        self.time_start = time.time() + data.get('time_offset', 0)
+        self.stop()
+        self.time_start = time.time() - data.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
-        self.timesigniture = parse_timesigniture(data.get('timesigniture', self.DEFAULT_TIMESIGNITURE))
+        self.timesigniture = parse_timesigniture(data.get('timesigniture', self.DEFAULT_TIMESIGNITURE))  # Currently this is not used
         if data.get('sequence'):
             self.sequence = self.sequences[data.get('sequence')]
         if data.get('scene'):
             self.sequence = (self.scenes.get(data.get('scene', self.DEFAULT_SCENE_NAME)), )
         self.sequence_index = 0
 
-    def stop(self, data):
+    def stop(self, data={}):
         """
         Originates from external call from trigger system
         """
         self.time_start = 0
+        self.sequence = ()
+        self.sequence_index = None
 
     @property
     def sequence_index(self):
