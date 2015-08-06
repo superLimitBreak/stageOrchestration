@@ -1,10 +1,10 @@
 
-0:
+0.0.0:
     duration: auto
     tween: linear
     state:
         all: full
-8:
+8.0.0:
     duration: match_next
     tween: easeOutBounce
     state:
@@ -16,12 +16,12 @@
         light6: red
         light7: red
         light8: red
-16:
+16.0.0:
     duration: auto
     tween: easeInOutElastic
     state:
         all: green
-24:
+24.0.0:
     duration: match_prev
     tween: easeOutCirc
     state:

@@ -153,26 +153,29 @@ class SceneFactory(object):
         """
         if not data:
             return ()
-        data_float_indexed = {float(k): v for k, v in data.items()}
+
+        def attempt_parse_key_timecode(value):
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                pass
+            try:
+                return parse_timecode(value)
+            except (AssertionError, ValueError, AttributeError):
+                pass
+            return value
+
+        data_float_indexed = {attempt_parse_key_timecode(k): v for k, v in data.items()}
         sorted_keys = sorted(data_float_indexed.keys())
         def normalise_duration(index):
             """
             Convert any time code or alias to a linear float value. e.g.
-            '1.2' -> 1.5
-            'match_next' -> 4.0
+            '1.2' parses to -> 1.5
+            'match_next' resolves to -> 4.0
             """
             key = sorted_keys[index]
             item = data_float_indexed[key]
-            duration = item.get('duration')
-            try:
-                duration = float(duration)
-            except (ValueError, TypeError):
-                pass
-            try:
-                # TODO: get the timesigniture here? How? What should do this?
-                duration = parse_timecode(duration)
-            except (AssertionError, ValueError, AttributeError):
-                pass
+            duration = attempt_parse_key_timecode(item.get('duration'))
             if duration == 'match_next':
                 duration = normalise_duration(index+1)
             if duration == 'match_prev':
