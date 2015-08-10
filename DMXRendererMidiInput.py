@@ -10,10 +10,13 @@ log = logging.getLogger(__name__)
 
 class DMXRendererMidiInput(AbstractDMXRenderer):
     CONTROL_OFFSET_JUMP = 8
-    CONTROL_ID_HSV_A = -512  # todo - find correct values for inputs
-    CONTROL_ID_HSV_B = -512
-    HSV_A_INDEXS = [0, 8, 16, 24]
-    HSV_B_INDEXS = [32, 48, 56, 64]
+    CONTROL_ID_HSV_A = 16
+    CONTROL_ID_HSV_B = 20
+    #HSV_A_INDEXS = [0, 8, 16, 24]
+    #HSV_B_INDEXS = [32, 40, 48, 56]
+    HSV_A_INDEXS = [8, 16, 24, 32, 40, 48]
+    HSV_B_INDEXS = [0, 56]
+
 
     def __init__(self, name):
         super().__init__()
@@ -31,8 +34,10 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
         return self.dmx_universe
 
     def midi_event(self, event, data1, data2, data3):
+        #print(event, data1, data2, data3)
         if data1 == 46:
-            self.loop.running = False
+            #self.loop.running = False
+            print('Exit is disbaled')
         if data1 == 59 and data2 == 127:
             self.control_offset += self.CONTROL_OFFSET_JUMP
             log.info('control_offset: {0}'.format(self.control_offset))
@@ -41,23 +46,23 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
             log.info('control_offset: {0}'.format(self.control_offset))
         if data1 >= 0 and data1 < self.CONTROL_OFFSET_JUMP:
             self.dmx_universe[self.control_offset + data1] = data2 * 2
-
-        def update_hsv_from_input(control_id, value, id_range, hsv_color):
-            if control_id in range(id_range, id_range + 4):
-                hsv_color[control_id - id_range] = value / 127
-        update_hsv_from_input(data1, data2, self.CONTROL_ID_HSV_A, self.hsv_a)
-        update_hsv_from_input(data1, data2, self.CONTROL_ID_HSV_B, self.hsv_b)
+            #print('single:', self.control_offset + data1, self.dmx_universe[self.control_offset + data1])
 
         def color_float_to_byte(value):
             return min(255, max(0, int(value * 255)))
         def render_hsv_from_state(indexs, color):
             for dmx_index in indexs:
-                for color_index, color_component in enumerate(hsv_to_rgb(*color[:3]) + color[3:4]):
+                for color_index, color_component in enumerate(list(hsv_to_rgb(*color[:3])) + color[3:4]):
                     self.dmx_universe[dmx_index + color_index] = color_float_to_byte(color_component)
-        render_hsv_from_state(self.HSV_A_INDEXS, self.hsv_a)
-        render_hsv_from_state(self.HSV_B_INDEXS, self.hsv_b)
-
-        #print('lights2 {0} {1} {2} {3}'.format(event, data1, data2, data3))
+                    #print('hsv:', dmx_index + color_index, self.dmx_universe[dmx_index + color_index])
+        def update_hsv_from_input(control_id, value, id_range, hsv_color):
+            if control_id in range(id_range, id_range + 4):
+                hsv_color[control_id - id_range] = value / 127
+                return True
+        if update_hsv_from_input(data1, data2, self.CONTROL_ID_HSV_A, self.hsv_a):
+            render_hsv_from_state(self.HSV_A_INDEXS, self.hsv_a)
+        if update_hsv_from_input(data1, data2, self.CONTROL_ID_HSV_B, self.hsv_b):
+            render_hsv_from_state(self.HSV_B_INDEXS, self.hsv_b)
 
     def close(self):
         self.midi_input.close()

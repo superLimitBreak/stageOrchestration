@@ -94,7 +94,7 @@ def main():
 
     DMXManager(
         renderers=(
-            #DMXRendererMidiInput(args['midi_input']),
+            DMXRendererMidiInput(args['midi_input']),
             DMXRendererLightTiming(args['lighting_config'], args['lighting_scenes'], args['lighting_sequence']),
             #DMXRendererPentatonicHero(),
         ),
