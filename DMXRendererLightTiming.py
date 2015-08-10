@@ -45,6 +45,8 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.sequences = self._open_path(path_sequences)
 
         self.bpm = self.DEFAULT_BPM
+        self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
+
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
         self.stop()
@@ -73,7 +75,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.stop()
         self.time_start = time.time() - data.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
-        self.timesigniture = parse_timesigniture(data.get('timesigniture', self.DEFAULT_TIMESIGNITURE))  # Currently this is not used
+        self.timesigniture = parse_timesigniture(data.get('timesigniture', self.DEFAULT_TIMESIGNITURE))
         if data.get('sequence'):
             self.sequence = self.sequences[data.get('sequence')]
         if data.get('scene'):
@@ -110,11 +112,15 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return max(0.0, ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0)
 
     @property
+    def current_bar(self):
+        return self.current_beat / self.timesigniture.bar
+
+    @property
     def current_sequence_of_scenes(self):
         return (self.scenes.get(scene_name, ) for scene_name in self.sequence) if self.sequence else self.default_sequence
 
     def render(self, frame):
-        scene, scene_beat, sequence_index = self.get_scene_at_beat(self.current_beat)
+        scene, scene_beat, sequence_index = self.get_scene_at_beat(self.current_bar)
         if sequence_index is not self.sequence_index:
             self.sequence_index = sequence_index
             self.dmx_universe_previous = copy.copy(self.dmx_universe)
