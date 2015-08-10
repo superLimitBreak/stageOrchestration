@@ -26,6 +26,29 @@ dmx_devices:
     all:
         type: group
         group: [light1, light2, light3, light4, light5, light6, light7, light8]
+    
+    matt:
+        type: lightRGBW
+        index: 8
+    allan_piano:
+        type: lightRGBW
+        index: 16
+    allan_bass:
+        type: lightRGBW
+        index: 24
+    choco:
+        type: lightRGBW
+        index: 32
+    joe:
+        type: lightRGBW
+        index: 40
+    joe:
+        type: lightRGBW
+        index: 40
+    lyle:
+        type: lightRGBW
+        index: 48
+
 colors:
     #'off': [0,0,0,0]
     black: [0,0,0,0]
@@ -39,3 +62,6 @@ colors:
     purple: [1,0,1,0]
     orange: [1,0.5,0,0]
     cyan  : [0,1,1,0]
+    dim_25: [0,0,0,0.25]
+    dim_50: [0,0,0,0.5]
+    dim_75: [0,0,0,0.75]

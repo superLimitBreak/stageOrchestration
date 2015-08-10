@@ -182,6 +182,8 @@ class SceneFactory(object):
             """
             key = sorted_keys[index]
             item = data_float_indexed[key]
+            if not item:
+                return  # No need to process a null item
             duration = attempt_parse_key_timecode(item.get('duration'))
             if duration == 'match_next':
                 duration = normalise_duration(index+1)
@@ -218,6 +220,9 @@ class SceneFactory(object):
         {alias_name: value, alias_name2: value}
         and render that to a DMX array
         """
+        if not target_state_dict:
+            return
+
         # Render item
         def render_state_item(dmx_device_name, color_value):
             dmx_device = self.config['dmx_devices'].get(dmx_device_name)
