@@ -5,7 +5,7 @@ import copy
 
 import pytweening
 
-from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color
+from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_scan_diff_thread
 from libs.music import parse_timesigniture, parse_timecode
 
 from DMXBase import AbstractDMXRenderer, get_value_at
@@ -43,6 +43,10 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.config = self._open_yaml(path_config)
         self.scenes = self._open_path(path_scenes, SceneFactory(self.config).create_scene)
         self.sequences = self._open_path(path_sequences)
+
+        #def onfilechange(changed_files):
+        #    print(changed_files)
+        #file_scan_diff_thread((path_scenes, path_sequences), onfilechange)
 
         self.bpm = self.DEFAULT_BPM
         self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
@@ -146,6 +150,7 @@ class SceneFactory(object):
         self.config = config
 
     def create_scene(self, data):
+        #\import pudb ; pu.db
         scene_items = self.parse_scene_order(data)
         for scene_item in scene_items:
             self.pre_render_scene_item(scene_item)
@@ -161,19 +166,28 @@ class SceneFactory(object):
         if not data:
             return ()
 
+        meta = data.pop('meta', {})
+        timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
+        num_scenes = len(data)
+
         def attempt_parse_key_timecode(value):
             try:
                 return float(value)
             except (ValueError, TypeError):
                 pass
             try:
-                return parse_timecode(value)
-            except (AssertionError, ValueError, AttributeError):
+                return parse_timecode(value, timesigniture)
+            except (AssertionError, ValueError, AttributeError) as e:
                 pass
             return value
-
+        # Surface the original key value in the dict (useful for debugging)
+        for key, value in data.items():
+            if value:
+                value['key'] = key
         data_float_indexed = {attempt_parse_key_timecode(k): v for k, v in data.items()}
+        assert len(data_float_indexed) == num_scenes
         sorted_keys = sorted(data_float_indexed.keys())
+        assert len(sorted_keys) == num_scenes
         def normalise_duration(index):
             """
             Convert any time code or alias to a linear float value. e.g.
@@ -201,7 +215,7 @@ class SceneFactory(object):
             return duration
         for index in range(len(sorted_keys)):
             normalise_duration(index)
-        return [data_float_indexed[key] for key in sorted_keys]
+        return [data_float_indexed[key] or dict() for key in sorted_keys]
 
     def pre_render_scene_item(self, scene_item):
         """
