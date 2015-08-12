@@ -67,5 +67,6 @@ meta:
             choco: white
         tween:
             linear
+    duration: 4.0
 
 

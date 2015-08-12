@@ -197,7 +197,8 @@ class SceneFactory(object):
             key = sorted_keys[index]
             item = data_float_indexed[key]
             if not item:
-                return  # No need to process a null item
+                item = {'duration': 'auto'}
+                data_float_indexed[key] = item
             duration = attempt_parse_key_timecode(item.get('duration'))
             if duration == 'match_next':
                 duration = normalise_duration(index+1)
@@ -215,7 +216,12 @@ class SceneFactory(object):
             return duration
         for index in range(len(sorted_keys)):
             normalise_duration(index)
-        return [data_float_indexed[key] or dict() for key in sorted_keys]
+        scene_items = []
+        for key in sorted_keys:
+            scene_item = data_float_indexed[key]
+            assert scene_item and scene_item.get('duration') >= 0, "All scene must have durations. Something has failed in parsing. {0}:{1}".format(key, scene_item)
+            scene_items.append(scene_item)
+        return scene_items
 
     def pre_render_scene_item(self, scene_item):
         """
