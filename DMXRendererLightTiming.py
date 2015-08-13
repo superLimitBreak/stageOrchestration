@@ -152,10 +152,10 @@ class SceneFactory(object):
     def create_scene(self, data):
         #\import pudb ; pu.db
         scene_items = self.parse_scene_order(data)
-        for scene_item in scene_items:
-            self.pre_render_scene_item(scene_item)
-        for prev_scene, current_scene, next_scene in list_neighbor_generator(scene_items):
-            self.set_start_state_for_scene_item(current_scene, prev_scene)
+        #import pudb ; pu.db
+        # Step though the dict items in order - rendering the desired output to 'previous' and 'target' states
+        for previous_scene, current_scene, next_scene in list_neighbor_generator(scene_items):
+            self.pre_render_scene_item(current_scene, previous_scene)
         return Scene(scene_items)
 
     def parse_scene_order(self, data):
@@ -223,15 +223,23 @@ class SceneFactory(object):
             scene_items.append(scene_item)
         return scene_items
 
-    def pre_render_scene_item(self, scene_item):
+    def pre_render_scene_item(self, current_scene, previous_scene):
         """
         Once the order of the items is known, we can iterate over the scenes
         calculating/prerendering the dmx state for each section
         This make seeking much faster
         """
-        dmx_universe_target = AbstractDMXRenderer.new_dmx_array()
-        scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target'] = dmx_universe_target
-        self.render_state_dict(scene_item.get('state'), dmx_universe_target)
+        assert current_scene
+        current_scene_dmx = current_scene.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})
+        # Aquire a reference to the previous DMX state
+        if previous_scene:
+            current_scene_dmx['previous'] = previous_scene.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target']
+
+        # The target state is a copy of the previous state
+        current_scene_dmx['target'] = copy.copy(current_scene_dmx.get('previous')) if current_scene_dmx.get('previous') else AbstractDMXRenderer.new_dmx_array()
+
+        # Modify the target state based on this scene item
+        self.render_state_dict(current_scene.get('state'), current_scene_dmx['target'])
 
 
     def render_state_dict(self, target_state_dict, dmx_universe_target):
@@ -259,10 +267,6 @@ class SceneFactory(object):
         # Render dict
         for dmx_device_name, color_value in target_state_dict.items():
             render_state_item(dmx_device_name, color_value)
-
-    def set_start_state_for_scene_item(self, scene_item, previous_scene_item):
-        if scene_item and previous_scene_item:
-            scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['previous'] = previous_scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target']
 
 
 class Scene(object):

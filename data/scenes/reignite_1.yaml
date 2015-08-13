@@ -38,35 +38,30 @@ meta:
 3.0.0:
 
 3.2.0:
-    choco:
-        state:
-            choco: dim_75
-        tween:
-            linear
+    state:
+        choco: dim_75
+    tween:
+        linear
 3.3.0:
-    choco:
-        state:
-            choco: dim_25
-        tween:
-            linear
+    state:
+        choco: dim_25
+    tween:
+        linear
 3.5.0:
-    choco:
-        state:
-            choco: dim_75
-        tween:
-            linear
+    state:
+        choco: dim_75
+    tween:
+        linear
 4.0.0:
-    choco:
-        state:
-            choco: dim_50
-        tween:
-            linear
+    state:
+        choco: dim_50
+    tween:
+        linear
 4.2.0:
-    choco:
-        state:
-            choco: white
-        tween:
-            linear
+    state:
+        choco: white
+    tween:
+        linear
     duration: 4.0
 
 
