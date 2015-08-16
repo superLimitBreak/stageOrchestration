@@ -12,7 +12,7 @@ class ArtNe3tDatagram(Datagram):
     header_ProtVer = 14
 
     opcode_definitions = (
-        Datagram.OpCodeDefinition('Header', None, ('ID', 'OpCode', 'ProtVer'), '>8sHxB'),  # The ProtVer in the spec is a differnt endian to the OpCode - as the Hi byte is never used I've skipped the hi bype with 'xB' rather than 'H'
+        Datagram.OpCodeDefinition('Header', None, ('ID', 'OpCode', 'ProtVer'), '<8sHxB'),  # The ProtVer in the spec is a differnt endian to the OpCode - as the Hi byte is never used I've skipped the hi bype with 'xB' rather than 'H'
         Datagram.OpCodeDefinition('Poll', 0x2000, (), ''),
         Datagram.OpCodeDefinition('PollReply', 0x2100, (), ''),
         Datagram.OpCodeDefinition('DiagData', 0x2300, (), ''),
@@ -55,7 +55,7 @@ class ArtNe3tDatagram(Datagram):
     def decode(self, raw_data):
         r"""
         >>> datagram = ArtNe3tDatagram()
-        >>> datagram.decode(b'Art-Net\x00\x97\x00\x00\x0e\x00\x00\x18\x3C\x3C\x18\x00')
+        >>> datagram.decode(b'Art-Net\x00\x00\x97\x00\x0e\x00\x00\x18\x3C\x3C\x18\x00')
         (TimeCode(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0), b'')
         """
         # Decode Header
@@ -78,7 +78,7 @@ class ArtNe3tDatagram(Datagram):
         r"""
         >>> datagram = ArtNe3tDatagram()
         >>> datagram.encode(datagram.get_namedtuple('TimeCode')(Frames=24, Seconds=60, Minutes=60, Hours=24, Type=0))
-        b'Art-Net\x00\x97\x00\x00\x0e\x00\x00\x18<<\x18\x00'
+        b'Art-Net\x00\x00\x97\x00\x0e\x00\x00\x18<<\x18\x00'
         """
         opcode = self.get_opcode(opcode_namedtuple_data.__class__)
         data_struct = self.get_struct(opcode_namedtuple_data.__class__)
@@ -117,11 +117,11 @@ class ArtNet3(UDPMixin):
         Called from UDPMixin with raw udp packet data
 
         >>> art3 = ArtNet3()
-        >>> art3._recieve(None, b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03')
+        >>> art3._recieve(None, b'Art-Net\x00\x00P\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03')
         b'\x00\x01\x02\x03'
 
         Todo: Disabled test, how do I check the assertion is raised? Do I need try:except:?
-        >> art3._recieve(None, b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03\x04')
+        >> art3._recieve(None, b'Art-Net\x00\x00P\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03\x04')
         AssertionError: Payload length should match length described in header
         """
         data, payload = self.DATAGRAM.decode(raw_data)
@@ -151,7 +151,7 @@ class ArtNet3(UDPMixin):
         r"""
         >>> art3 = ArtNet3()
         >>> art3._dmx(b'\x00\x01\x02\x03')
-        b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03'
+        b'Art-Net\x00\x00P\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03'
         """
         assert len(data) % 2 == 0, "data payload must be an even length"  # Todo: padd data to an even length automatically
         output_data = self.get_namedtuple('Output')(
