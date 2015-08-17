@@ -14,6 +14,7 @@ log = logging.getLogger(__name__)
 
 VERSION = '0.03'
 
+DEFAULT_HOST = '127.0.0.1'
 DEFAULT_FRAMERATE = 30
 DEFAULT_MIDI_PORT_NAME = 'nanoKONTROL2'
 DEFAULT_LIGHTING_CONFIG_FILE = 'data/config.yaml'
@@ -23,13 +24,13 @@ DEFAULT_LIGHTING_SEQUENCE_FOLDER = 'data/sequences'
 
 class DMXManager(AbstractDMXRenderer):
 
-    def __init__(self, renderers, framerate=DEFAULT_FRAMERATE):
+    def __init__(self, renderers, host=DEFAULT_HOST, framerate=DEFAULT_FRAMERATE, **kwargs):
         super().__init__()
 
         assert len(renderers), "Must provide renderers"
         self.renderers = renderers
 
-        self.artnet = ArtNet3()
+        self.artnet = ArtNet3(host=host)
 
         self.net = SocketHandler.factory(recive_func=self.recive)
 
@@ -67,7 +68,7 @@ def get_args():
     parser = argparse.ArgumentParser(
         prog=__name__,
         description="""DMXManager - Lighting Automation Framework
-
+        Simple lighting automation for a single DMX universe driven by YAML scene and sequence descriptions.
         """,
         epilog="""
         """
@@ -75,6 +76,7 @@ def get_args():
     parser_input = parser
 
     parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', default=DEFAULT_FRAMERATE)
+    parser.add_argument('--host', action='store', help='ArtNet3 ip address', default=DEFAULT_HOST)
     parser.add_argument('--midi_input', action='store', help='name of the midi input port to use', default=DEFAULT_MIDI_PORT_NAME)
     parser.add_argument('--lighting_config', action='store', help='yaml config', default=DEFAULT_LIGHTING_CONFIG_FILE)
     parser.add_argument('--lighting_scenes', action='store', help='folder where the lighting descriptions are to be loaded', default=DEFAULT_LIGHTING_SCENES_FOLDER)
@@ -98,7 +100,7 @@ def main():
             DMXRendererLightTiming(args['lighting_config'], args['lighting_scenes'], args['lighting_sequence']),
             #DMXRendererPentatonicHero(),
         ),
-        framerate = args['framerate'],
+        **args
     )
 
 

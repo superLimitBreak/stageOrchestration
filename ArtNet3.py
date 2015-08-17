@@ -102,8 +102,8 @@ class ArtNet3(UDPMixin):
     DATAGRAM = ArtNe3tDatagram()
     PORT = 0x1936
 
-    def __init__(self):
-        UDPMixin.__init__(self, port=ArtNet3.PORT)
+    def __init__(self, host=UDPMixin.DEFAULT_HOST):
+        UDPMixin.__init__(self, host=host, port=ArtNet3.PORT)
 
     # Utils ------------
 
