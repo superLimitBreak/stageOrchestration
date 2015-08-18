@@ -154,14 +154,17 @@ class SceneFactory(object):
 
     def create_scene(self, data):
         #\import pudb ; pu.db
-        scene_items = self.parse_scene_order(data)
+        meta = data.pop('meta', {})
+        timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
+
+        scene_items = self.parse_scene_order(data, timesigniture)
         #import pudb ; pu.db
         # Step though the dict items in order - rendering the desired output to 'previous' and 'target' states
         for previous_scene_item, current_scene_item, next_scene_item in list_neighbor_generator(scene_items):
             self.pre_render_scene_item(current_scene_item, previous_scene_item)
-        return Scene(scene_items)
+        return Scene(scene_items, timesigniture)
 
-    def parse_scene_order(self, data):
+    def parse_scene_order(self, data, timesigniture):
         """
         Durations are 'dict string keys'. The keys need to be converted to floats.
         The keys need to be ordered and the scenes returned with calculated durations
@@ -169,8 +172,6 @@ class SceneFactory(object):
         if not data:
             return ()
 
-        meta = data.pop('meta', {})
-        timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
         num_scenes = len(data)
 
         def attempt_parse_key_timecode(value):
@@ -182,7 +183,7 @@ class SceneFactory(object):
                 pass
             try:
                 return timecode_to_beat(value, timesigniture)
-            except (AssertionError, ValueError, AttributeError) as e:
+            except (AssertionError, ValueError, AttributeError):
                 pass
             return value
         # Surface the original key value in the dict (useful for debugging)
@@ -193,6 +194,7 @@ class SceneFactory(object):
         assert len(data_float_indexed) == num_scenes
         sorted_keys = sorted(data_float_indexed.keys())
         assert len(sorted_keys) == num_scenes
+
         def normalise_duration(index):
             """
             Convert any time code or alias to a linear float value. e.g.
@@ -276,21 +278,23 @@ class SceneFactory(object):
 
 class Scene(object):
     SCENE_ITEM_DMX_STATE_KEY = 'dmx'
-    TT = parse_timesigniture('4:8')
 
-    def __init__(self, scene_items):
+    def __init__(self, scene_items, timesigniture):
         """
         Given a list of parsed scene_items (a plain list of dicts)
         Provide methods for redering that data
+
+        timesigniture is only used for debug printing
         """
         self.scene_items = scene_items
         self.total_beats = sum(scene_item['duration'] for scene_item in self.scene_items)
+        self.timesigniture = timesigniture
 
     def get_scene_item_beat(self, target_beat):
         return get_value_at(self.scene_items, target_beat, operator.itemgetter('duration'))
 
     def render(self, dmx_universe, dmx_universe_previous, beat):
-        print(beat_to_timecode(beat, self.TT), beat)
+        log.debug(beat_to_timecode(beat, self.timesigniture), beat)
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
         progress = beat_in_item / scene_item['duration']
         previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous') or dmx_universe_previous
