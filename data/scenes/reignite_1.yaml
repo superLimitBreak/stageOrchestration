@@ -2,62 +2,56 @@ meta:
     timesigniture: '4:8'
 0.0.0:
     state:
-        all: black
-    tween: linear
-0.2.0:
-    state:
         matt: white
+0.2.4:
+    state:
+        allan_piano: white
+0.2.6:
+    state:
+        allan_piano: dim_50
     tween: linear
-
-1.0.0:
+0.3.0:
+    state:
+        allan_piano: white
+    tween: linear
+0.4.0:
     state:
         allan_piano: black
+    tween: linear
+1.2.4:
+    state:
+        allan_piano: white
+    tween: linear
+1.2.6:
+    state:
+        allan_piano: dim_50
+    tween: linear
 1.3.0:
     state:
         allan_piano: white
-1.3.4:
-    state:
-        allan_piano: dim_50
-1.4.0:
-    state:
-        allan_piano: dim_25
+    tween: linear
 
 2.0.0:
-    state:
-        allan_piano: black
-2.3.0:
-    state:
-        allan_piano: white
-2.3.4:
-    state:
-        allan_piano: dim_50
-2.4.0:
-    state:
-        allan_piano: dim_25
-
-3.0.0:
-
-3.2.0:
     state:
         choco: dim_75
     tween:
         linear
-3.3.0:
+2.3.0:
     state:
         choco: dim_25
     tween:
         linear
-3.5.0:
+2.5.0:
     state:
         choco: dim_75
     tween:
         linear
-4.0.0:
+3.0.0:
     state:
         choco: dim_50
     tween:
         linear
-4.2.0:
+3.2.0:
     state:
         choco: white
     tween:

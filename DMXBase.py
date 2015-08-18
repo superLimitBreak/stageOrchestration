@@ -5,7 +5,7 @@ class AbstractDMXRenderer(object):
     DEFAULT_DMX_SIZE = 128
 
     @staticmethod
-    def new_dmx_array(dmx_size=DEFAULT_DMX_SIZE, default_value=b'\xff'):
+    def new_dmx_array(dmx_size=DEFAULT_DMX_SIZE, default_value=b'\x00'):
         dmx_universe = array.array('B')
         dmx_universe.frombytes(default_value*dmx_size)
         return dmx_universe

@@ -6,7 +6,7 @@ import copy
 import pytweening
 
 from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_scan_diff_thread
-from libs.music import parse_timesigniture, parse_timecode
+from libs.music import parse_timesigniture, timecode_to_beat, beat_to_timecode, get_beat
 
 from DMXBase import AbstractDMXRenderer, get_value_at
 
@@ -113,7 +113,9 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     @property
     def current_beat(self):
-        return max(0.0, ((time.time() - self.time_start) / 60) * self.bpm if self.time_start else 0.0)
+        if not self.time_start:
+            return 0.0
+        return get_beat(time.time() - self.time_start, self.bpm)
 
     @property
     def current_bar(self):
@@ -124,6 +126,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return (self.scenes.get(scene_name, ) for scene_name in self.sequence) if self.sequence else self.default_sequence
 
     def render(self, frame):
+        #print(beat_to_timecode(self.current_bar, self.timesigniture), self.current_bar)
         scene, scene_beat, sequence_index = self.get_scene_at_beat(self.current_bar)
         if sequence_index is not self.sequence_index:
             self.sequence_index = sequence_index
@@ -171,12 +174,14 @@ class SceneFactory(object):
         num_scenes = len(data)
 
         def attempt_parse_key_timecode(value):
+            if not value:
+                return value
             try:
                 return float(value)
             except (ValueError, TypeError):
                 pass
             try:
-                return parse_timecode(value, timesigniture)
+                return timecode_to_beat(value, timesigniture)
             except (AssertionError, ValueError, AttributeError) as e:
                 pass
             return value
@@ -271,6 +276,7 @@ class SceneFactory(object):
 
 class Scene(object):
     SCENE_ITEM_DMX_STATE_KEY = 'dmx'
+    TT = parse_timesigniture('4:8')
 
     def __init__(self, scene_items):
         """
@@ -284,6 +290,7 @@ class Scene(object):
         return get_value_at(self.scene_items, target_beat, operator.itemgetter('duration'))
 
     def render(self, dmx_universe, dmx_universe_previous, beat):
+        print(beat_to_timecode(beat, self.TT), beat)
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
         progress = beat_in_item / scene_item['duration']
         previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous') or dmx_universe_previous

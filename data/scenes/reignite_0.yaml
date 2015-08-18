@@ -1,0 +1,6 @@
+meta:
+    timesigniture: '4:8'
+0.0.0:
+    duration: 0.5
+    state:
+        all: black
