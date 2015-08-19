@@ -9,14 +9,23 @@ log = logging.getLogger(__name__)
 
 
 class DMXRendererMidiInput(AbstractDMXRenderer):
+    """
+    Take midi input from the Korg USB nanoKONTROL2 and control the lighting rig in realtime.
+
+    This is intended to be a debug test system.
+
+    To support other controlers/lighting system the magic number of the
+    midi address's and lighting address's will need changing manually.
+
+    Sliders control a single lights red,green,blue,white,control directly.
+    Nobs manipulate groups of lights using HSV
+    """
+
     CONTROL_OFFSET_JUMP = 8
     CONTROL_ID_HSV_A = 16
     CONTROL_ID_HSV_B = 20
-    #HSV_A_INDEXS = [0, 8, 16, 24]
-    #HSV_B_INDEXS = [32, 40, 48, 56]
     HSV_A_INDEXS = [8, 16, 24, 32, 40, 48]
     HSV_B_INDEXS = [0, 56]
-
 
     def __init__(self, name):
         super().__init__()
@@ -30,14 +39,13 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
         self.hsv_b = [0.0, 0.0, 0.0, 0.0]
 
     def render(self, frame):
-        self.midi_input.process_events()
+        self.midi_input.process_events()  # Poll the midi input per frame (This prevents the need for another thread to monitor the midi state)
         return self.dmx_universe
 
     def midi_event(self, event, data1, data2, data3):
-        #print(event, data1, data2, data3)
         if data1 == 46:
             #self.loop.running = False
-            print('Exit is disbaled')
+            print('Exit is disbaled, bloody well fix it')
         if data1 == 59 and data2 == 127:
             self.control_offset += self.CONTROL_OFFSET_JUMP
             log.info('control_offset: {0}'.format(self.control_offset))
@@ -54,7 +62,6 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
             for dmx_index in indexs:
                 for color_index, color_component in enumerate(list(hsv_to_rgb(*color[:3])) + color[3:4]):
                     self.dmx_universe[dmx_index + color_index] = color_float_to_byte(color_component)
-                    #print('hsv:', dmx_index + color_index, self.dmx_universe[dmx_index + color_index])
         def update_hsv_from_input(control_id, value, id_range, hsv_color):
             if control_id in range(id_range, id_range + 4):
                 hsv_color[control_id - id_range] = value / 127
