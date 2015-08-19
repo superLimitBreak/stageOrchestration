@@ -102,7 +102,10 @@ def main():
         log.info('DMXRendererMidiInput')
     if kwargs.get('yamlpath'):
         from DMXRendererLightTiming import DMXRendererLightTiming
-        renderers.append(DMXRendererLightTiming(kwargs['yamlpath']))
+        from DMXRendererDisplayTriggerEvents import DMXRendererDisplayTriggerEvents
+        dmx_lighting_renderer = DMXRendererLightTiming(kwargs['yamlpath'])
+        renderers.append(dmx_lighting_renderer)
+        renderers.append(DMXRendererDisplayTriggerEvents(dmx_lighting_renderer))
         log.info('DMXRendererLightTiming')
     try:
         from DMXRendererPentatonicHero import DMXRendererPentatonicHero
