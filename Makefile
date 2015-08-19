@@ -17,7 +17,7 @@ install_plugin_pentetonic_hero:
 pytweening:
 	mkdir pytweening
 pytweening/__init__.py: pytweening
-	cd pytweening && curl https://raw.githubusercontent.com/UNKNOWN/__init.py --compressed -O
+	cd pytweening && curl https://raw.githubusercontent.com/asweigart/pytweening/master/pytweening/__init__.py --compressed -O
 
 
 # Custom Python Dependencys ----------------------------------------------------
