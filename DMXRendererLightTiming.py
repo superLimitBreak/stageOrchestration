@@ -1,3 +1,4 @@
+import os.path
 import time
 import yaml
 import operator
@@ -32,17 +33,21 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     The scenes 'render' method is called with the current 'beat' into the scene
     """
 
+    PATH_CONFIG_FILE = 'config.yaml'
+    PATH_SCENES_FOLDER = 'scenes'
+    PATH_SEQUENCE_FOLDER = 'sequences'
+
     DEFAULT_SCENE_NAME = 'none'
     DEFAULT_SEQUENCE_NAME = 'none'
     DEFAULT_BPM = 120.0
     DEFAULT_TIMESIGNITURE = "4:4"
 
-    def __init__(self, path_config, path_scenes, path_sequences, *args, **kwargs):
+    def __init__(self, yamlpath, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.config = self._open_yaml(path_config)
-        self.scenes = self._open_path(path_scenes, SceneFactory(self.config).create_scene)
-        self.sequences = self._open_path(path_sequences)
+        self.config = self._open_yaml(os.path.join(yamlpath, self.PATH_CONFIG_FILE))
+        self.scenes = self._open_path(os.path.join(yamlpath, self.PATH_SCENES_FOLDER), SceneFactory(self.config).create_scene)
+        self.sequences = self._open_path(os.path.join(yamlpath, self.PATH_SEQUENCE_FOLDER))
 
         #def onfilechange(changed_files):
         #    print(changed_files)

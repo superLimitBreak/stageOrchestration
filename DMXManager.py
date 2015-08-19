@@ -4,37 +4,36 @@ from libs.misc import run_funcs, postmortem
 from libs.network_display_event import DisplayEventHandler as SocketHandler # Name to change! refactor this poo!
 
 from DMXBase import AbstractDMXRenderer, mix
-from DMXRendererMidiInput import DMXRendererMidiInput
-from DMXRendererLightTiming import DMXRendererLightTiming
-#from DMXRendererPentatonicHero import DMXRendererPentatonicHero
+
 from ArtNet3 import ArtNet3
 
 import logging
 log = logging.getLogger(__name__)
 
-VERSION = '0.03'
+VERSION = '0.04'
 
-DEFAULT_HOST = '127.0.0.1'
+DEFAULT_DISPLAYTRIGGER_HOST = '127.0.0.1'
+DEFAULT_ARTNET_DMX_HOST = '127.0.0.1'
 DEFAULT_FRAMERATE = 30
-DEFAULT_MIDI_PORT_NAME = 'nanoKONTROL2'
-DEFAULT_LIGHTING_CONFIG_FILE = 'data/config.yaml'
-DEFAULT_LIGHTING_SCENES_FOLDER = 'data/scenes'
-DEFAULT_LIGHTING_SEQUENCE_FOLDER = 'data/sequences'
+DEFAULT_YAMLPATH = 'data'
 
 
 class DMXManager(AbstractDMXRenderer):
 
-    def __init__(self, renderers, host=DEFAULT_HOST, framerate=DEFAULT_FRAMERATE, **kwargs):
+    def __init__(self, renderers, **kwargs):
+        """
+        """
         super().__init__()
 
         assert len(renderers), "Must provide renderers"
         self.renderers = renderers
 
-        self.artnet = ArtNet3(host=host)
+        self.artnet = ArtNet3(host=kwargs['artnet_dmx_host'])
 
-        self.net = SocketHandler.factory(recive_func=self.recive)
+        if kwargs.get('displaytrigger_host'):
+            self.net = SocketHandler.factory(host=kwargs['displaytrigger_host'], recive_func=self.recive)
 
-        self.loop = Loop(framerate)
+        self.loop = Loop(kwargs['framerate'])
         self.loop.render = self.render
         self.loop.close = self.close
 
@@ -75,33 +74,44 @@ def get_args():
     )
     parser_input = parser
 
+    # Core
+    parser.add_argument('--displaytrigger_host', action='store', help='display-trigger server to recieve events from', default=DEFAULT_DISPLAYTRIGGER_HOST)
     parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', default=DEFAULT_FRAMERATE)
-    parser.add_argument('--host', action='store', help='ArtNet3 ip address', default=DEFAULT_HOST)
-    parser.add_argument('--midi_input', action='store', help='name of the midi input port to use', default=DEFAULT_MIDI_PORT_NAME)
-    parser.add_argument('--lighting_config', action='store', help='yaml config', default=DEFAULT_LIGHTING_CONFIG_FILE)
-    parser.add_argument('--lighting_scenes', action='store', help='folder where the lighting descriptions are to be loaded', default=DEFAULT_LIGHTING_SCENES_FOLDER)
-    parser.add_argument('--lighting_sequence', action='store', help='tracks', default=DEFAULT_LIGHTING_SEQUENCE_FOLDER)
+    parser.add_argument('--artnet_dmx_host', action='store', help='ArtNet3 ip address', default=DEFAULT_ARTNET_DMX_HOST)
 
+    # Plugin params
+    parser.add_argument('--midi_input', action='store', help='name of the midi input port to use')
+    parser.add_argument('--yamlpath', action='store', help='folder path for the yaml lighting data.', default=DEFAULT_YAMLPATH)
+
+    # Common
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
     parser.add_argument('--version', action='version', version=VERSION)
 
     args = parser.parse_args()
-
     return vars(args)
 
 
 def main():
-    args = get_args()
-    logging.basicConfig(level=args['log_level'])
+    kwargs = get_args()
+    logging.basicConfig(level=kwargs['log_level'])
 
-    DMXManager(
-        renderers=(
-            #DMXRendererMidiInput(args['midi_input']),
-            DMXRendererLightTiming(args['lighting_config'], args['lighting_scenes'], args['lighting_sequence']),
-            #DMXRendererPentatonicHero(),
-        ),
-        **args
-    )
+    renderers = []
+    if kwargs.get('midi_input'):
+        from DMXRendererMidiInput import DMXRendererMidiInput
+        renderers.append(DMXRendererMidiInput(kwargs['midi_input']))
+        log.info('DMXRendererMidiInput')
+    if kwargs.get('yamlpath'):
+        from DMXRendererLightTiming import DMXRendererLightTiming
+        renderers.append(DMXRendererLightTiming(kwargs['yamlpath']))
+        log.info('DMXRendererLightTiming')
+    try:
+        from DMXRendererPentatonicHero import DMXRendererPentatonicHero
+        renderers.append(DMXRendererPentatonicHero())
+        log.info('DMXRendererPentatonicHero')
+    except ImportError:
+        pass
+
+    DMXManager(renderers, **kwargs)
 
 
 if __name__ == "__main__":

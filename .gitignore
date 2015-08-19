@@ -3,4 +3,6 @@ env/
 __pycache__
 *.pyc
 
-libs/
+libs
+pytweening
+DMXRendererPentatonicHero.py
