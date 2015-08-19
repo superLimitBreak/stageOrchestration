@@ -44,14 +44,15 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     def __init__(self, yamlpath, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.yamlpath = yamlpath
+        file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reset())
+        self.reset()
 
-        self.config = self._open_yaml(os.path.join(yamlpath, self.PATH_CONFIG_FILE))
-        self.scenes = self._open_path(os.path.join(yamlpath, self.PATH_SCENES_FOLDER), SceneFactory(self.config).create_scene)
-        self.sequences = self._open_path(os.path.join(yamlpath, self.PATH_SEQUENCE_FOLDER))
-
-        #def onfilechange(changed_files):
-        #    print(changed_files)
-        #file_scan_diff_thread((path_scenes, path_sequences), onfilechange)
+    def reset(self):
+        log.info('Loading yaml '.format(self.yamlpath))
+        self.config = self._open_yaml(os.path.join(self.yamlpath, self.PATH_CONFIG_FILE))
+        self.scenes = self._open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneFactory(self.config).create_scene)
+        self.sequences = self._open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
 
         self.bpm = self.DEFAULT_BPM
         self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
@@ -120,7 +121,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     def current_beat(self):
         if not self.time_start:
             return 0.0
-        return get_beat(time.time() - self.time_start, self.bpm)
+        return get_beat(time.time(), self.bpm, time_start=self.time_start)
 
     @property
     def current_bar(self):
