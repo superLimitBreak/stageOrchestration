@@ -9,7 +9,6 @@ log = logging.getLogger(__name__)
 
 
 class DMXRendererDisplayTriggerEvents(AbstractDMXRenderer):
-
     __name__ = 'trigger'
 
     def __init__(self, dmx_lighting_renderer):
@@ -17,7 +16,9 @@ class DMXRendererDisplayTriggerEvents(AbstractDMXRenderer):
         self.dmx_lighting_renderer = dmx_lighting_renderer
 
     def empty(self, data):
-        print('empty', data)
+        log.info('empty')
+        self.dmx_lighting_renderer.stop()
 
     def stop(self, data):
-        print('stop', data)
+        log.info('stop')
+        self.dmx_lighting_renderer.stop()
