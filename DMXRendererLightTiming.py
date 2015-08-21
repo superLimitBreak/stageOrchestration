@@ -100,6 +100,11 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.sequence = ()
         self.sequence_index = None
 
+    def seek(self, data={}):
+        time_offset = data.get('currentTime', 0)
+        self.time_start = time.time() - time_offset
+        log.info('seek {0}'.format(time_offset))
+
     @property
     def sequence_index(self):
         return self._sequence_index
