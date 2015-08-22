@@ -45,11 +45,11 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     def __init__(self, yamlpath, rescan_interval=1.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.yamlpath = yamlpath
-        file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reset())
-        self.reset()
+        file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reload())
+        self.reload()
         self.stop()
 
-    def reset(self):
+    def reload(self):
         log.info('Loading yaml '.format(self.yamlpath))
         self.config = self._open_yaml(os.path.join(self.yamlpath, self.PATH_CONFIG_FILE))
         self.scenes = self._open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneFactory(self.config).create_scene)
@@ -98,7 +98,6 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.sequence_index = None
         self.bpm = self.DEFAULT_BPM
         self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
-
 
     def seek(self, data={}):
         time_offset = data.get('currentTime', 0)
@@ -164,12 +163,10 @@ class SceneFactory(object):
         self.config = config
 
     def create_scene(self, data):
-        #\import pudb ; pu.db
         meta = data.pop('meta', {})
         timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
 
         scene_items = self.parse_scene_order(data, timesigniture)
-        #import pudb ; pu.db
         # Step though the dict items in order - rendering the desired output to 'previous' and 'target' states
         for previous_scene_item, current_scene_item, next_scene_item in list_neighbor_generator(scene_items):
             self.pre_render_scene_item(current_scene_item, previous_scene_item)
@@ -250,12 +247,12 @@ class SceneFactory(object):
         assert current_scene_item
         current_scene_dmx = current_scene_item.setdefault(Scene.SCENE_ITEM_DMX_STATE_KEY, {})
         # Aquire a reference to the previous DMX state
-        if previous_scene_item:
-            current_scene_dmx['previous'] = previous_scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target']
-
+        current_scene_dmx['previous'] = copy.copy(previous_scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {})['target']) if previous_scene_item else AbstractDMXRenderer.new_dmx_array()
         # The target state is a copy of the previous state
-        current_scene_dmx['target'] = copy.copy(current_scene_dmx.get('previous')) if current_scene_dmx.get('previous') else AbstractDMXRenderer.new_dmx_array()
+        current_scene_dmx['target'] = copy.copy(current_scene_dmx['previous'])
 
+        # Modify the starting/previous state based on any overrides in this scene (this is a shortcut feature as I kept requireing this)
+        self.render_state_dict(current_scene_item.get('state_start'), current_scene_dmx['previous'])
         # Modify the target state based on this scene item
         self.render_state_dict(current_scene_item.get('state'), current_scene_dmx['target'])
 
