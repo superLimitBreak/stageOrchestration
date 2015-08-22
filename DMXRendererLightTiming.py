@@ -42,11 +42,12 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     DEFAULT_BPM = 120.0
     DEFAULT_TIMESIGNITURE = "4:4"
 
-    def __init__(self, yamlpath, *args, **kwargs):
+    def __init__(self, yamlpath, rescan_interval=1.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.yamlpath = yamlpath
         file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reset())
         self.reset()
+        self.stop()
 
     def reset(self):
         log.info('Loading yaml '.format(self.yamlpath))
@@ -54,12 +55,8 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.scenes = self._open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneFactory(self.config).create_scene)
         self.sequences = self._open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
 
-        self.bpm = self.DEFAULT_BPM
-        self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
-
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
-        self.stop()
 
     @staticmethod
     def _open_yaml(path, target_class=None):
@@ -99,6 +96,9 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.time_start = 0
         self.sequence = ()
         self.sequence_index = None
+        self.bpm = self.DEFAULT_BPM
+        self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
+
 
     def seek(self, data={}):
         time_offset = data.get('currentTime', 0)

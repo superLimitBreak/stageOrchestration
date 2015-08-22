@@ -16,7 +16,7 @@ DEFAULT_DISPLAYTRIGGER_HOST = '127.0.0.1'
 DEFAULT_ARTNET_DMX_HOST = '127.0.0.1'
 DEFAULT_FRAMERATE = 30
 DEFAULT_YAMLPATH = 'data'
-
+DEFAULT_YAML_SCAN_INTERVAL = 1.0
 
 class DMXManager(AbstractDMXRenderer):
 
@@ -82,6 +82,7 @@ def get_args():
     # Plugin params
     parser.add_argument('--midi_input', action='store', help='name of the midi input port to use')
     parser.add_argument('--yamlpath', action='store', help='folder path for the yaml lighting data.', default=DEFAULT_YAMLPATH)
+    parser.add_argument('--yamlscaninterval', action='store', type=float, help='seconds to scan', default=DEFAULT_YAML_SCAN_INTERVAL)
 
     # Common
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
@@ -103,7 +104,7 @@ def main():
     if kwargs.get('yamlpath'):
         from DMXRendererLightTiming import DMXRendererLightTiming
         from DMXRendererDisplayTriggerEvents import DMXRendererDisplayTriggerEvents
-        dmx_lighting_renderer = DMXRendererLightTiming(kwargs['yamlpath'])
+        dmx_lighting_renderer = DMXRendererLightTiming(kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
         renderers.append(dmx_lighting_renderer)
         renderers.append(DMXRendererDisplayTriggerEvents(dmx_lighting_renderer))
         log.info('DMXRendererLightTiming')
