@@ -3,33 +3,44 @@ meta:
 0.0.0:
     state:
         matt: white
+
 0.2.4:
-    state:
+    state_start:
         allan_piano: white
-0.2.6:
     state:
-        allan_piano: dim_50
-    tween: linear
+        allan_piano: green
+    tween:
+        linear
 0.3.0:
     state:
         allan_piano: white
     tween: linear
-0.4.0:
+0.3.4:
     state:
         allan_piano: black
-    tween: linear
+    tween:
+        easeOutQuad
+0.3.8:
+
+
 1.2.4:
-    state:
+    state_start:
         allan_piano: white
-    tween: linear
-1.2.6:
     state:
-        allan_piano: dim_50
-    tween: linear
+        allan_piano: green
+    tween:
+        linear
 1.3.0:
     state:
         allan_piano: white
     tween: linear
+1.3.4:
+    state:
+        allan_piano: black
+    tween:
+        easeOutQuad
+1.3.8:
+
 
 2.0.0:
     state:
