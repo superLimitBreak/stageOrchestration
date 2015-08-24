@@ -14,6 +14,9 @@ from DMXBase import AbstractDMXRenderer, get_value_at
 import logging
 log = logging.getLogger(__name__)
 
+DEFAULT_TIMESIGNITURE = "4:4"
+DEFAULT_TIMESIGNITURE_ = parse_timesigniture(DEFAULT_TIMESIGNITURE)
+
 
 class DMXRendererLightTiming(AbstractDMXRenderer):
     """
@@ -40,7 +43,6 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     DEFAULT_SCENE_NAME = 'none'
     DEFAULT_SEQUENCE_NAME = 'none'
     DEFAULT_BPM = 120.0
-    DEFAULT_TIMESIGNITURE = "4:4"
 
     def __init__(self, yamlpath, rescan_interval=1.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,7 +84,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.stop()
         self.time_start = time.time() - data.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
-        self.timesigniture = parse_timesigniture(data.get('timesigniture', self.DEFAULT_TIMESIGNITURE))
+        self.timesigniture = parse_timesigniture(data.get('timesigniture', DEFAULT_TIMESIGNITURE))
         if data.get('sequence'):
             self.sequence = self.sequences[data.get('sequence')]
         if data.get('scene'):
@@ -97,7 +99,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.sequence = ()
         self.sequence_index = None
         self.bpm = self.DEFAULT_BPM
-        self.timesigniture = parse_timesigniture(self.DEFAULT_TIMESIGNITURE)
+        self.timesigniture = DEFAULT_TIMESIGNITURE_
 
     def seek(self, data={}):
         time_offset = data.get('currentTime', 0)
@@ -163,6 +165,8 @@ class SceneFactory(object):
         self.config = config
 
     def create_scene(self, data):
+        if not data:
+            return Scene([])
         meta = data.pop('meta', {})
         timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
 
@@ -287,7 +291,7 @@ class SceneFactory(object):
 class Scene(object):
     SCENE_ITEM_DMX_STATE_KEY = 'dmx'
 
-    def __init__(self, scene_items, timesigniture):
+    def __init__(self, scene_items, timesigniture=DEFAULT_TIMESIGNITURE_):
         """
         Given a list of parsed scene_items (a plain list of dicts)
         Provide methods for redering that data
