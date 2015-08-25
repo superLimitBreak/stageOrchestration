@@ -162,7 +162,7 @@ class SceneFactory(object):
     This factory creates a Scene from a plain YAML data structure
     Separate out the YAML parsing and interpritation from the functional use of Scene
     """
-    DEFAULT_DURATION = 4.0
+    DEFAULT_DURATION = 0.0
 
     def __init__(self, config):
         self.config = config
