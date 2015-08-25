@@ -86,9 +86,12 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
         self.timesigniture = parse_timesigniture(data.get('timesigniture', DEFAULT_TIMESIGNITURE))
         if data.get('sequence'):
-            self.sequence = self.sequences[data.get('sequence')]
+            sequence_name = data.get('sequence')
+            assert sequence_name in self.sequences, '{0} is not a known sequence'.format(sequence_name)
+            self.sequence = self.sequences[sequence_name]
         if data.get('scene'):
-            self.sequence = (self.scenes.get(data.get('scene', self.DEFAULT_SCENE_NAME)), )
+            # Single scene - Fake the sequence list by inserting the name of the single scene required
+            self.sequence = (data.get('scene', self.DEFAULT_SCENE_NAME), )
         self.sequence_index = 0
 
     def stop(self, data={}):
