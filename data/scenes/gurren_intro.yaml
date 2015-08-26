@@ -1,4 +1,27 @@
 0.0.0:
     state:
         all: green
-    duration: 11
+2.3.0:
+    state:
+        all: full
+    tween:
+        easeInSine
+3.1.0:
+    state:
+        all: red
+    tween:
+        easeOutSine
+4.0.0:
+    state:
+        all: green
+    tween:
+        easeInSine
+9.0.0:
+    state:
+        all: red
+9.2.0:
+    state:
+        primary: red
+        secondary: green
+11.0.0:
+    

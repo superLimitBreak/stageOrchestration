@@ -1,4 +1,35 @@
 0.0.0:
     state:
+        all: [0,1,1,1]
+2.0.0:
+    state:
+        primary: [1,0,1,1]
+4.0.0:
+    state:
+        secondary: [1,0,1,1]
+6.0.0:
+    state:
+        all: [0,1,1,1]
+6.2.0:
+    state:
+        primary: [0,1,1,0]
+7.0.0:
+    state:
+        secondary: [0,1,0,1]
+8.0.0:
+    state:
+        all: [1,0,1,1]
+10.0.0:
+    state:
+        all: [0,1,1,1]
+12.0.0:
+    state:
+        primary: [1,0,1,1]
+        secondary: [1,0,1,1]
+14.0.0:
+    state:
         all: white
-    duration: 16
+
+16.0.0:
+    
+    #duration: 16
