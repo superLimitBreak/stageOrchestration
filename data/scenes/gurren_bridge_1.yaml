@@ -1,5 +1,63 @@
 0.0.0:
     state:
-        all: green
-    duration: 9
+        primary: green
+        secondary: red
+    tween:
+        linear
+1.0.0:
+    state:
+        primary: red
+        secondary: green
+    tween:
+        linear
+
+2.0.0:
+    state:
+        primary: green
+        secondary: red
+    tween:
+        linear
+3.0.0:
+    state:
+        primary: red
+        secondary: green
+    tween:
+        linear
+
+4.0.0:
+    state:
+        primary: green
+        secondary: red
+    tween:
+        linear
+5.0.0:
+    state:
+        primary: red
+        secondary: green
+    tween:
+        linear
+
+6.0.0:
+    state:
+        primary: green
+        secondary: red
+    tween:
+        linear
+7.0.0:
+    state:
+        primary: red
+        secondary: green
+    tween:
+        linear
+
+8.0.0:
+    state_start:
+        all: white
+    state:
+        all: full
+    tween:
+        easeInOutElastic
+
+
+9.0.0:
     

@@ -1,4 +1,53 @@
 0.0.0:
     state:
         all: purple
-    duration: 20
+    tween:
+        easeOutExpo
+2.0.0:
+    state:
+        primary: blue
+        secondary: red
+    tween:
+        easeOutExpo
+4.0.0:
+    state:
+        all: purple
+    tween:
+        easeOutExpo
+6.0.0:
+    state:
+        primary: red
+        secondary: blue
+    tween:
+        easeOutExpo
+
+8.0.0:
+    state:
+        all: purple
+    tween:
+        easeOutExpo
+10.0.0:
+    state:
+        primary: blue
+        secondary: red
+    tween:
+        easeOutExpo
+12.0.0:
+    state:
+        all: purple
+    tween:
+        easeOutExpo
+14.0.0:
+    state:
+        primary: red
+        secondary: blue
+    tween:
+        easeOutExpo
+
+16.0.0:
+    state:
+        all: green
+    tween:
+        easeOutExpo
+20.0.0:
+    
