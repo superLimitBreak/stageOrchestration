@@ -1,26 +1,63 @@
 0.0.0:
     state:
         all: green
-1.0.0:
+0.2.0:
     state:
         light1: red
-2.0.0:
+1.2.0:
     state:
         light2: red
-3.0.0:
+2.0.0:
     state:
         light3: red
-4.0.0:
+2.2.0:
     state:
         light4: red
-5.0.0:
+3.0.0:
     state:
         light5: red
-6.0.0:
+3.2.0:
     state:
         light6: red
-7.0.0:
+4.0.0:
     state:
         light7: red
+4.2.0:
+    state:
+        light8: red
+
+6.2.0:
+    state:
+        all: black
+6.2.1:
+    state:
+        all: red
+6.2.2:
+    state:
+        all: black
+6.2.3:
+    state:
+        all: red
+
+6.3.0:
+    state:
+        all: black
+6.3.1:
+    state:
+        all: red
+6.3.2:
+    state:
+        all: black
+6.3.3:
+    state:
+        all: red
+
+
+
+
+
+
+
+
 8.0.0:
     
