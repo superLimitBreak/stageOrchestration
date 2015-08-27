@@ -54,7 +54,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     def reload(self):
         log.info('Loading yaml '.format(self.yamlpath))
         self.config = self._open_yaml(os.path.join(self.yamlpath, self.PATH_CONFIG_FILE))
-        self.scenes = self._open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneFactory(self.config).create_scene)
+        self.scenes = self._open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneParser(self.config).create_scene)
         self.sequences = self._open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
 
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
@@ -114,6 +114,8 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return self._sequence_index
     @sequence_index.setter
     def sequence_index(self, index):
+        if self.sequence_index is index:
+            return
         self._sequence_index = index
         if self.sequence and self.sequence_index is not None:
             log.info('Rendering scene: {0}'.format(self.sequence[self.sequence_index]))
@@ -143,10 +145,9 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     def render(self, frame):
         #print(beat_to_timecode(self.current_bar, self.timesigniture), self.current_bar)
         scene, scene_beat, sequence_index = self.get_scene_at_beat(self.current_bar)
-        if sequence_index is not self.sequence_index:
-            self.sequence_index = sequence_index
-            self.dmx_universe_previous = copy.copy(self.dmx_universe)
-        scene.render(self.dmx_universe, self.dmx_universe_previous, scene_beat)
+        self.sequence_index = sequence_index
+            #self.dmx_universe_previous = copy.copy(self.dmx_universe)
+        scene.render(self.dmx_universe, scene_beat)  # self.dmx_universe_previous,  # previous universe was taken out to simplify scene parsing. Every scene was now self contained. We might reinstate the previous state at a later date
         return self.dmx_universe
 
     def get_scene_at_beat(self, current_beat):
@@ -157,10 +158,56 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         return current_scene, beats_into_scene, sequence_index
 
 
-class SceneFactory(object):
+class SceneParser(object):
     """
     This factory creates a Scene from a plain YAML data structure
     Separate out the YAML parsing and interpritation from the functional use of Scene
+
+    Processing scenes:
+        * Parse string 'keys' as timecodes into linear floats to represent time
+        * Sort the items in a scene by time
+        * Iterate through each scene item in order pre-rendering the dmx state before and after
+
+    Input structure (plain dict):
+        {
+            meta:
+                optional extra keys to support processing
+            '0.0.0':
+                state_start (OPTIONAL):
+                state (OPTIONALish):
+                    LIGHT_ALIAS: COLOR_ALIAS
+                tween: TWEEN_FUNCTIONNAME (see pytweening for list)
+            '1.2.0':
+                same structure as above
+            '2.0.0':
+                None
+        }
+
+    Output structure 'scene_items' (ordered list):
+        [
+            {
+                dmx:
+                    previous: BYTEARRAY
+                    target: BYTEARRAY
+                key: '0.0.0'
+                state: same as source - unneeded, just here for reference
+                state_start: same as source
+                tween: TWEEN_FUNCTIONNAME same as source
+                duration: 1.5
+            },
+            {
+                same structure as above
+                duration: 0.5
+            },
+            {
+                dmx:
+                    previous: BYTEARRAY (copied from previous sceneitem)
+                    target: BYEARRAY (copied from this sceneitem)
+                duration: 0 (by default)
+            }
+        ]
+
+        This processing could be in a separate file and could be unit tested
     """
     DEFAULT_DURATION = 0.0
 
@@ -231,7 +278,7 @@ class SceneFactory(object):
             if (not duration or duration == 'auto') and index < len(sorted_keys)-1:
                 duration = sorted_keys[index+1] - key
             if not isinstance(duration, float):
-                log.info('Unparsed duration: {0}'.format(duration))
+                #log.info('Unparsed duration: {0}'.format(duration))
                 duration = self.DEFAULT_DURATION
             if duration != item.get('duration'):
                 item['duration'] = duration
@@ -308,11 +355,11 @@ class Scene(object):
     def get_scene_item_beat(self, target_beat):
         return get_value_at(self.scene_items, target_beat, operator.itemgetter('duration'))
 
-    def render(self, dmx_universe, dmx_universe_previous, beat):
+    def render(self, dmx_universe, beat):
         log.debug(beat_to_timecode(beat, self.timesigniture), beat)
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
         progress = beat_in_item / scene_item['duration']
-        previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous') or dmx_universe_previous
+        previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous')  # or dmx_universe_previous
         target = scene_item[Scene.SCENE_ITEM_DMX_STATE_KEY]['target']
         tween_function = getattr(pytweening, scene_item.get('tween', ''), lambda n: 1)
 
