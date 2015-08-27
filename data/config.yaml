@@ -23,6 +23,9 @@ dmx_devices:
     light8:
         type: lightRGBW
         index: 56
+    smoke:
+        type: cauvetHuricane
+        index: 100
 
     all:
         type: group

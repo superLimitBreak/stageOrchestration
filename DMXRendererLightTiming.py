@@ -47,6 +47,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     def __init__(self, yamlpath, rescan_interval=1.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.yamlpath = yamlpath
+        self._sequence_index = None
         file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reload())
         self.reload()
         self.stop()
