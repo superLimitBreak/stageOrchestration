@@ -328,7 +328,7 @@ class SceneParser(object):
             if dmx_device.get('type') == 'lightRGBW':
                 color_value = self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
                 for index, rgb_value in enumerate(color_value):
-                    dmx_universe_target[index+dmx_device['index']] = min(255, int(rgb_value * 255))
+                    dmx_universe_target[index+dmx_device['index']] = min(255, max(0, int(rgb_value * 255)))
             # Group alias
             elif dmx_device.get('type') == 'group':
                 for group_item_dmx_device_name in dmx_device['group']:
