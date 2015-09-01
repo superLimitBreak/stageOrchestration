@@ -100,6 +100,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         Originates from external call from trigger system
         """
         self.time_start = 0
+        self.time_mutator = 0
         self.sequence = ()
         self.sequence_index = None
         self.bpm = self.DEFAULT_BPM
@@ -107,6 +108,9 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
 
     def seek(self, data={}):
         time_offset = data.get('currentTime', 0)
+        if (time.time() - self.time_start) < 0.1:
+            log.info('Seek recived within 100ms of start - Assuming this is a bounceback from test_audio - applying automatic time mutator of {0}s'.format(time_offset))
+            self.time_mutator = time_offset
         self.time_start = time.time() - time_offset
         log.info('seek {0}'.format(time_offset))
 
@@ -133,7 +137,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
     def current_beat(self):
         if not self.time_start:
             return 0.0
-        return get_beat(time.time(), self.bpm, time_start=self.time_start)
+        return get_beat(time.time() - self.time_mutator, self.bpm, time_start=self.time_start)
 
     @property
     def current_bar(self):
