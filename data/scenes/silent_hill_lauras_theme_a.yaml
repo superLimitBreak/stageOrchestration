@@ -26,32 +26,7 @@
         all: white
 
 2.0.0:
-    state:
-        all: red
-2.1.0:
-    state:
-        all: green
 
-2.2.0:
-    state:
-        all: blue
-2.3.0:
-    state:
-        all: white
 
-3.0.0:
-    state:
-        all: red
-3.1.0:
-    state:
-        all: green
-
-3.2.0:
-    state:
-        all: blue
-3.3.0:
-    state:
-        all: white
-
-30.0.0:
+8.0.0:
     

@@ -1,0 +1,9 @@
+0.0.0:
+    state_start:
+        all: white
+    state:
+        all:
+            black
+    tween:
+        linear
+4.0.0:
