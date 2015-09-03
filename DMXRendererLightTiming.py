@@ -6,7 +6,7 @@ import copy
 
 import pytweening
 
-from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_scan_diff_thread
+from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_scan_diff_thread, one_byte_limit
 from libs.music import parse_timesigniture, timecode_to_beat, beat_to_timecode, get_beat
 
 from DMXBase import AbstractDMXRenderer, get_value_at
@@ -321,18 +321,34 @@ class SceneParser(object):
         Given a state dict in the form of
         {alias_name: value, alias_name2: value}
         and render that to a DMX array
+
+        This needs refactoring.
+        Maybe abstract each light into an object that has it's own color function to convert it to it's own color space?
         """
         if not target_state_dict:
             return
+
+        def get_color_rgbw(color_value):
+            return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
 
         # Render item
         def render_state_item(dmx_device_name, color_value):
             dmx_device = self.config['dmx_devices'].get(dmx_device_name)
             # Single light
             if dmx_device.get('type') == 'lightRGBW':
-                color_value = self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
-                for index, rgb_value in enumerate(color_value):
-                    dmx_universe_target[index+dmx_device['index']] = min(255, max(0, int(rgb_value * 255)))
+                for index, value in enumerate(get_color_rgbw(color_value)):
+                    dmx_universe_target[index+dmx_device['index']] = one_byte_limit(value)
+            if dmx_device.get('type') == 'neoneonfloor':
+                dmx_universe_target[dmx_device['index']] = 17  # Constant to enter 3 light mode
+                rgbw = get_color_rgbw(color_value)
+                dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[0]+rgbw[3])
+                dmx_universe_target[dmx_device['index']+3] = one_byte_limit(rgbw[1]+rgbw[3])
+                dmx_universe_target[dmx_device['index']+4] = one_byte_limit(rgbw[2]+rgbw[3])
+            if dmx_device.get('type') == 'neoneonfloorPart':
+                rgbw = get_color_rgbw(color_value)
+                dmx_universe_target[dmx_device['index']+0] = one_byte_limit(rgbw[0]+rgbw[3])
+                dmx_universe_target[dmx_device['index']+1] = one_byte_limit(rgbw[1]+rgbw[3])
+                dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[2]+rgbw[3])
             # Group alias
             elif dmx_device.get('type') == 'group':
                 for group_item_dmx_device_name in dmx_device['group']:

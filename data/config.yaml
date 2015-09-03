@@ -23,19 +23,74 @@ dmx_devices:
     light8:
         type: lightRGBW
         index: 56
+
+    floor1:
+        type: group
+        group: [floor1a, floor1b, floor1c]
+    floor1a:
+        type: neoneonfloor
+        index: 64
+    floor1b:
+        type: neoneonfloorPart
+        index: 70
+    floor1c:
+        type: neoneonfloorPart
+        index: 72
+
+    floor2:
+        type: group
+        group: [floor2a, floor2b, floor2c]
+    floor2a:
+        type: neoneonfloor
+        index: 75
+    floor2b:
+        type: neoneonfloorPart
+        index: 80
+    floor2c:
+        type: neoneonfloorPart
+        index: 83
+
+    floor3:
+        type: group
+        group: [floor3a, floor3b, floor3c]
+    floor3a:
+        type: neoneonfloor
+        index: 86
+    floor3b:
+        type: neoneonfloorPart
+        index: 91
+    floor3c:
+        type: neoneonfloorPart
+        index: 94
+
+    floor4:
+        type: group
+        group: [floor4a, floor4b, floor4c]
+    floor4a:
+        type: neoneonfloor
+        index: 97
+    floor4b:
+        type: neoneonfloorPart
+        index: 102
+    floor4c:
+        type: neoneonfloorPart
+        index: 105
+
+
+
     smoke:
         type: cauvetHuricane
-        index: 100
+        index: 110
 
     all:
         type: group
-        group: [light1, light2, light3, light4, light5, light6, light7, light8]
+        group: [light1, light2, light3, light4, light5, light6, light7, light8, floor1, floor2, floor3, floor4]
     top:
         type: group
         group: [light2, light3, light4, light5, light6, light7]
     bottom:
         type: group
-        group: [light1, light8]
+        group: [light1, light8, floor1, floor2, floor3, floor4]
     odd:
         type: group
         group: [light1, light3, light5, light7]
