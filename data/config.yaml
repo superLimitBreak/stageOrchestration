@@ -32,7 +32,7 @@ dmx_devices:
         index: 64
     floor1b:
         type: neoneonfloorPart
-        index: 70
+        index: 69
     floor1c:
         type: neoneonfloorPart
         index: 72
