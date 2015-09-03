@@ -67,7 +67,10 @@ def _send_example():
 
 # DMX Simulator ----------------------------------------------------------------
 
-class DMXLight(object):
+class DMXLightRGB(object):
+    pass
+
+class DMXLightRGBW(object):
     data_size = 8
 
     def __init__(self, x, y, size):
@@ -114,16 +117,16 @@ class DMXSimulator(ArtNet3, PygameBase):
         PygameBase.__init__(self, framerate=framerate)
 
         self._init_dmx_items(
-            DMXLight(0, 180, 8),
-            DMXLight(0, 100, 8),
-            DMXLight(0, 0, 8),
-            DMXLight(64, 0, 8),
-            DMXLight(128, 0, 8),
-            DMXLight(184, 0, 8),
-            DMXLight(256, 0, 8),
-            DMXLight(284, 100, 8),
+            DMXLightRGBW(0, 180, 8),
+            DMXLightRGBW(0, 100, 8),
+            DMXLightRGBW(0, 0, 8),
+            DMXLightRGBW(64, 0, 8),
+            DMXLightRGBW(128, 0, 8),
+            DMXLightRGBW(184, 0, 8),
+            DMXLightRGBW(256, 0, 8),
+            DMXLightRGBW(284, 100, 8),
         )
-        self.state = [random.randint(0, 255) for i in range(512)]
+        self.state = [random.randint(0, 255) for i in range(512)]  # Startup with a completlty random DMX state
 
     def _init_dmx_items(self, *dmx_items):
         self.dmx_items = dmx_items
