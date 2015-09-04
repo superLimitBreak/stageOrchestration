@@ -30,6 +30,7 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
     FLATPAR_BOTTOM = (0, 56)
     HSV_A_INDEXS = FLATPAR_TOP
     HSV_B_INDEXS = FLATPAR_BOTTOM + FLOOR_INDEXS_RGB
+    SMOKE_INDEX = 128
 
     def __init__(self, name):
         super().__init__()
@@ -80,6 +81,12 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
             for index in self.FLOOR_INDEXS_RGB:
                 for index_offset in range(3):  # Derive white from plain RGB for floor lights
                     self.dmx_universe[index+index_offset] = data2 * 2
+
+        # Smoke
+        if data1 == 60:
+            self.dmx_universe[self.SMOKE_INDEX] = 64 if data2 >= 64 else 0
+        if data1 == 61:
+            self.dmx_universe[self.SMOKE_INDEX] = 255 if data2 >= 64 else 0
 
 
         def color_float_to_byte(value):
