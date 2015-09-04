@@ -145,3 +145,8 @@ colors:
     dim_25: [0,0,0,0.25]
     dim_50: [0,0,0,0.5]
     dim_75: [0,0,0,0.75]
+
+# Globa time offset (in seconds) to mitigate dealy in network and dmx translation for tight timing
+# 0.1 will start the lighting 100ms early
+# Typically this will be mean the first 100ms of the first scene will be skipped
+time_offset: 0

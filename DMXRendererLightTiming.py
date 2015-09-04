@@ -83,7 +83,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         """
         print(data)
         self.stop()
-        self.time_start = time.time() - data.get('time_offset', 0)
+        self.time_start = time.time() - data.get('time_offset', 0) - self.config.get('time_offset', 0)
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
         self.timesigniture = parse_timesigniture(data.get('timesigniture', DEFAULT_TIMESIGNITURE))
         if data.get('sequence'):
