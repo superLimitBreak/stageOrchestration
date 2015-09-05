@@ -80,7 +80,7 @@ dmx_devices:
 
     smoke:
         type: cauvetHuricane
-        index: 110
+        index: 112
 
     all:
         type: group

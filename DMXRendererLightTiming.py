@@ -334,18 +334,21 @@ class SceneParser(object):
         # Render item
         def render_state_item(dmx_device_name, color_value):
             dmx_device = self.config['dmx_devices'].get(dmx_device_name)
+            rgbw = get_color_rgbw(color_value)
             # Single light
             if dmx_device.get('type') == 'lightRGBW':
-                for index, value in enumerate(get_color_rgbw(color_value)):
-                    dmx_universe_target[index+dmx_device['index']] = one_byte_limit(value)
+                dmx_universe_target[dmx_device['index']+0] = one_byte_limit(rgbw[0])
+                dmx_universe_target[dmx_device['index']+1] = one_byte_limit(rgbw[1]*(36/127))
+                dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[2]*(93/127))
+                dmx_universe_target[dmx_device['index']+3] = one_byte_limit(rgbw[3])
+                #for index, value in enumerate(get_color_rgbw(color_value)):
+                #    dmx_universe_target[index+dmx_device['index']] = one_byte_limit(value)
             if dmx_device.get('type') == 'neoneonfloor':
-                dmx_universe_target[dmx_device['index']] = 17  # Constant to enter 3 light mode
-                rgbw = get_color_rgbw(color_value)
+                dmx_universe_target[dmx_device['index']] = 50  # Constant to enter 3 light mode
                 dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[0]+rgbw[3])
                 dmx_universe_target[dmx_device['index']+3] = one_byte_limit(rgbw[1]+rgbw[3])
                 dmx_universe_target[dmx_device['index']+4] = one_byte_limit(rgbw[2]+rgbw[3])
             if dmx_device.get('type') == 'neoneonfloorPart':
-                rgbw = get_color_rgbw(color_value)
                 dmx_universe_target[dmx_device['index']+0] = one_byte_limit(rgbw[0]+rgbw[3])
                 dmx_universe_target[dmx_device['index']+1] = one_byte_limit(rgbw[1]+rgbw[3])
                 dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[2]+rgbw[3])

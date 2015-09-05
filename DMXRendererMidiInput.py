@@ -1,3 +1,4 @@
+from pprint import pprint
 from colorsys import hsv_to_rgb
 
 from libs.pygame_midi_input import MidiInput
@@ -19,6 +20,14 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
 
     Sliders control a single lights red,green,blue,white,control directly.
     Nobs manipulate groups of lights using HSV
+
+    neoneon modes
+    40 -> 80 3 light mode
+    80 -> 120 Single light mode
+
+    35/127 green
+    93/127 blue
+
     """
 
     CONTROL_OFFSET_JUMP = 8
@@ -30,7 +39,7 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
     FLATPAR_BOTTOM = (0, 56)
     HSV_A_INDEXS = FLATPAR_TOP
     HSV_B_INDEXS = FLATPAR_BOTTOM + FLOOR_INDEXS_RGB
-    SMOKE_INDEX = 128
+    SMOKE_INDEX = 112
 
     def __init__(self, name):
         super().__init__()
@@ -45,13 +54,15 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
 
         # Set dmx constant for single light mode for the neoneon floor lights
         for index in self.FLOOR_INDEXS:
-            self.dmx_universe[index] = 64
+            self.dmx_universe[index] = 100
 
     def render(self, frame):
         self.midi_input.process_events()  # Poll the midi input per frame (This prevents the need for another thread to monitor the midi state)
         return self.dmx_universe
 
     def midi_event(self, event, data1, data2, data3):
+        #print(data1, data2, data3)
+
         if data1 == 46:
             #self.loop.running = False
             print('Exit is disbaled, bloody well fix it')
@@ -84,9 +95,18 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
 
         # Smoke
         if data1 == 60:
-            self.dmx_universe[self.SMOKE_INDEX] = 64 if data2 >= 64 else 0
+            self.dmx_universe[self.SMOKE_INDEX+0] = 0
         if data1 == 61:
-            self.dmx_universe[self.SMOKE_INDEX] = 255 if data2 >= 64 else 0
+            self.dmx_universe[self.SMOKE_INDEX+0] = 6
+            self.dmx_universe[self.SMOKE_INDEX+1] = 64 if data2 >= 64 else 0
+        if data1 == 62:
+            self.dmx_universe[self.SMOKE_INDEX+0] = 6
+            self.dmx_universe[self.SMOKE_INDEX+1] = 255 if data2 >= 64 else 0
+
+        if data1 == 43 and data2 == 127:
+            print(self.dmx_universe)
+        if data1 == 44 and data2 == 127:
+            pprint(list(enumerate(self.dmx_universe)))
 
 
         def color_float_to_byte(value):
