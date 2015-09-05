@@ -25,7 +25,7 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
     CONTROL_ID_HSV_A = 16
     CONTROL_ID_HSV_B = 20
     FLOOR_INDEXS = (64, 75, 86, 97)
-    FLOOR_INDEXS_RGB = (i+2 for i in FLOOR_INDEXS)
+    FLOOR_INDEXS_RGB = tuple(i+2 for i in FLOOR_INDEXS)
     FLATPAR_TOP = (8, 16, 24, 32, 40, 48)
     FLATPAR_BOTTOM = (0, 56)
     HSV_A_INDEXS = FLATPAR_TOP
