@@ -102,6 +102,12 @@ dmx_devices:
         type: group
         group: [light1, light3, light6, light8]
 
+    side_floor:
+        type: group
+        group: [matt_floor, lyle_floor]
+    side_top:
+        type: group
+        group: [matt_top, lyle_top]
 
     matt:
         type: group
