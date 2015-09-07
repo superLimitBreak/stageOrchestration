@@ -76,15 +76,13 @@ dmx_devices:
         type: neoneonfloorPart
         index: 105
 
-
-
     smoke:
         type: cauvetHuricane
         index: 112
 
     all:
         type: group
-        group: [light1, light2, light3, light4, light5, light6, light7, light8, floor1, floor2, floor3, floor4]
+        group: [top, bottom]
     top:
         type: group
         group: [light2, light3, light4, light5, light6, light7]
@@ -105,29 +103,64 @@ dmx_devices:
         group: [light1, light3, light6, light8]
 
 
-
-    
     matt:
-        type: lightRGBW
-        index: 8
+        type: group
+        group: [matt_top, matt_floor]
+    matt_top:
+        type: group
+        group: [light2]
+    matt_floor:
+        type: group
+        group: [floor1]
+
     allan_piano:
-        type: lightRGBW
-        index: 16
+        type: group
+        group: [allan_piano_top, allan_piano_floor]
+    allan_piano_top:
+        type: group
+        group: [light4]
+    allan_piano_floor:
+        type: group
+        group: [floor2]
+
     allan_bass:
-        type: lightRGBW
-        index: 24
+        type: group
+        group: [allan_bass_top, allan_bass_floor]
+    allan_bass_top:
+        type: group
+        group: [light3]
+    allan_bass_floor:
+        group: [light2]
+
     choco:
-        type: lightRGBW
-        index: 32
+        type: group
+        group: [choco_top, choco_floor]
+    choco_top:
+        type: group
+        group: [light6]
+    choco_floor:
+        type: group
+        group: [light8]
+
     joe:
-        type: lightRGBW
-        index: 40
-    joe:
-        type: lightRGBW
-        index: 40
+        type: group
+        group: [joe_top, joe_floor]
+    joe_top:
+        type: group
+        group: [light5]
+    joe_floor:
+        type: group
+        group: [floor4]
+
     lyle:
-        type: lightRGBW
-        index: 48
+        type: group
+        group: [lyle_top, lyle_floor]
+    lyle_top:
+        type: group
+        group: [light7]
+    lyle_floor:
+        type: group
+        group: [floor3]
 
 colors:
     #'off': [0,0,0,0]
@@ -150,3 +183,9 @@ colors:
 # 0.1 will start the lighting 100ms early
 # Typically this will be mean the first 100ms of the first scene will be skipped
 time_offset: 0
+
+# A function to limit the maximum value of the lights.
+# A value of 0.5 will ensure that all values are halfed
+# e.g. red:255 -> red:127
+# This is useful for when you want the lights, but they are trumping other lightsouces like a projector
+global_volume: 1.0
