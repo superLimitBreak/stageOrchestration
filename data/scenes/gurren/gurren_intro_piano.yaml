@@ -1,12 +1,15 @@
 0.0.0:
-    state:
+    state_start:
         all:
             black
-0.2.0:
     state:
         allan_piano:
             white
     tween:
         linear
-1.2.0:
-    duration: 20
+1.0.0:
+    
+15.0.0:
+    state:
+        all: black
+16.0.0:

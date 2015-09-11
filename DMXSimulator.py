@@ -134,30 +134,30 @@ class DMXSimulator(ArtNet3, PygameBase):
         PygameBase.__init__(self, framerate=framerate)
 
         self._init_dmx_items(
-            DMXLightRGBW(0, 0, 140),
-            DMXLightRGBW(8, 0, 100),
-            DMXLightRGBW(16, 0, 0),
-            DMXLightRGBW(24, 64, 0),
-            DMXLightRGBW(32, 128, 0),
-            DMXLightRGBW(40, 184, 0),
-            DMXLightRGBW(48, 256, 0),
-            DMXLightRGBW(56, 284, 100),
+            DMXLightRGBW(0, 80, 140),    # light1 - allan_bass_floor
+            DMXLightRGBW(8, 0, 120),     # light2 - matt_top
+            DMXLightRGBW(16, 80, 100),   # light3 - allan_bass_top
+            DMXLightRGBW(24, 20, 0),     # light4 - allan_piano_top
+            DMXLightRGBW(32, 220, 0),    # light5 - joe_top
+            DMXLightRGBW(40, 180, 100),    # light6 - choco_top
+            DMXLightRGBW(48, 250, 120),    # light7 - lyle_top
+            DMXLightRGBW(56, 180, 140),  # light8 - choco_floor
 
-            DMXLightRGB(66, 0, 200),
+            DMXLightRGB(66, 0, 200),     # floor1 - matt_bottom
             DMXLightRGB(69, 0+24, 200),
             DMXLightRGB(72, 0+48, 200),
 
-            DMXLightRGB(77, 96, 200),
-            DMXLightRGB(80, 96+24, 200),
-            DMXLightRGB(83, 96+48, 200),
+            DMXLightRGB(77, 0, 60),    # floor2 - allan_piano_bottom
+            DMXLightRGB(80, 0+24, 60),
+            DMXLightRGB(83, 0+48, 60),
 
-            DMXLightRGB(88, 192, 200),
-            DMXLightRGB(91, 192+24, 200),
-            DMXLightRGB(94, 192+48, 200),
+            DMXLightRGB(88, 240, 60),   # floor3 - joe_bottom
+            DMXLightRGB(91, 240+24, 60),
+            DMXLightRGB(94, 240+48, 60),
 
-            DMXLightRGB(88, 288, 200),
-            DMXLightRGB(91, 288+24, 200),
-            DMXLightRGB(94, 288+48, 200),
+            DMXLightRGB(99, 240, 200),   # floor4 - lyle_bottom
+            DMXLightRGB(102, 240+24, 200),
+            DMXLightRGB(105, 240+48, 200),
 
         )
         self.state = [random.randint(0, 255) for i in range(512)]  # Startup with a completlty random DMX state

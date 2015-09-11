@@ -97,10 +97,12 @@ dmx_devices:
         group: [light2, light4, light6, light8]
     primary:
         type: group
-        group: [light2, light4, light5, light7]
+        group: [light2, light4, light5, light7, floor1, floor4]
     secondary:
         type: group
-        group: [light1, light3, light6, light8]
+        group: [light1, light3, light6, light8, floor2, floor3]
+
+
 
     side_floor:
         type: group
@@ -108,6 +110,10 @@ dmx_devices:
     side_top:
         type: group
         group: [matt_top, lyle_top]
+    sides:
+        type: group
+        group: [lyle, matt]
+
 
     matt:
         type: group
@@ -136,7 +142,7 @@ dmx_devices:
         type: group
         group: [light3]
     allan_bass_floor:
-        group: [light2]
+        group: [light1]
 
     choco:
         type: group
@@ -156,7 +162,7 @@ dmx_devices:
         group: [light5]
     joe_floor:
         type: group
-        group: [floor4]
+        group: [floor3]
 
     lyle:
         type: group
@@ -166,7 +172,7 @@ dmx_devices:
         group: [light7]
     lyle_floor:
         type: group
-        group: [floor3]
+        group: [floor4]
 
 colors:
     #'off': [0,0,0,0]

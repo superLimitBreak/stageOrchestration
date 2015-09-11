@@ -26,6 +26,7 @@
     state:
         light8: red
 
+
 6.2.0:
     state:
         all: black
@@ -52,7 +53,44 @@
     state:
         all: red
 
+7.0.0:
+    state:
+        all: black
+7.0.1:
+    state:
+        all: red
+7.0.2:
+    state:
+        all: black
+7.0.3:
+    state:
+        all: red
 
+7.1.0:
+    state:
+        all: black
+7.1.1:
+    state:
+        all: red
+7.1.2:
+    state:
+        all: black
+7.1.3:
+    state:
+        all: red
+
+7.2.0:
+    state:
+        all: black
+7.2.1:
+    state:
+        all: red
+7.2.2:
+    state:
+        all: black
+7.2.3:
+    state:
+        all: red
 
 
 
