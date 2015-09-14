@@ -123,7 +123,7 @@ dmx_devices:
         group: [light2]
     matt_floor:
         type: group
-        group: [floor1]
+        group: [floor2]
 
     allan_piano:
         type: group
@@ -133,7 +133,7 @@ dmx_devices:
         group: [light4]
     allan_piano_floor:
         type: group
-        group: [floor2]
+        group: [floor1]
 
     allan_bass:
         type: group
@@ -162,7 +162,7 @@ dmx_devices:
         group: [light5]
     joe_floor:
         type: group
-        group: [floor3]
+        group: [floor4]
 
     lyle:
         type: group
@@ -172,7 +172,15 @@ dmx_devices:
         group: [light7]
     lyle_floor:
         type: group
-        group: [floor4]
+        group: [floor3]
+
+device_config:
+    lightRGBW:
+        red_factor: 1.0
+        green_factor: 0.28
+        blue_factor: 0.73
+    neoneonfloor:
+        mode: 50
 
 colors:
     #'off': [0,0,0,0]
