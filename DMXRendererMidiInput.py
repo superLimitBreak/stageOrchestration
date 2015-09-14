@@ -96,12 +96,13 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
         # Smoke
         if data1 == 60:
             self.dmx_universe[self.SMOKE_INDEX+0] = 0
+            self.dmx_universe[self.SMOKE_INDEX+1] = 0
         if data1 == 61:
             self.dmx_universe[self.SMOKE_INDEX+0] = 6
-            self.dmx_universe[self.SMOKE_INDEX+1] = 64 if data2 >= 64 else 0
+            self.dmx_universe[self.SMOKE_INDEX+1] = 64  # if data2 >= 64 else 0
         if data1 == 62:
             self.dmx_universe[self.SMOKE_INDEX+0] = 6
-            self.dmx_universe[self.SMOKE_INDEX+1] = 255 if data2 >= 64 else 0
+            self.dmx_universe[self.SMOKE_INDEX+1] = 255  # if data2 >= 64 else 0
 
         if data1 == 43 and data2 == 127:
             print(self.dmx_universe)
