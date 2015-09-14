@@ -143,21 +143,21 @@ class DMXSimulator(ArtNet3, PygameBase):
             DMXLightRGBW(48, 250, 120),    # light7 - lyle_top
             DMXLightRGBW(56, 180, 140),  # light8 - choco_floor
 
-            DMXLightRGB(66, 0, 200),     # floor1 - matt_bottom
-            DMXLightRGB(69, 0+24, 200),
-            DMXLightRGB(72, 0+48, 200),
+            DMXLightRGB(66, 0, 60),    # floor1 - allan_piano_bottom
+            DMXLightRGB(69, 0+24, 60),
+            DMXLightRGB(72, 0+48, 60),
 
-            DMXLightRGB(77, 0, 60),    # floor2 - allan_piano_bottom
-            DMXLightRGB(80, 0+24, 60),
-            DMXLightRGB(83, 0+48, 60),
+            DMXLightRGB(77, 0, 200),     # floor2 - matt_bottom
+            DMXLightRGB(80, 0+24, 200),
+            DMXLightRGB(83, 0+48, 200),
 
-            DMXLightRGB(88, 240, 60),   # floor3 - joe_bottom
-            DMXLightRGB(91, 240+24, 60),
-            DMXLightRGB(94, 240+48, 60),
+            DMXLightRGB(88, 240, 200),   # floor3 - lyle_bottom
+            DMXLightRGB(91, 240+24, 200),
+            DMXLightRGB(94, 240+48, 200),
 
-            DMXLightRGB(99, 240, 200),   # floor4 - lyle_bottom
-            DMXLightRGB(102, 240+24, 200),
-            DMXLightRGB(105, 240+48, 200),
+            DMXLightRGB(99, 240, 60),   # floor4 - joe_bottom
+            DMXLightRGB(102, 240+24, 60),
+            DMXLightRGB(105, 240+48, 60),
 
         )
         self.state = [random.randint(0, 255) for i in range(512)]  # Startup with a completlty random DMX state
