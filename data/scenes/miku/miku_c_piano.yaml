@@ -1,6 +1,6 @@
 0.0.0:
     state:
-        alias: test1
+        name: test1
         
         allan_piano_floor: white
         joe_floor: white
@@ -15,7 +15,7 @@
 
 1.0.0:
     state:
-        alias: test2
+        name: test2
         
         allan_piano_floor: cyan
         joe_floor: cyan
@@ -33,9 +33,13 @@
 3.0.0:
     state: test2
 4.0.0:
-    state: test1
+    state:
+        use: test1
+        allan_bass: red
 5.0.0:
-    state: test2
+    state:
+        use: test2
+        choco: red
 
 
 8.0.0:

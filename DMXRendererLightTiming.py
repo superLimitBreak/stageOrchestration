@@ -216,7 +216,7 @@ class SceneParser(object):
     """
     DEFAULT_DURATION = 0.0
 
-    EXCLUDE_DMX_DEVICE_NAME = ('alias',)
+    EXCLUDE_DMX_DEVICE_NAME = ('use', 'name')
 
     def __init__(self, config):
         self.config = config
@@ -331,9 +331,11 @@ class SceneParser(object):
         if not target_state:
             return
         # Copy the alias over this bytearray
-        if isinstance(target_state, str) and self.dmx_universe_alias.get(target_state):
-            dmx_universe_target[:] = self.dmx_universe_alias.get(target_state)
-            return  # May not need to return here ... what if we could do additional modifications?
+        if isinstance(target_state, str):
+            target_state = {'use': target_state}
+        alias_name = target_state.get('use')
+        if alias_name and alias_name in self.dmx_universe_alias:
+            dmx_universe_target[:] = self.dmx_universe_alias[alias_name]
 
         def get_color_rgbw(color_value):
             return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
@@ -375,8 +377,8 @@ class SceneParser(object):
             render_state_item(dmx_device_name, color_value)
 
         # Alias this name
-        if target_state.get('alias'):
-            self.dmx_universe_alias[target_state.get('alias')] = dmx_universe_target
+        if target_state.get('name'):
+            self.dmx_universe_alias[target_state.get('name')] = dmx_universe_target
 
 
 class Scene(object):
