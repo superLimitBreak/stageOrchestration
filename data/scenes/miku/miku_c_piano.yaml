@@ -1,3 +1,6 @@
+meta:
+    mute_devices: [light1, light3, light6, light8]
+
 0.0.0:
     state:
         name: test1
@@ -39,7 +42,7 @@
 5.0.0:
     state:
         use: test2
-        choco: red
+        matt: red
 
 
 8.0.0:

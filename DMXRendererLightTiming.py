@@ -216,17 +216,19 @@ class SceneParser(object):
     """
     DEFAULT_DURATION = 0.0
 
-    EXCLUDE_DMX_DEVICE_NAME = ('use', 'name')
+    MUTED_DEVICES = ('use', 'name')
 
     def __init__(self, config):
         self.config = config
         self.dmx_universe_alias = {}
+        self.mute_devices = []
 
     def create_scene(self, data):
         if not data:
             return Scene([])
         meta = data.pop('meta', {})
         timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
+        self.mute_devices = tuple(meta.get('mute_devices', ())) + self.MUTED_DEVICES
 
         scene_items = self.parse_scene_order(data, timesigniture)
         # Step though the dict items in order - rendering the desired output to 'previous' and 'target' states
@@ -342,7 +344,7 @@ class SceneParser(object):
 
         # Render item
         def render_state_item(dmx_device_name, color_value):
-            if dmx_device_name in self.EXCLUDE_DMX_DEVICE_NAME:
+            if dmx_device_name in self.mute_devices:
                 return
             dmx_device = self.config['dmx_devices'].get(dmx_device_name)
             if not dmx_device:
