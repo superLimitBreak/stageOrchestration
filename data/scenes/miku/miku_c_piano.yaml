@@ -1,5 +1,42 @@
 0.0.0:
     state:
-        all: yellow
+        alias: test1
+        
+        allan_piano_floor: white
+        joe_floor: white
+        lyle_floor: white
+        matt_floor: white
+        
+        allan_piano_top: dim_25
+        joe_top: dim_25
+        
+        matt_top: cyan
+        lyle_top: cyan
+
+1.0.0:
+    state:
+        alias: test2
+        
+        allan_piano_floor: cyan
+        joe_floor: cyan
+        lyle_floor: cyan
+        matt_floor: cyan
+        
+        allan_piano_top: dim_25
+        joe_top: dim_25
+        
+        matt_top: white
+        lyle_top: white
+        
+2.0.0:
+    state: test1
+3.0.0:
+    state: test2
+4.0.0:
+    state: test1
+5.0.0:
+    state: test2
+
+
 8.0.0:
     

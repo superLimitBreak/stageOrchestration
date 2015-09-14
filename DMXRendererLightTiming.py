@@ -216,8 +216,11 @@ class SceneParser(object):
     """
     DEFAULT_DURATION = 0.0
 
+    EXCLUDE_DMX_DEVICE_NAME = ('alias',)
+
     def __init__(self, config):
         self.config = config
+        self.dmx_universe_alias = {}
 
     def create_scene(self, data):
         if not data:
@@ -316,7 +319,7 @@ class SceneParser(object):
         self.render_state_dict(current_scene_item.get('state'), current_scene_dmx['target'])
 
 
-    def render_state_dict(self, target_state_dict, dmx_universe_target):
+    def render_state_dict(self, target_state, dmx_universe_target):
         """
         Given a state dict in the form of
         {alias_name: value, alias_name2: value}
@@ -325,15 +328,25 @@ class SceneParser(object):
         This needs refactoring.
         Maybe abstract each light into an object that has it's own color function to convert it to it's own color space?
         """
-        if not target_state_dict:
+        if not target_state:
             return
+        # Copy the alias over this bytearray
+        if isinstance(target_state, str) and self.dmx_universe_alias.get(target_state):
+            dmx_universe_target[:] = self.dmx_universe_alias.get(target_state)
+            return  # May not need to return here ... what if we could do additional modifications?
 
         def get_color_rgbw(color_value):
             return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
 
         # Render item
         def render_state_item(dmx_device_name, color_value):
+            if dmx_device_name in self.EXCLUDE_DMX_DEVICE_NAME:
+                return
             dmx_device = self.config['dmx_devices'].get(dmx_device_name)
+            if not dmx_device:
+                log.info('unknown dmx_device_name: '+dmx_device_name)
+                return
+
             rgbw = get_color_rgbw(color_value)
             # Single light
             if dmx_device.get('type') == 'lightRGBW':
@@ -358,8 +371,12 @@ class SceneParser(object):
                     render_state_item(group_item_dmx_device_name, color_value)
 
         # Render dict
-        for dmx_device_name, color_value in target_state_dict.items():
+        for dmx_device_name, color_value in target_state.items():
             render_state_item(dmx_device_name, color_value)
+
+        # Alias this name
+        if target_state.get('alias'):
+            self.dmx_universe_alias[target_state.get('alias')] = dmx_universe_target
 
 
 class Scene(object):
