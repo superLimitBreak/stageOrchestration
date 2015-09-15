@@ -1,5 +1,6 @@
 0.0.0:
     state:
-        all: cyan
+        top: red
+        floor: dim_50
 8.0.0:
     

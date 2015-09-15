@@ -82,19 +82,14 @@ dmx_devices:
 
     all:
         type: group
-        group: [top, bottom]
+        group: [top, floor]
     top:
         type: group
-        group: [light2, light3, light4, light5, light6, light7]
-    bottom:
+        group: [matt_top, lyle_top, allan_piano_top, joe_top, allan_bass_top, choco_top]
+    floor:
         type: group
-        group: [light1, light8, floor1, floor2, floor3, floor4]
-    odd:
-        type: group
-        group: [light1, light3, light5, light7]
-    even:
-        type: group
-        group: [light2, light4, light6, light8]
+        group: [matt_floor, lyle_floor, allan_piano_floor, joe_floor, allan_bass_floor, choco_floor]
+        
     primary:
         type: group
         group: [light2, light4, light5, light7, floor1, floor4]
@@ -142,6 +137,7 @@ dmx_devices:
         type: group
         group: [light3]
     allan_bass_floor:
+        type: group
         group: [light1]
 
     choco:

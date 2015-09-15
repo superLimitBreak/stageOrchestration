@@ -1,5 +1,27 @@
 0.0.0:
+    state_start:
+        all: dim_50
     state:
-        all: blue
+        floor: purple
+        top: orange
+    tween:
+        easeInQuint
+1.0.0:
+    state:
+        floor: orange
+        top: purple
+    tween:
+        easeInQuint
+2.0.0:
+    state:
+        all: yellow
+    tween:
+        easeInQuint
+3.0.0:
+    
+5.0.0:
+    state:
+        all: black
+    tween: linear
 6.0.0:
     

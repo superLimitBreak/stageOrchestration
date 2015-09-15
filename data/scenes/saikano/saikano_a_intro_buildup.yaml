@@ -1,4 +1,9 @@
 0.0.0:
     state:
-        all: red
+        matt_floor: red
+        matt_top: yellow
+2.0.0:
+    state:
+        lyle: white
+    tween: linear
 4.0.0:

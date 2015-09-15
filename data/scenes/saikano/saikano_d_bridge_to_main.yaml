@@ -1,5 +1,15 @@
 0.0.0:
+    state_start:
+        floor: white
+        top: orange
     state:
-        all: orange
+        floor: orange
+        top: white
+    tween: linear
+4.0.0:
+    state:
+        floor: white
+        top: orange
+    tween: linear
 8.0.0:
     

@@ -1,5 +1,6 @@
 0.0.0:
     state:
-        all: red
+        floor: blue
+        top: red
 8.0.0:
     
