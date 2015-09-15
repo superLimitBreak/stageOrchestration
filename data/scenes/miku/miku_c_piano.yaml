@@ -3,7 +3,11 @@ meta:
 
 0.0.0:
     state:
-        name: test1
+        all: cyan
+
+0.3.2:
+    state:
+        name: cyan_white_1
         
         allan_piano_floor: white
         joe_floor: white
@@ -16,9 +20,9 @@ meta:
         matt_top: cyan
         lyle_top: cyan
 
-1.0.0:
+1.3.2:
     state:
-        name: test2
+        name: cyan_white_2
         
         allan_piano_floor: cyan
         joe_floor: cyan
@@ -31,19 +35,10 @@ meta:
         matt_top: white
         lyle_top: white
         
-2.0.0:
-    state: test1
-3.0.0:
-    state: test2
+2.3.2:
+    state: cyan_white_1
 4.0.0:
-    state:
-        use: test1
-        allan_bass: red
-5.0.0:
-    state:
-        use: test2
-        matt: red
-
+    state: cyan_white_2
 
 8.0.0:
     

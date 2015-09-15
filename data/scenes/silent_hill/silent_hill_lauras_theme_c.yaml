@@ -1,21 +1,60 @@
 # first
 0.0.0:
-    state:
-        all: white
+    state_start: laura_green1
+    state: laura_green2
+    tween: easeInQuad
+1.0.0:
+    state: laura_green1
+    tween: easeInQuad
+2.0.0:
+    state: laura_green2
+    tween: easeInQuad
+3.0.0:
+    state: laura_green1
+    tween: easeInQuad
+
 # second
 4.0.0:
-    state:
-        all: blue
+    state: laura_green2
+    tween: easeInQuad
+5.0.0:
+    state: laura_green1
+    tween: easeInQuad
+6.0.0:
+    state: laura_green2
+    tween: easeInQuad
+7.0.0:
+    state: laura_green1
+    tween: easeInQuad    
 
 # third
 8.0.0:
-    state:
-        all: green
+    state: laura_green2
+    tween: easeInQuad
+9.0.0:
+    state: laura_green1
+    tween: easeInQuad
+10.0.0:
+    state: laura_green2
+    tween: easeInQuad
+11.0.0:
+    state: laura_green1
+    tween: easeInQuad
+
 
 # fourth
 12.0.0:
-    state:
-        all: red
+    state: laura_green2
+    tween: easeInQuad
+13.0.0:
+    state: laura_green1
+    tween: easeInQuad
+14.0.0:
+    state: laura_green2
+    tween: easeInQuad
+15.0.0:
+    state: laura_green1
+    tween: easeInQuad
 
 16.0.0:
     

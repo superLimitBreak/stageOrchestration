@@ -1,6 +1,11 @@
+
+
 0.0.0:
     state:
-        all: red
+        matt_floor: red
+        lyle_floor: red
+        matt_top: yellow
+        lyle_top: yellow
 
 16.0.0:
     

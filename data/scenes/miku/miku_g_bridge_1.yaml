@@ -1,3 +1,5 @@
+meta:
+    mute_devices: [allan_bass, choco, joe_floor, allan_piano_floor]
 0.0.0:
     state:
         all: orange

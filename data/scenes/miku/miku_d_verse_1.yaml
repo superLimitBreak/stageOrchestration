@@ -1,5 +1,6 @@
 0.0.0:
-    state:
-        all: green
+    state: cyan_white_1
+8.0.0:
+    state: cyan_white_2
 16.0.0:
     

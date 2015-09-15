@@ -1,12 +1,13 @@
 # Bass follows drums
 0.0.0:
     state:
-        all: blue
+        floor: green
 
 # Rise up
 8.0.0:
     state:
-        all: red
+        top: red
+        floor: yellow
     
 # Down heavy at end
 14.0.0:

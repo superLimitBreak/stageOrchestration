@@ -82,7 +82,7 @@ dmx_devices:
 
     all:
         type: group
-        group: [top, floor]
+        group: [allan_piano, allan_bass, matt, lyle, joe, choco]
     top:
         type: group
         group: [matt_top, lyle_top, allan_piano_top, joe_top, allan_bass_top, choco_top]
@@ -109,6 +109,25 @@ dmx_devices:
         type: group
         group: [lyle, matt]
 
+    back_floor:
+        type: group
+        group: [allan_piano_floor, joe_floor]
+    back_top:
+        type: group
+        group: [allan_piano_top, joe_top]
+    back:
+        type: group
+        group: [back_floor, back_top]
+
+    middle_top:
+        type: group
+        group: [allan_bass_top, choco_top]
+    middle_floor:
+        type: group
+        group: [allan_bass_floor, choco_floor]
+    middle:
+        type: group
+        group: [middle_floor, middle_top]
 
     matt:
         type: group

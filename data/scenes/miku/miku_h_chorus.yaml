@@ -1,5 +1,9 @@
+meta:
+    mute_devices: [allan_bass_floor, allan_bass_top, choco_floor, choco_top]
+
 0.0.0:
     state:
-        all: red
+        floor: cyan
+        top: white
 16.0.0:
     

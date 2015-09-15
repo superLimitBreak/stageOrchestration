@@ -1,32 +1,36 @@
 0.0.0:
     state:
-        all: red
-0.1.0:
-    state:
-        all: green
-0.2.0:
-    state:
-        all: blue
-0.3.0:
-    state:
-        all: white
+        name: laura_green1
         
+        side_floor: green
+        side_top: white
+        back_floor: white
+        back_top: green
+        middle_top: white
+        middle_floor: green
 1.0.0:
     state:
-        all: red
-1.1.0:
-    state:
-        all: green
+        name: laura_green2
 
-1.2.0:
-    state:
-        all: blue
-1.3.0:
-    state:
-        all: white
+        side_floor: white
+        side_top: green
+        back_floor: green
+        back_top: white
+        middle_top: white
+        middle_floor: green
 
 2.0.0:
-
+    state: laura_green1
+3.0.0:
+    state: laura_green2
+4.0.0:
+    state: laura_green1
+5.0.0:
+    state: laura_green2
+6.0.0:
+    state: laura_green1
+7.0.0:
+    state: laura_green2
 
 8.0.0:
     
