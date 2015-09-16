@@ -3,7 +3,7 @@
         all:
             black
     state:
-        allan_piano:
+        piano:
             white
     tween:
         linear

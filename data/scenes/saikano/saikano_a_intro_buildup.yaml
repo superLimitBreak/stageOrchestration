@@ -1,9 +1,9 @@
 0.0.0:
     state:
-        matt_floor: red
-        matt_top: yellow
+        rythum_floor: red
+        rythum_top: yellow
 2.0.0:
     state:
-        lyle: white
+        lead: white
     tween: linear
 4.0.0:

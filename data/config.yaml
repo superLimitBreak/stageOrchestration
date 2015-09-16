@@ -82,13 +82,13 @@ dmx_devices:
 
     all:
         type: group
-        group: [allan_piano, allan_bass, matt, lyle, joe, choco]
+        group: [piano, bass, rythum, lead, drum, vocal]
     top:
         type: group
-        group: [matt_top, lyle_top, allan_piano_top, joe_top, allan_bass_top, choco_top]
+        group: [rythum_top, lead_top, piano_top, drum_top, bass_top, vocal_top]
     floor:
         type: group
-        group: [matt_floor, lyle_floor, allan_piano_floor, joe_floor, allan_bass_floor, choco_floor]
+        group: [rythum_floor, lead_floor, piano_floor, drum_floor, bass_floor, vocal_floor]
         
     primary:
         type: group
@@ -101,91 +101,91 @@ dmx_devices:
 
     side_floor:
         type: group
-        group: [matt_floor, lyle_floor]
+        group: [rythum_floor, lead_floor]
     side_top:
         type: group
-        group: [matt_top, lyle_top]
+        group: [rythum_top, lead_top]
     sides:
         type: group
-        group: [lyle, matt]
+        group: [lead, rythum]
 
     back_floor:
         type: group
-        group: [allan_piano_floor, joe_floor]
+        group: [piano_floor, drum_floor]
     back_top:
         type: group
-        group: [allan_piano_top, joe_top]
+        group: [piano_top, drum_top]
     back:
         type: group
         group: [back_floor, back_top]
 
     middle_top:
         type: group
-        group: [allan_bass_top, choco_top]
+        group: [bass_top, vocal_top]
     middle_floor:
         type: group
-        group: [allan_bass_floor, choco_floor]
+        group: [bass_floor, vocal_floor]
     middle:
         type: group
         group: [middle_floor, middle_top]
 
-    matt:
+    rythum:
         type: group
-        group: [matt_top, matt_floor]
-    matt_top:
+        group: [rythum_top, rythum_floor]
+    rythum_top:
         type: group
         group: [light2]
-    matt_floor:
+    rythum_floor:
         type: group
         group: [floor2]
 
-    allan_piano:
+    piano:
         type: group
-        group: [allan_piano_top, allan_piano_floor]
-    allan_piano_top:
+        group: [piano_top, piano_floor]
+    piano_top:
         type: group
         group: [light4]
-    allan_piano_floor:
+    piano_floor:
         type: group
         group: [floor1]
 
-    allan_bass:
+    bass:
         type: group
-        group: [allan_bass_top, allan_bass_floor]
-    allan_bass_top:
+        group: [bass_top, bass_floor]
+    bass_top:
         type: group
         group: [light3]
-    allan_bass_floor:
+    bass_floor:
         type: group
         group: [light1]
 
-    choco:
+    vocal:
         type: group
-        group: [choco_top, choco_floor]
-    choco_top:
+        group: [vocal_top, vocal_floor]
+    vocal_top:
         type: group
         group: [light6]
-    choco_floor:
+    vocal_floor:
         type: group
         group: [light8]
 
-    joe:
+    drum:
         type: group
-        group: [joe_top, joe_floor]
-    joe_top:
+        group: [drum_top, drum_floor]
+    drum_top:
         type: group
         group: [light5]
-    joe_floor:
+    drum_floor:
         type: group
         group: [floor4]
 
-    lyle:
+    lead:
         type: group
-        group: [lyle_top, lyle_floor]
-    lyle_top:
+        group: [lead_top, lead_floor]
+    lead_top:
         type: group
         group: [light7]
-    lyle_floor:
+    lead_floor:
         type: group
         group: [floor3]
 

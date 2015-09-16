@@ -2,10 +2,10 @@
 
 0.0.0:
     state:
-        matt_floor: red
-        lyle_floor: red
-        matt_top: yellow
-        lyle_top: yellow
+        rythum_floor: red
+        lead_floor: red
+        rythum_top: yellow
+        lead_top: yellow
 
 16.0.0:
     

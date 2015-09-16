@@ -1,12 +1,12 @@
 meta:
     mute_devices: [light1, light3, light6, light8, floor1, floor4]
-# Matt solo
+# Rythum solo
 
 0.0.0:
     state:
         all: blue
 
-# Matt & allan solo
+# Rythum & allan solo
 
 4.0.0:
     state:

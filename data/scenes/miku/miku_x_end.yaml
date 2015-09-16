@@ -1,5 +1,5 @@
 meta:
-    mute_devices: [allan_bass_floor, allan_bass_top, choco_floor, choco_top]
+    mute_devices: [bass_floor, bass_top, vocal_floor, vocal_top]
 
 0.0.0:
     state:

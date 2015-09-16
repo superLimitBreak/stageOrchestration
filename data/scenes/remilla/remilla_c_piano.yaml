@@ -6,12 +6,12 @@ meta:
 
 0.0.0:
     state:
-        lyle_floor: yellow
-        joe_floor: yellow
-        allan_piano_floor: yellow
+        lead_floor: yellow
+        drum_floor: yellow
+        piano_floor: yellow
         
-        lyle_top: white
-        joe_top: white
-        allan_piano_top: white
+        lead_top: white
+        drum_top: white
+        piano_top: white
 16.0.0:
     

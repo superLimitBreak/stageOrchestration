@@ -4,18 +4,18 @@ meta:
 
 0.0.0:
     state_start:
-        allan_piano: white
-        lyle: white
+        piano: white
+        lead: white
     state:
-        allan_piano: white
-        lyle: white
-        joe: white
+        piano: white
+        lead: white
+        drum: white
     tween: linear
 0.2.0:
     state:
-        allan_piano: white
-        lyle: white
-        joe: black
+        piano: white
+        lead: white
+        drum: black
     tween: linear
 1.0.0:
 

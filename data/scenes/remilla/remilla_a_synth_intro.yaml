@@ -3,12 +3,12 @@ meta:
 
 0.0.0:
     state:
-        allan_piano: white
+        piano: white
         
 
 15.0.0:
     state:
-        lyle: white
+        lead: white
     tween: linear
 
 17.0.0:

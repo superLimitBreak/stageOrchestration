@@ -1,38 +1,38 @@
 0.0.0:
     state_start:
-        lyle_top: red
-        lyle_floor: blue
-        joe: white
-        allan_piano: white
+        lead_top: red
+        lead_floor: blue
+        drum: white
+        piano: white
     state:
-        joe: white
-        allan_piano: white
-        lyle_top: blue
-        lyle_floor: red
+        drum: white
+        piano: white
+        lead_top: blue
+        lead_floor: red
     tween: linear
 4.0.0:
     state:
-        joe: white
-        allan_piano: white
+        drum: white
+        piano: white
 
-        lyle_top: red
-        lyle_floor: blue
+        lead_top: red
+        lead_floor: blue
     tween: linear
 8.0.0:
     state:
-        joe: white
-        allan_piano: white
+        drum: white
+        piano: white
 
-        lyle_top: blue
-        lyle_floor: red
+        lead_top: blue
+        lead_floor: red
     tween: linear
 12.0.0:
     state:
-        joe: white
-        allan_piano: white
+        drum: white
+        piano: white
 
-        lyle_top: blue
-        lyle_floor: red
+        lead_top: blue
+        lead_floor: red
     tween: linear
 16.0.0:
     

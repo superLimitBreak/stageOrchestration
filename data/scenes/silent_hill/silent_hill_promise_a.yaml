@@ -1,16 +1,16 @@
 0.0.0:
     state_start:
-        matt_top: dim_50
+        rythum_top: dim_50
     state:
-        matt_floor: white
+        rythum_floor: white
     tween:
         linear
 
 4.0.0:
     state_start:
-        lyle_top: dim_50
+        lead_top: dim_50
     state:
-        lyle_floor: white
+        lead_floor: white
     tween:
         linear
 
@@ -18,8 +18,8 @@
 
 8.0.0:
     state:
-        lyle_top: dim_50
-        matt_top: dim_50
+        lead_top: dim_50
+        rythum_top: dim_50
     tween:
         linear
 
@@ -27,7 +27,7 @@
 
 12.0.0:
     state:
-        lyle: orange
+        lead: orange
     tween: linear
 
 # Bass & Drums enter
