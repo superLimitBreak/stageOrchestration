@@ -1,7 +1,12 @@
 # synth a
 
+meta:
+    mute_devices: [light1, light3, light6, light8]
+
+
 0.0.0:
     state:
-        all: white
+        top: red
+        floor: yellow
 16.0.0:
     

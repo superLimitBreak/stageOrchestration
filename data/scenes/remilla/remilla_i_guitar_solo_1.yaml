@@ -1,5 +1,38 @@
 0.0.0:
+    state_start:
+        lyle_top: red
+        lyle_floor: blue
+        joe: white
+        allan_piano: white
     state:
-        all: purple
+        joe: white
+        allan_piano: white
+        lyle_top: blue
+        lyle_floor: red
+    tween: linear
+4.0.0:
+    state:
+        joe: white
+        allan_piano: white
+
+        lyle_top: red
+        lyle_floor: blue
+    tween: linear
+8.0.0:
+    state:
+        joe: white
+        allan_piano: white
+
+        lyle_top: blue
+        lyle_floor: red
+    tween: linear
+12.0.0:
+    state:
+        joe: white
+        allan_piano: white
+
+        lyle_top: blue
+        lyle_floor: red
+    tween: linear
 16.0.0:
     

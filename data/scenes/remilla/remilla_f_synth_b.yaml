@@ -1,5 +1,10 @@
+meta:
+    mute_devices: [light1, light3, light6, light8]
+
+
 0.0.0:
     state:
-        all: green
+        top: purple
+        floor: cyan
 8.0.0:
     

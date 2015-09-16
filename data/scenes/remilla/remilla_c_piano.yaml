@@ -1,7 +1,17 @@
 #Piano
 
+meta:
+    mute_devices: [light1, light3, light6, light8]
+
+
 0.0.0:
     state:
-        all: blue
+        lyle_floor: yellow
+        joe_floor: yellow
+        allan_piano_floor: yellow
+        
+        lyle_top: white
+        joe_top: white
+        allan_piano_top: white
 16.0.0:
     

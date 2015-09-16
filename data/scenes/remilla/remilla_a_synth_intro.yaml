@@ -1,5 +1,15 @@
+meta:
+    mute_devices: [light1, light3, light6, light8]
+
 0.0.0:
     state:
-        all: red
+        allan_piano: white
+        
+
+15.0.0:
+    state:
+        lyle: white
+    tween: linear
+
 17.0.0:
     
