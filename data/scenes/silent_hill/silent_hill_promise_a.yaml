@@ -1,8 +1,8 @@
 0.0.0:
     state_start:
-        rythum_top: dim_50
+        rhythm_top: dim_50
     state:
-        rythum_floor: white
+        rhythm_floor: white
     tween:
         linear
 
@@ -19,7 +19,7 @@
 8.0.0:
     state:
         lead_top: dim_50
-        rythum_top: dim_50
+        rhythm_top: dim_50
     tween:
         linear
 

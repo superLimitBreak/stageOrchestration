@@ -2,9 +2,9 @@
 
 0.0.0:
     state:
-        rythum_floor: red
+        rhythm_floor: red
         lead_floor: red
-        rythum_top: yellow
+        rhythm_top: yellow
         lead_top: yellow
 
 16.0.0:

@@ -1,8 +1,9 @@
 meta:
     timesigniture: '4:8'
+
 0.0.0:
     state:
-        rythum: white
+        rhythm: white
 
 0.2.4:
     state_start:
@@ -44,17 +45,17 @@ meta:
 
 2.0.0:
     state:
-        vocal: dim_75
+        vocal: white
     tween:
         linear
 2.3.0:
     state:
-        vocal: dim_25
+        vocal: dim_50
     tween:
         linear
 2.5.0:
     state:
-        vocal: dim_75
+        vocal: white
     tween:
         linear
 3.0.0:
@@ -67,6 +68,8 @@ meta:
         vocal: white
     tween:
         linear
-    duration: 4.0
+4.0.0:
+    
+8.0.0:
 
 

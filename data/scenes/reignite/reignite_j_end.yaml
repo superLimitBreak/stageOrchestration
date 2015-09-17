@@ -1,0 +1,13 @@
+meta:
+    timesigniture: '4:8'
+
+0.0.0:
+    state:
+        rhythm: white
+1.0.0:
+    state:
+        all: black
+    tween:
+        linear
+2.0.0:
+    
