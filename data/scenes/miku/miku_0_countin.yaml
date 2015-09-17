@@ -1,5 +1,7 @@
+meta:
+    mute_devices: [bass, vocal, drum_floor, piano_floor]
+
 0.0.0:
-    state:
-        all: black
-4.0.0:
+    drum: white
+2.0.0:
     

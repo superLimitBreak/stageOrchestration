@@ -1,5 +1,8 @@
+meta:
+    mute_devices: [bass, vocal, drum_floor, piano_floor]
+
 0.0.0:
     state:
-        all: blue
+        all: cyan
 4.0.0:
     
