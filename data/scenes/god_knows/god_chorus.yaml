@@ -1,4 +1,6 @@
 0.0.0:
     state:
-        all: purple
-    duration: 18
+        top: full
+        floor: yellow
+18.0.0:
+    

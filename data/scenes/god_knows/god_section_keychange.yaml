@@ -1,4 +1,6 @@
 0.0.0:
     state:
-        all: white
-    duration: 18
+        top: yellow
+        floor: yellow
+18.0.0:
+    

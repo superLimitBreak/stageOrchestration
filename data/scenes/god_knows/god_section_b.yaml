@@ -1,5 +1,9 @@
+# vocals start
+
 0.0.0:
     state:
-        all: green
-    duration: 16
+        top: [0,1,0,1]
+        floor: [1,0,0,1]
+16.0.0:
+    
     

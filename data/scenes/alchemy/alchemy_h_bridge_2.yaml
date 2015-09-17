@@ -1,5 +1,6 @@
 0.0.0:
     state:
-        all: green
+        top: white
+        floor: yellow
 8.0.0:
     

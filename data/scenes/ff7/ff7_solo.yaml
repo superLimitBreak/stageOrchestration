@@ -3,6 +3,7 @@ meta:
 
 0.0.0:
     state:
-        all: yellow
+        top: yellow
+        floor: white
 32.0.0:
     

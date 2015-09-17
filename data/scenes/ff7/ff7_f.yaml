@@ -3,8 +3,10 @@ meta:
 
 0.0.0:
     state:
-        all: purple
+        top: purple
+        floor: white
 8.0.0:
     state:
-        all: white
+        top: cyan
+        floor: white
 16.0.0:

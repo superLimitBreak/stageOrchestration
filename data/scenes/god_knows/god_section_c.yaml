@@ -1,4 +1,6 @@
 0.0.0:
     state:
-        all: white
-    duration: 8
+        top: [1,0,0,1]
+        floor: [0,1,0,1]
+8.0.0:
+    

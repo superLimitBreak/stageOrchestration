@@ -4,13 +4,15 @@ meta:
 
 0.0.0:
     state:
-        all: blue
+        top: blue
+        floor: white
 
 # Rhythm & allan solo
 
 4.0.0:
     state:
-        all: white
+        top: cyan
+        floor: white
 
 8.0.0:
     
