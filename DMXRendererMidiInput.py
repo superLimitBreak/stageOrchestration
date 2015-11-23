@@ -62,6 +62,7 @@ class DMXRendererMidiInput(AbstractDMXRenderer):
 
     def midi_event(self, event, data1, data2, data3):
         #print(data1, data2, data3)
+        #print(self.dmx_universe)
 
         if data1 == 46:
             #self.loop.running = False

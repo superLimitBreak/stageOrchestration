@@ -369,6 +369,17 @@ class SceneParser(object):
                 dmx_universe_target[dmx_device['index']+0] = one_byte_limit(rgbw[0]+rgbw[3])
                 dmx_universe_target[dmx_device['index']+1] = one_byte_limit(rgbw[1]+rgbw[3])
                 dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[2]+rgbw[3])
+            if dmx_device.get('type') == 'OrionLinkV2':
+                dmx_universe_target[dmx_device['index']+0] = one_byte_limit((rgbw[0]+rgbw[3]) * self.config['device_config']['lightRGBW']['red_factor'])
+                dmx_universe_target[dmx_device['index']+1] = one_byte_limit((rgbw[1]+rgbw[3]) * self.config['device_config']['lightRGBW']['green_factor'])
+                dmx_universe_target[dmx_device['index']+2] = one_byte_limit((rgbw[2]+rgbw[3]) * self.config['device_config']['lightRGBW']['blue_factor'])
+            if dmx_device.get('type') == 'OrionLinkV2Final':
+                dmx_universe_target[dmx_device['index']+0] = one_byte_limit((rgbw[0]+rgbw[3]) * self.config['device_config']['lightRGBW']['red_factor'])
+                dmx_universe_target[dmx_device['index']+1] = one_byte_limit((rgbw[1]+rgbw[3]) * self.config['device_config']['lightRGBW']['green_factor'])
+                dmx_universe_target[dmx_device['index']+2] = one_byte_limit((rgbw[2]+rgbw[3]) * self.config['device_config']['lightRGBW']['blue_factor'])
+                dmx_universe_target[dmx_device['index']+3] = 0  # No flash
+                dmx_universe_target[dmx_device['index']+4] = 255  # Master dim
+
             # Group alias
             elif dmx_device.get('type') == 'group':
                 for group_item_dmx_device_name in dmx_device['group']:

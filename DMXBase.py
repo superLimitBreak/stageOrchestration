@@ -2,7 +2,7 @@ import array
 
 
 class AbstractDMXRenderer(object):
-    DEFAULT_DMX_SIZE = 128
+    DEFAULT_DMX_SIZE = 146
 
     @staticmethod
     def new_dmx_array(dmx_size=DEFAULT_DMX_SIZE, default_value=b'\x00'):

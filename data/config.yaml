@@ -76,6 +76,35 @@ dmx_devices:
         type: neoneonfloorPart
         index: 105
 
+    floorLarge1:
+        type: group
+        group: [floorLarge1a, floorLarge1b, floorLarge1c, floorLarge1d, floorLarge1e, floorLarge1f, floorLarge1g, floorLarge1h]
+    floorLarge1a:
+        type: OrionLinkV2
+        index: 116
+    floorLarge1b:
+        type: OrionLinkV2
+        index: 119
+    floorLarge1c:
+        type: OrionLinkV2
+        index: 122
+    floorLarge1d:
+        type: OrionLinkV2
+        index: 125
+    floorLarge1e:
+        type: OrionLinkV2
+        index: 128
+    floorLarge1f:
+        type: OrionLinkV2
+        index: 131
+    floorLarge1g:
+        type: OrionLinkV2
+        index: 134
+    floorLarge1h:
+        type: OrionLinkV2Final
+        index: 137
+    
+
     smoke:
         type: cauvetHuricane
         index: 112
@@ -196,6 +225,11 @@ device_config:
         blue_factor: 0.73
     neoneonfloor:
         mode: 50
+    OrionLinkV2:
+        red_factor: 1.0
+        green_factor: 1.0
+        blue_factor: 1.0
+
 
 colors:
     #'off': [0,0,0,0]
