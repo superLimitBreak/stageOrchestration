@@ -2,6 +2,7 @@
 env/
 __pycache__
 *.pyc
+.cache
 
 libs
 pytweening

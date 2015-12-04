@@ -22,7 +22,7 @@ pytweening/__init__.py: pytweening
 
 # Custom Python Dependencys ----------------------------------------------------
 
-python_libs: libs/udp.py libs/pygame_midi_wrapper.py libs/pygame_midi_input.py libs/music.py libs/loop.py libs/misc.py libs/network_display_event.py
+python_libs: libs/udp.py libs/pygame_midi_wrapper.py libs/pygame_midi_input.py libs/music.py libs/loop.py libs/misc.py libs/client_reconnect.py
 libs:
 	mkdir libs
 	touch libs/__init__.py
@@ -32,8 +32,8 @@ libs/loop.py: libs
 	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py --compressed -O
 libs/udp.py: libs
 	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py --compressed -O
-libs/network_display_event.py: libs
-	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/network_display_event.py --compressed -O
+libs/client_reconnect.py: libs
+	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/client_reconnect.py --compressed -O
 libs/pygame_midi_wrapper.py: libs
 	cd libs && curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py --compressed -O
 libs/pygame_midi_input.py: libs
@@ -43,13 +43,13 @@ libs/music.py: libs
 
 python_libs_local_link: libs
 	# Link local libs; use when all the required repos are checked out locally
-	ln -s ../libs/python3/lib/misc.py ./libs/misc.py
-	ln -s ../libs/python3/lib/oop.py ./libs/loop.py
-	ln -s ../libs/python3/lib/net/upd.py ./libs/upd.py
-	ln -s ../libs/python3/lib/net/network_display_event.py ./libs/network_display_event.py
-	ln -s ../libs/python3/lib/midi/pygame_midi_wrapper.py ./libs/pygame_midi_wrapper.py
-	ln -s ../libs/python3/lib/midi/pygame_midi_input.py ./libs/pygame_midi_input.py
-	ln -s ../PentatonicHero/DMXRendererPentatonicHero.py ./DMXRendererPentatonicHero.py
+	ln -s ../../libs/python3/lib/misc.py ./libs/misc.py
+	ln -s ../../libs/python3/lib/oop.py ./libs/loop.py
+	ln -s ../../libs/python3/lib/net/upd.py ./libs/upd.py
+	ln -s ../../libs/python3/lib/net/client_reconnect.py ./libs/client_reconnect.py
+	ln -s ../../libs/python3/lib/midi/pygame_midi_wrapper.py ./libs/pygame_midi_wrapper.py
+	ln -s ../../libs/python3/lib/midi/pygame_midi_input.py ./libs/pygame_midi_input.py
+	ln -s ../../PentatonicHero/DMXRendererPentatonicHero.py ./DMXRendererPentatonicHero.py
 
 
 # Run --------------------------------------------------------------------------
