@@ -1,7 +1,7 @@
 from libs.loop import Loop
 
 from libs.misc import run_funcs, postmortem
-from libs.client_reconnect import SocketReconnect
+from libs.client_reconnect import JsonSocketReconnect
 
 from DMXBase import AbstractDMXRenderer, mix
 
@@ -31,7 +31,7 @@ class DMXManager(AbstractDMXRenderer):
         self.artnet = ArtNet3(host=kwargs['artnet_dmx_host'])
 
         if kwargs.get('displaytrigger_host'):
-            self.net = SocketReconnect.factory(host=kwargs['displaytrigger_host'])
+            self.net = JsonSocketReconnect.factory(host=kwargs['displaytrigger_host'])
             self.net.recive = self.recive
 
         self.loop = Loop(kwargs['framerate'])
