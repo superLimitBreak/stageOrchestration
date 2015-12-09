@@ -1,7 +1,7 @@
 from libs.loop import Loop
 
 from libs.misc import run_funcs, postmortem
-from libs.client_reconnect import JsonSocketReconnect
+from libs.client_reconnect import SubscriptionClient
 
 from DMXBase import AbstractDMXRenderer, mix
 
@@ -31,8 +31,8 @@ class DMXManager(AbstractDMXRenderer):
         self.artnet = ArtNet3(host=kwargs['artnet_dmx_host'])
 
         if kwargs.get('displaytrigger_host'):
-            self.net = JsonSocketReconnect.factory(host=kwargs['displaytrigger_host'])
-            self.net.recive = self.recive
+            self.net = SubscriptionClient.factory(host=kwargs['displaytrigger_host'], subscriptions=('lights',))
+            self.net.recive_message = self.recive_message
 
         self.loop = Loop(kwargs['framerate'])
         self.loop.render = self.render
@@ -54,12 +54,12 @@ class DMXManager(AbstractDMXRenderer):
         mix(self.dmx_universe, tuple(renderer.render(frame) for renderer in self.renderers))
         self.artnet.dmx(self.dmx_universe.tobytes())
 
-    def recive(self, data):
+    def recive_message(self, message):
         """
         Network Event
         Trigger the correct network event to the correct renderer
         """
-        run_funcs(data, self.renderers)
+        run_funcs(message, self.renderers)
 
 
 def get_args():
