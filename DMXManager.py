@@ -31,7 +31,7 @@ class DMXManager(AbstractDMXRenderer):
         self.artnet = ArtNet3(host=kwargs['artnet_dmx_host'])
 
         if kwargs.get('displaytrigger_host'):
-            self.net = SubscriptionClient.factory(host=kwargs['displaytrigger_host'], subscriptions=('lights',))
+            self.net = SubscriptionClient.factory(host=kwargs['displaytrigger_host'], subscriptions=('lights', 'all'))
             self.net.recive_message = self.recive_message
 
         self.loop = Loop(kwargs['framerate'])
