@@ -19,7 +19,7 @@ libs:
 	if [ -d ../libs/ ] ; then \
 		ln -s ../../libs/python3/lib/misc.py misc.py ;\
 		ln -s ../../libs/python3/lib/oop.py loop.py ;\
-		ln -s ../../libs/python3/lib/net/upd.py upd.py ;\
+		ln -s ../../libs/python3/lib/net/udp.py udp.py ;\
 		ln -s ../../libs/python3/lib/net/client_reconnect.py client_reconnect.py ;\
 		ln -s ../../libs/python3/lib/midi/pygame_midi_wrapper.py pygame_midi_wrapper.py ;\
 		ln -s ../../libs/python3/lib/midi/pygame_midi_input.py pygame_midi_input.py ;\
@@ -27,7 +27,7 @@ libs:
 	else \
 		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/misc.py                      --compressed -O ;\
 		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py                      --compressed -O ;\
-		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/upd.py                   --compressed -O ;\
+		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/udp.py                   --compressed -O ;\
 		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/client_reconnect.py      --compressed -O ;\
 		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py  --compressed -O ;\
 		curl https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py    --compressed -O ;\
