@@ -18,7 +18,7 @@ libs:
 	cd libs && \
 	if [ -d ../libs/ ] ; then \
 		ln -s ../../libs/python3/lib/misc.py misc.py ;\
-		ln -s ../../libs/python3/lib/oop.py loop.py ;\
+		ln -s ../../libs/python3/lib/loop.py loop.py ;\
 		ln -s ../../libs/python3/lib/net/udp.py udp.py ;\
 		ln -s ../../libs/python3/lib/net/client_reconnect.py client_reconnect.py ;\
 		ln -s ../../libs/python3/lib/midi/pygame_midi_wrapper.py pygame_midi_wrapper.py ;\
