@@ -104,6 +104,7 @@ def main():
         from lighting.renderers.LightTiming import LightTiming
         from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
         from lighting.renderers.RemoteControl import RemoteControl
+        from lighting.renderers.Ambilight import AmbilightPlayer
 
         dmx_lighting_renderer = LightTiming(kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
         renderers.append(dmx_lighting_renderer)
