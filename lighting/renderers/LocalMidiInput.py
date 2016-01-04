@@ -3,13 +3,13 @@ from colorsys import hsv_to_rgb
 
 from libs.pygame_midi_input import MidiInput
 
-from DMXBase import AbstractDMXRenderer
+from lighting import AbstractDMXRenderer
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class DMXRendererMidiInput(AbstractDMXRenderer):
+class LocalMidiInput(AbstractDMXRenderer):
     """
     Take midi input from the Korg USB nanoKONTROL2 and control the lighting rig in realtime.
 

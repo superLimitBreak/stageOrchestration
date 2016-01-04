@@ -3,14 +3,14 @@ from libs.loop import Loop
 from libs.misc import run_funcs, postmortem
 from libs.client_reconnect import SubscriptionClient
 
-from DMXBase import AbstractDMXRenderer, mix
+from lighting import AbstractDMXRenderer, mix
 
-from ArtNet3 import ArtNet3
+from lighting.ArtNet3 import ArtNet3
 
 import logging
 log = logging.getLogger(__name__)
 
-VERSION = '0.04'
+VERSION = '0.05'
 
 DEFAULT_DISPLAYTRIGGER_HOST = '127.0.0.1'
 DEFAULT_ARTNET_DMX_HOST = '127.0.0.1'
@@ -100,20 +100,20 @@ def main():
 
     renderers = []
     if kwargs.get('midi_input'):
-        from DMXRendererMidiInput import DMXRendererMidiInput
-        renderers.append(DMXRendererMidiInput(kwargs['midi_input']))
-        log.info('DMXRendererMidiInput')
+        from lighting.renderers.LocalMidiInput import LocalMidiInput
+        renderers.append(LocalMidiInput(kwargs['midi_input']))
+        log.info('Init: LocalMidiInput')
     if kwargs.get('yamlpath'):
-        from DMXRendererLightTiming import DMXRendererLightTiming
-        from DMXRendererDisplayTriggerEvents import DMXRendererDisplayTriggerEvents
-        dmx_lighting_renderer = DMXRendererLightTiming(kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
+        from lighting.renderers.LightTiming import LightTiming
+        from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
+        dmx_lighting_renderer = LightTiming(kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
         renderers.append(dmx_lighting_renderer)
-        renderers.append(DMXRendererDisplayTriggerEvents(dmx_lighting_renderer))
-        log.info('DMXRendererLightTiming')
+        renderers.append(DisplayTriggerEvents(dmx_lighting_renderer))
+        log.info('Init: LightTiming')
     try:
-        from DMXRendererPentatonicHero import DMXRendererPentatonicHero
+        from lighting.renderers.PentatonicHero import DMXRendererPentatonicHero
         renderers.append(DMXRendererPentatonicHero())
-        log.info('DMXRendererPentatonicHero')
+        log.info('Init: PentatonicHero')
     except ImportError:
         pass
 

@@ -6,4 +6,4 @@ __pycache__
 
 libs
 pytweening
-DMXRendererPentatonicHero.py
+lighting/renderers/PentatonicHero.py

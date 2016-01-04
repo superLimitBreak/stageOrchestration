@@ -9,7 +9,7 @@ import pytweening
 from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_scan_diff_thread, one_byte_limit
 from libs.music import parse_timesigniture, timecode_to_beat, beat_to_timecode, get_beat
 
-from DMXBase import AbstractDMXRenderer, get_value_at
+from lighting import AbstractDMXRenderer, get_value_at
 
 import logging
 log = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ DEFAULT_TIMESIGNITURE = "4:4"
 DEFAULT_TIMESIGNITURE_ = parse_timesigniture(DEFAULT_TIMESIGNITURE)
 
 
-class DMXRendererLightTiming(AbstractDMXRenderer):
+class LightTiming(AbstractDMXRenderer):
     """
     Load a dataset of scenes and seqeucnes as dictionarys
 
@@ -74,7 +74,7 @@ class DMXRendererLightTiming(AbstractDMXRenderer):
         """
         objs = {}
         for file_info in file_scan(path, r'.*\.yaml$'):
-            objs[file_info.file_no_ext] = DMXRendererLightTiming._open_yaml(file_info.absolute, target_class)
+            objs[file_info.file_no_ext] = LightTiming._open_yaml(file_info.absolute, target_class)
         return objs
 
     def start(self, data):

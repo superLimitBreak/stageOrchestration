@@ -2,13 +2,13 @@
 Plugin for responding to other network events to stop the lighting system
 """
 
-from DMXBase import AbstractDMXRenderer
+from lighting import AbstractDMXRenderer
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class DMXRendererDisplayTriggerEvents(AbstractDMXRenderer):
+class DisplayTriggerEvents(AbstractDMXRenderer):
     __name__ = 'trigger'
 
     def __init__(self, dmx_lighting_renderer):

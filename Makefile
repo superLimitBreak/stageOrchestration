@@ -1,12 +1,17 @@
-OS = $(shell uname -s)
 
 help:
-	@printf "To install run 'make install'\n"
+	# Automated ArtNet3 DMX Lighting System
+	#  - install        : Install dependencys
+	#  - run            :
+	#  - run_production :
+	#  - run_simulator  : Pygame based visulisation of ArtNet packets
+	# (Requires python3 + pyyaml lib)
 
 
 # Install ----------------------------------------------------------------------
 
-install: libs pytweening/__init__.py DMXRendererPentatonicHero.py
+.PHONY: install
+install: libs pytweening/__init__.py lighting/renderers/PentatonicHero.py
 
 
 
@@ -36,11 +41,13 @@ libs:
 
 # PentatonicHero plugin --------------------------------------------------------
 
-DMXRendererPentatonicHero.py:
+PENTATONIC_HERO_SOURCE_FILE=PentatonicHero/DMXRendererPentatonicHero.py
+PENTATONIC_HERO_DESTINATION_FILE=./lighting/renderers/PentatonicHero.py
+lighting/renderers/PentatonicHero.py:
 	if [ -d ../PentatonicHero/ ] ; then \
-		ln -s ../PentatonicHero/DMXRendererPentatonicHero.py ./DMXRendererPentatonicHero.py ;\
+		ln -s ../../../$(PENTATONIC_HERO_SOURCE_FILE) $(PENTATONIC_HERO_DESTINATION_FILE) ;\
 	else \
-		curl https://raw.githubusercontent.com/calaldees/PentatonicHero/DMXRendererPentatonicHero.py --compressed -O ;\
+		curl https://raw.githubusercontent.com/calaldees/$(PENTATONIC_HERO_SOURCE_FILE) --compressed -o $(PENTATONIC_HERO_DESTINATION_FILE) ;\
 	fi
 
 
@@ -55,17 +62,19 @@ pytweening/__init__.py: pytweening
 
 # Run --------------------------------------------------------------------------
 
-run: python_libs
-	python3 DMXManager.py
+.PHONY: run run_midi_input run_production run_simulator
+
+run:
+	python3 lightingAutomation.py --postmortem
 
 run_midi_input:
-	python3 DMXManager.py --midi_input 'nanoKONTROL2'
+	python3 lightingAutomation.py --midi_input 'nanoKONTROL2'
 
-run_dmxking:
-	python3 DMXManager.py --midi_input 'nanoKONTROL2' --artnet_dmx_host 192.168.0.111
+run_production:
+	python3 lightingAutomation.py --midi_input 'nanoKONTROL2' --artnet_dmx_host 192.168.0.111
 
-run_simulator: python_libs
-	python3 DMXSimulator.py
+run_simulator:
+	python3 ArtNetSimulator.py
 
 
 # Clean ------------------------------------------------------------------------
@@ -73,4 +82,4 @@ run_simulator: python_libs
 clean:
 	rm -rf libs
 	rm -rf pytweening
-	rm -rf DMXRendererPentatonicHero.py
+	rm -rf $(PENTATONIC_HERO_DESTINATION_FILE)
