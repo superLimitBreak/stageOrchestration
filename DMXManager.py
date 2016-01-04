@@ -86,6 +86,7 @@ def get_args():
     parser.add_argument('--yamlscaninterval', action='store', type=float, help='seconds to scan', default=DEFAULT_YAML_SCAN_INTERVAL)
 
     # Common
+    parser.add_argument('--postmortem', action='store_true', help='enter debugger on exception')
     parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
     parser.add_argument('--version', action='version', version=VERSION)
 
@@ -116,9 +117,12 @@ def main():
     except ImportError:
         pass
 
-    DMXManager(renderers, **kwargs)
+    launch = lambda: DMXManager(renderers, **kwargs)
+    if kwargs.get('postmortem'):
+        postmortem(launch)
+    else:
+        launch()
 
 
 if __name__ == "__main__":
-    postmortem(main)
-
+    main()
