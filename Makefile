@@ -67,14 +67,14 @@ pytweening/__init__.py: pytweening
 run:
 	python3 lightingAutomation.py --postmortem
 
-run_midi_input:
-	python3 lightingAutomation.py --midi_input 'nanoKONTROL2'
+run_midiRemote:
+	python3 midiRemote.py --midi_input 'nanoKONTROL2'
 
 run_production:
-	python3 lightingAutomation.py --midi_input 'nanoKONTROL2' --artnet_dmx_host 192.168.0.111
+	python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111
 
 run_simulator:
-	python3 ArtNetSimulator.py
+	python3 simulator.py
 
 
 # Clean ------------------------------------------------------------------------
