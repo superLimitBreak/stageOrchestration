@@ -11,6 +11,8 @@ log = logging.getLogger(__name__)
 
 class LocalMidiInput(AbstractDMXRenderer):
     """
+    TO BE DEPRICATED - RemoteControl should be used in preference
+
     Take midi input from the Korg USB nanoKONTROL2 and control the lighting rig in realtime.
 
     This is intended to be a debug test system.

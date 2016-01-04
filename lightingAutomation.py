@@ -99,17 +99,24 @@ def main():
     logging.basicConfig(level=kwargs['log_level'])
 
     renderers = []
-    if kwargs.get('midi_input'):
-        from lighting.renderers.LocalMidiInput import LocalMidiInput
-        renderers.append(LocalMidiInput(kwargs['midi_input']))
-        log.info('Init: LocalMidiInput')
+
     if kwargs.get('yamlpath'):
         from lighting.renderers.LightTiming import LightTiming
         from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
+        from lighting.renderers.RemoteControl import RemoteControl
+
         dmx_lighting_renderer = LightTiming(kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
         renderers.append(dmx_lighting_renderer)
         renderers.append(DisplayTriggerEvents(dmx_lighting_renderer))
+        renderers.append(RemoteControl(dmx_lighting_renderer.config))
         log.info('Init: LightTiming')
+
+    if kwargs.get('midi_input'):
+        # To be depricated
+        from lighting.renderers.LocalMidiInput import LocalMidiInput
+        renderers.append(LocalMidiInput(kwargs['midi_input']))
+        log.info('Init: LocalMidiInput')
+
     try:
         from lighting.renderers.PentatonicHero import DMXRendererPentatonicHero
         renderers.append(DMXRendererPentatonicHero())
