@@ -122,7 +122,7 @@ class DMXLightRGBW(object):
         draw_led(white, (255, 255, 255), 3)
 
 
-from ArtNet3 import ArtNet3
+from lighting.ArtNet3 import ArtNet3
 
 
 class DMXSimulator(ArtNet3, PygameBase):

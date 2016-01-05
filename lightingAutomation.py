@@ -101,15 +101,17 @@ def main():
     renderers = []
 
     if kwargs.get('yamlpath'):
+        from lighting.config import LightingConfig
         from lighting.renderers.LightTiming import LightTiming
         from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
         from lighting.renderers.RemoteControl import RemoteControl
-        from lighting.renderers.Ambilight import AmbilightPlayer
+        #from lighting.renderers.Ambilight import AmbilightPlayer
 
-        dmx_lighting_renderer = LightTiming(kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
-        renderers.append(dmx_lighting_renderer)
-        renderers.append(DisplayTriggerEvents(dmx_lighting_renderer))
-        renderers.append(RemoteControl(dmx_lighting_renderer.config))
+        config = LightingConfig(kwargs['yamlpath'])
+        light_renderer = LightTiming(config.config, kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
+        renderers.append(light_renderer)
+        renderers.append(DisplayTriggerEvents(light_renderer))
+        renderers.append(RemoteControl(config))
         log.info('Init: LightTiming')
 
     if kwargs.get('midi_input'):

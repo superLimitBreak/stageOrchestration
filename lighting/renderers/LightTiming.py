@@ -1,6 +1,5 @@
 import os.path
 import time
-import yaml
 import operator
 import copy
 
@@ -10,6 +9,7 @@ from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_
 from libs.music import parse_timesigniture, timecode_to_beat, beat_to_timecode, get_beat
 
 from lighting import AbstractDMXRenderer, get_value_at
+from lighting.config import open_path
 
 import logging
 log = logging.getLogger(__name__)
@@ -36,7 +36,6 @@ class LightTiming(AbstractDMXRenderer):
     The scenes 'render' method is called with the current 'beat' into the scene
     """
 
-    PATH_CONFIG_FILE = 'config.yaml'
     PATH_SCENES_FOLDER = 'scenes'
     PATH_SEQUENCE_FOLDER = 'sequences'
 
@@ -44,38 +43,21 @@ class LightTiming(AbstractDMXRenderer):
     DEFAULT_SEQUENCE_NAME = 'none'
     DEFAULT_BPM = 120.0
 
-    def __init__(self, yamlpath, rescan_interval=1.0, *args, **kwargs):
+    def __init__(self, config, yamlpath, rescan_interval=1.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.config = config
         self.yamlpath = yamlpath
         self._sequence_index = None
-        file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reload())
+        file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reload(), rescan_interval=rescan_interval)
         self.reload()
         self.stop()
 
     def reload(self):
-        log.info('Loading yaml '.format(self.yamlpath))
-        self.config = self._open_yaml(os.path.join(self.yamlpath, self.PATH_CONFIG_FILE))
-        self.scenes = self._open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneParser(self.config).create_scene)
-        self.sequences = self._open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
+        log.info('Loading scenes {0}'.format(self.yamlpath))
+        self.scenes = open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneParser(self.config).create_scene)
+        self.sequences = open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
 
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
-
-
-    @staticmethod
-    def _open_yaml(path, target_class=None):
-        with open(path, 'rb') as file_handle:
-            obj_data = yaml.load(file_handle)
-            return target_class(obj_data) if target_class else obj_data
-
-    @staticmethod
-    def _open_path(path, target_class=None):
-        """
-        Open all yamls in a path by constructing an object for each file based on the 'target' class
-        """
-        objs = {}
-        for file_info in file_scan(path, r'.*\.yaml$'):
-            objs[file_info.file_no_ext] = LightTiming._open_yaml(file_info.absolute, target_class)
-        return objs
 
     def start(self, data):
         """
