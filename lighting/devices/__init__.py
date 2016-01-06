@@ -3,7 +3,7 @@ Each def renders the bytes for config.yaml/device
 """
 
 
-def rgb(_, rgbw):
+def rgbw_to_rgb(_, rgbw):
     return (
         rgbw[0] + rgbw[3],
         rgbw[1] + rgbw[3],
@@ -11,7 +11,7 @@ def rgb(_, rgbw):
     )
 
 
-def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1, **kwargs):
+def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1):
     return (
         rgb[0] * red_factor,
         rgb[1] * green_factor,
@@ -31,11 +31,11 @@ def neoneonfloor(config, rgbw):
 
 
 def neoneonfloorPart(_, rgbw):
-    return rgb(_, rgbw)
+    return rgbw_to_rgb(_, rgbw)
 
 
 def OrionLinkV2(config, rgbw):
-    return tuple(v + rgbw[3] for v in rgb_calibrate(rgbw, config['device_config']['OrionLinkV2']))
+    return tuple(v + rgbw[3] for v in rgb_calibrate(rgbw, **config['device_config']['OrionLinkV2']))
 
 
 def OrionLinkV2Final(config, rgbw):
