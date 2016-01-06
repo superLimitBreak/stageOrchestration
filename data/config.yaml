@@ -1,27 +1,27 @@
 devices:
     light1:
-        type: lightRGBW
+        type: FlatPar
         index: 0
     light2:
-        type: lightRGBW
+        type: FlatPar
         index: 8
     light3:
-        type: lightRGBW
+        type: FlatPar
         index: 16
     light4:
-        type: lightRGBW
+        type: FlatPar
         index: 24
     light5:
-        type: lightRGBW
+        type: FlatPar
         index: 32
     light6:
-        type: lightRGBW
+        type: FlatPar
         index: 40
     light7:
-        type: lightRGBW
+        type: FlatPar
         index: 48
     light8:
-        type: lightRGBW
+        type: FlatPar
         index: 56
 
     floor1:
@@ -219,7 +219,7 @@ devices:
         group: [floor3]
 
 device_config:
-    lightRGBW:
+    FlatPar:
         red_factor: 1.0
         green_factor: 0.28
         blue_factor: 0.73

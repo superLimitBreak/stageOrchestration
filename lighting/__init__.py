@@ -109,41 +109,8 @@ class LightingConfig(object):
             rgbw = (0, 0, 0, 0)
 
         def overlay(index, values):
-            #dmx[index:index+len(values)] = tuple(map(limit, values))
             for offset, value in enumerate(values):
                 dmx[index+offset] = limit(value)
 
         for device in self.device_lookup.get(name, ()):
-            i = device['index']
-            device_type = device.get('type')
-
-            device_renderer = getattr(devices, device_type, None)
-            if device_renderer:
-                overlay(i, device_renderer(self.config, rgbw))
-
-            #if device.get('type') == 'lightRGBW':
-            #    dmx[i+0] = limit(rgbw[0] * self.config['device_config']['lightRGBW']['red_factor'])
-            #    dmx[i+1] = limit(rgbw[1] * self.config['device_config']['lightRGBW']['green_factor'])
-            #    dmx[i+2] = limit(rgbw[2] * self.config['device_config']['lightRGBW']['blue_factor'])
-            #    dmx[i+3] = limit(rgbw[3])
-            #    #for index, value in enumerate(get_color_rgbw(color_value)):
-            #    #    dmx[index+i] = limit(value)
-            if device_type == 'neoneonfloor':
-                dmx[i+0] = self.config['device_config']['neoneonfloor']['mode']  # Constant to enter 3 light mode
-                dmx[i+2] = limit(rgbw[0]+rgbw[3])
-                dmx[i+3] = limit(rgbw[1]+rgbw[3])
-                dmx[i+4] = limit(rgbw[2]+rgbw[3])
-            if device_type == 'neoneonfloorPart':
-                dmx[i+0] = limit(rgbw[0]+rgbw[3])
-                dmx[i+1] = limit(rgbw[1]+rgbw[3])
-                dmx[i+2] = limit(rgbw[2]+rgbw[3])
-            if device_type == 'OrionLinkV2':
-                dmx[i+0] = limit((rgbw[0]+rgbw[3]) * self.config['device_config']['lightRGBW']['red_factor'])
-                dmx[i+1] = limit((rgbw[1]+rgbw[3]) * self.config['device_config']['lightRGBW']['green_factor'])
-                dmx[i+2] = limit((rgbw[2]+rgbw[3]) * self.config['device_config']['lightRGBW']['blue_factor'])
-            if device_type == 'OrionLinkV2Final':
-                dmx[i+0] = limit((rgbw[0]+rgbw[3]) * self.config['device_config']['lightRGBW']['red_factor'])
-                dmx[i+1] = limit((rgbw[1]+rgbw[3]) * self.config['device_config']['lightRGBW']['green_factor'])
-                dmx[i+2] = limit((rgbw[2]+rgbw[3]) * self.config['device_config']['lightRGBW']['blue_factor'])
-                dmx[i+3] = 0  # No flash
-                dmx[i+4] = 255  # Master dim
+            overlay(device['index'], getattr(devices, device.get('type'))(self.config, rgbw))
