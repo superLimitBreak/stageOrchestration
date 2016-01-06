@@ -94,21 +94,18 @@ def get_args():
     return vars(args)
 
 
-def main():
-    kwargs = get_args()
-    logging.basicConfig(level=kwargs['log_level'])
-
+def main(**kwargs):
     renderers = []
 
     if kwargs.get('yamlpath'):
-        from lighting.config import LightingConfig
+        from lighting import LightingConfig
         from lighting.renderers.LightTiming import LightTiming
         from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
         from lighting.renderers.RemoteControl import RemoteControl
         #from lighting.renderers.Ambilight import AmbilightPlayer
 
         config = LightingConfig(kwargs['yamlpath'])
-        light_renderer = LightTiming(config.config, kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
+        light_renderer = LightTiming(config, kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
         renderers.append(light_renderer)
         renderers.append(DisplayTriggerEvents(light_renderer))
         renderers.append(RemoteControl(config))
@@ -127,12 +124,16 @@ def main():
     except ImportError:
         pass
 
-    launch = lambda: DMXManager(renderers, **kwargs)
+    DMXManager(renderers, **kwargs)
+
+
+if __name__ == "__main__":
+    kwargs = get_args()
+    logging.basicConfig(level=kwargs['log_level'])
+    #import pdb ; pdb.set_trace()
+    def launch():
+        main(**kwargs)
     if kwargs.get('postmortem'):
         postmortem(launch)
     else:
         launch()
-
-
-if __name__ == "__main__":
-    main()

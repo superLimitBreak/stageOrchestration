@@ -5,11 +5,10 @@ import copy
 
 import pytweening
 
-from libs.misc import file_scan, list_neighbor_generator, parse_rgb_color, file_scan_diff_thread, one_byte_limit
+from libs.misc import file_scan, list_neighbor_generator, file_scan_diff_thread
 from libs.music import parse_timesigniture, timecode_to_beat, beat_to_timecode, get_beat
 
-from lighting import AbstractDMXRenderer, get_value_at
-from lighting.config import open_path
+from lighting import AbstractDMXRenderer, get_value_at, open_path
 
 import logging
 log = logging.getLogger(__name__)
@@ -59,13 +58,17 @@ class LightTiming(AbstractDMXRenderer):
 
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
+    @property
+    def time_offset(self):
+        return self.config.config.get('time_offset', 0)
+
     def start(self, data):
         """
         Originates from external call from trigger system
         """
         print(data)
         self.stop()
-        self.time_start = time.time() - data.get('time_offset', 0) - self.config.get('time_offset', 0)
+        self.time_start = time.time() - data.get('time_offset', 0) - self.time_offset
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
         self.timesigniture = parse_timesigniture(data.get('timesigniture', DEFAULT_TIMESIGNITURE))
         if data.get('sequence'):
@@ -211,6 +214,7 @@ class SceneParser(object):
         meta = data.pop('meta', {})
         timesigniture = parse_timesigniture(meta.get('timesigniture', '4:4'))
         self.mute_devices = tuple(meta.get('mute_devices', ())) + self.MUTED_DEVICES
+        # TODO: Derive all muted devices by steping down the device alias tree
 
         scene_items = self.parse_scene_order(data, timesigniture)
         # Step though the dict items in order - rendering the desired output to 'previous' and 'target' states
@@ -321,57 +325,14 @@ class SceneParser(object):
         if alias_name and alias_name in self.dmx_universe_alias:
             dmx_universe_target[:] = self.dmx_universe_alias[alias_name]
 
-        def get_color_rgbw(color_value):
-            return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
-
-        # Render item
-        def render_state_item(dmx_device_name, color_value):
-            if dmx_device_name in self.mute_devices:
-                return
-            dmx_device = self.config['dmx_devices'].get(dmx_device_name)
-            if not dmx_device:
-                log.info('unknown dmx_device_name: '+dmx_device_name)
-                return
-
-            rgbw = get_color_rgbw(color_value)
-            # Single light
-            if dmx_device.get('type') == 'lightRGBW':
-                dmx_universe_target[dmx_device['index']+0] = one_byte_limit(rgbw[0] * self.config['device_config']['lightRGBW']['red_factor'])
-                dmx_universe_target[dmx_device['index']+1] = one_byte_limit(rgbw[1] * self.config['device_config']['lightRGBW']['green_factor'])
-                dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[2] * self.config['device_config']['lightRGBW']['blue_factor'])
-                dmx_universe_target[dmx_device['index']+3] = one_byte_limit(rgbw[3])
-                #for index, value in enumerate(get_color_rgbw(color_value)):
-                #    dmx_universe_target[index+dmx_device['index']] = one_byte_limit(value)
-            if dmx_device.get('type') == 'neoneonfloor':
-                dmx_universe_target[dmx_device['index']] = self.config['device_config']['neoneonfloor']['mode']  # Constant to enter 3 light mode
-                dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[0]+rgbw[3])
-                dmx_universe_target[dmx_device['index']+3] = one_byte_limit(rgbw[1]+rgbw[3])
-                dmx_universe_target[dmx_device['index']+4] = one_byte_limit(rgbw[2]+rgbw[3])
-            if dmx_device.get('type') == 'neoneonfloorPart':
-                dmx_universe_target[dmx_device['index']+0] = one_byte_limit(rgbw[0]+rgbw[3])
-                dmx_universe_target[dmx_device['index']+1] = one_byte_limit(rgbw[1]+rgbw[3])
-                dmx_universe_target[dmx_device['index']+2] = one_byte_limit(rgbw[2]+rgbw[3])
-            if dmx_device.get('type') == 'OrionLinkV2':
-                dmx_universe_target[dmx_device['index']+0] = one_byte_limit((rgbw[0]+rgbw[3]) * self.config['device_config']['lightRGBW']['red_factor'])
-                dmx_universe_target[dmx_device['index']+1] = one_byte_limit((rgbw[1]+rgbw[3]) * self.config['device_config']['lightRGBW']['green_factor'])
-                dmx_universe_target[dmx_device['index']+2] = one_byte_limit((rgbw[2]+rgbw[3]) * self.config['device_config']['lightRGBW']['blue_factor'])
-            if dmx_device.get('type') == 'OrionLinkV2Final':
-                dmx_universe_target[dmx_device['index']+0] = one_byte_limit((rgbw[0]+rgbw[3]) * self.config['device_config']['lightRGBW']['red_factor'])
-                dmx_universe_target[dmx_device['index']+1] = one_byte_limit((rgbw[1]+rgbw[3]) * self.config['device_config']['lightRGBW']['green_factor'])
-                dmx_universe_target[dmx_device['index']+2] = one_byte_limit((rgbw[2]+rgbw[3]) * self.config['device_config']['lightRGBW']['blue_factor'])
-                dmx_universe_target[dmx_device['index']+3] = 0  # No flash
-                dmx_universe_target[dmx_device['index']+4] = 255  # Master dim
-
-            # Group alias
-            elif dmx_device.get('type') == 'group':
-                for group_item_dmx_device_name in dmx_device['group']:
-                    render_state_item(group_item_dmx_device_name, color_value)
-
-        # Render dict
+        # Render items
         for dmx_device_name, color_value in target_state.items():
-            render_state_item(dmx_device_name, color_value)
+            self.config.render_device(dmx_universe_target, dmx_device_name, color_value)
+        # Mute items
+        for dmx_device_name in self.mute_devices:
+            self.config.render_device(dmx_universe_target, dmx_device_name, None)
 
-        # Alias this name
+        # Add an alias for this state if a name is provided
         if target_state.get('name'):
             self.dmx_universe_alias[target_state.get('name')] = dmx_universe_target
 

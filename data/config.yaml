@@ -1,4 +1,4 @@
-dmx_devices:
+devices:
     light1:
         type: lightRGBW
         index: 0
