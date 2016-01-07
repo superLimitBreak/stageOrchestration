@@ -10,14 +10,19 @@ class DisplayTriggerEvents(AbstractDMXRenderer):
     """
     __name__ = 'trigger'
 
-    def __init__(self, dmx_lighting_renderer):
+    def __init__(self, renderers):
         super().__init__()
-        self.dmx_lighting_renderer = dmx_lighting_renderer
+        self.renderers = tuple(renderers)
 
     def empty(self, data):
         log.info('empty')
-        self.dmx_lighting_renderer.stop()
+        self.clear(data)
 
     def stop(self, data):
         log.info('stop')
-        self.dmx_lighting_renderer.stop()
+        self.clear(data)
+
+    def clear(self, data):
+        for renderer in self.renderers:
+            for method in ('clear', 'stop', 'empty'):
+                getattr(renderer, method, lambda: None)()

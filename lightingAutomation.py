@@ -3,9 +3,13 @@ from libs.loop import Loop
 from libs.misc import run_funcs, postmortem
 from libs.client_reconnect import SubscriptionClient
 
-from lighting import AbstractDMXRenderer, mix
-
+from lighting import AbstractDMXRenderer, mix, LightingConfig
 from lighting.ArtNet3 import ArtNet3
+from lighting.renderers.LightTiming import LightTiming
+from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
+from lighting.renderers.RemoteControl import RemoteControl
+#from lighting.renderers.Ambilight import AmbilightPlayer
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -95,21 +99,14 @@ def get_args():
 
 
 def main(**kwargs):
+    config = LightingConfig(kwargs['yamlpath'])
+
     renderers = []
-
-    if kwargs.get('yamlpath'):
-        from lighting import LightingConfig
-        from lighting.renderers.LightTiming import LightTiming
-        from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
-        from lighting.renderers.RemoteControl import RemoteControl
-        #from lighting.renderers.Ambilight import AmbilightPlayer
-
-        config = LightingConfig(kwargs['yamlpath'])
-        light_renderer = LightTiming(config, kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
-        renderers.append(light_renderer)
-        renderers.append(DisplayTriggerEvents(light_renderer))
-        renderers.append(RemoteControl(config))
-        log.info('Init: LightTiming')
+    light_renderer = LightTiming(config, kwargs['yamlpath'], rescan_interval=kwargs['yamlscaninterval'])
+    remote_control_renderer = RemoteControl(config)
+    renderers.append(light_renderer)
+    renderers.append(remote_control_renderer)
+    renderers.append(DisplayTriggerEvents((light_renderer, remote_control_renderer)))
 
     if kwargs.get('midi_input'):
         # To be depricated
@@ -130,7 +127,7 @@ def main(**kwargs):
 if __name__ == "__main__":
     kwargs = get_args()
     logging.basicConfig(level=kwargs['log_level'])
-    #import pdb ; pdb.set_trace()
+
     def launch():
         main(**kwargs)
     if kwargs.get('postmortem'):
