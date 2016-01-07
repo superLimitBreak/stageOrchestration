@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="pyramid web application">
+        
+        <title>remoteControl</title>
+        
+        <style type="text/css">
+            input[type=range][orient=vertical] {
+                writing-mode: bt-lr; /* IE */
+                -webkit-appearance: slider-vertical; /* WebKit */
+                width: 8px;
+                height: 175px;
+                padding: 0 5px;
+            }
+        </style>
+        
+
+    </head>
+    <body>
+        <h1>remoteControl</h1>
+        
+        <div>
+            <input id="host_input" type="text">
+        </div>
+        
+        <div>
+            <input id="slider_test" type="range" orient="vertical" min="0" max="255" step="1" value="0" />
+        </div>
+        
+        
+        <script type="text/javascript">
+            var DEFAULT_HOST = "localhost:9873";
+
+            
+            // Socket ----------------------------------------------------------
+            
+            var socket = null;
+            
+            function connect() {
+                socket = new WebSocket("ws://"+document.getElementById('host_input').value+"/");
+                socket.onopen = function() {
+                    socket.send(JSON.stringify({action: "subscribe", data: ["None"]}));
+                };
+                socket.onopen = function() {
+                    // TODO: save in persistant storage
+                };
+            }
+
+            document.getElementById('host_input').addEventListener('keydown', function(event) {
+                if (event.keyCode==13) {
+                    connect();
+                }
+            }, true);
+
+            
+            // Slider ----------------------------------------------------------
+            
+            document.getElementById('slider_test').addEventListener('change', function(event) {
+                console.log(event.target.value);
+            }, true);
+
+
+            // Init ------------------------------------------------------------
+            
+            window.onload = function() {
+                document.getElementById('host_input').value = DEFAULT_HOST; //TODO: set from persistant storage
+                connect();
+            }
+        </script>
+    </body>
+</html>
