@@ -1,3 +1,5 @@
+from libs.misc import parse_rgb_color
+
 from lighting import AbstractDMXRenderer
 
 import logging
@@ -11,9 +13,19 @@ class RemoteControl(AbstractDMXRenderer):
     """
     __name__ = 'lights'
 
-    def __init__(self, lighting_config):
+    def __init__(self, config):
         super().__init__()
-        self.config = lighting_config
+        self.config = config
 
     def set(self, data):
-        log.info('set')
+        for item in data:
+            self.config.render_device(
+                self.dmx_universe,
+                item.get('device'),
+                parse_rgb_color(item['color'])
+            )
+
+    def clear(self):
+        # This is really inefficent - Whats a better way?
+        for i in range(len(self.dmx_universe)):
+            self.dmx_universe[i] = 0
