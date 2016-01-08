@@ -18,7 +18,6 @@ class RemoteControl(AbstractDMXRenderer):
         self.config = config
 
     def set(self, data):
-        #import pdb; pdb.set_trace()
         self.config.render_device(
             self.dmx_universe,
             data.get('device'),

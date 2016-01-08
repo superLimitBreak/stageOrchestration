@@ -27,8 +27,7 @@
 			<input id="host_input" type="text">
 		</div>
 		
-		<div>
-			<input id="slider_test" type="range" orient="vertical" min="0" max="255" step="1" value="0" />
+		<div id="sliders">
 		</div>
 		
 		
@@ -63,18 +62,33 @@
 			
 			// Slider ----------------------------------------------------------
 			
-			document.getElementById('slider_test').addEventListener('input', function(event) {
-				//console.log(event.target.value);
-				socket.send(JSON.stringify({action: "message", data: [
-					{deviceid: 'lights', func: 'lights.set', device: 'all', color: 'hsv:HUE,1,1,0'.replace('HUE', event.target.value/255)},
-				]}));
-			}, true);
-
+			function createSlider(device, type) {
+				var slider = document.createElement('input');
+				slider.setAttribute('type', 'range');
+				slider.setAttribute('orient', 'vertical');
+				slider.setAttribute('min', '0');
+				slider.setAttribute('max', '255');
+				slider.setAttribute('step', '1');
+				slider.setAttribute('value', '0');
+				slider.setAttribute('data-device', device);
+				slider.setAttribute('data-type', type);
+				slider.addEventListener('input', function(event){
+					socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
+						device: device,
+						color: type+':HUE,1,1,0'.replace('HUE', event.target.value/255),
+					},]}));
+				}, true);
+				return slider;
+			}
+			
 
 			// Init ------------------------------------------------------------
 			
 			window.onload = function() {
 				document.getElementById('host_input').value = localStorage.host || DEFAULT_HOST;
+				
+				document.getElementById('sliders').appendChild(createSlider('all', 'hsv'));
+				
 				connect();
 			}
 		</script>
