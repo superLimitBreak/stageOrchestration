@@ -18,12 +18,12 @@ class RemoteControl(AbstractDMXRenderer):
         self.config = config
 
     def set(self, data):
-        for item in data:
-            self.config.render_device(
-                self.dmx_universe,
-                item.get('device'),
-                parse_rgb_color(item['color'])
-            )
+        #import pdb; pdb.set_trace()
+        self.config.render_device(
+            self.dmx_universe,
+            data.get('device'),
+            parse_rgb_color(data.get('color'))
+        )
 
     def clear(self):
         # This is really inefficent - Whats a better way?

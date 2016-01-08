@@ -64,7 +64,10 @@
 			// Slider ----------------------------------------------------------
 			
 			document.getElementById('slider_test').addEventListener('input', function(event) {
-				console.log(event.target.value);
+				//console.log(event.target.value);
+				socket.send(JSON.stringify({action: "message", data: [
+					{deviceid: 'lights', func: 'lights.set', device: 'all', color: 'hsv:HUE,1,1,0'.replace('HUE', event.target.value/255)},
+				]}));
 			}, true);
 
 
