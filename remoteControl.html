@@ -73,18 +73,17 @@
 				slider.setAttribute('data-device', device);
 				slider.setAttribute('data-type', type);
 				slider.addEventListener('input', function(event){
-					var color = 'black';
+					var value = 'black';
 					if (Array.isArray(slider_group)) {
 						var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
-						color = type+':'+values.join(',');
+						value = type+':'+values.join(',');
 					}
 					else {
-						color = event.target.value;
+						value = event.target.value;
 					}
-					console.log(color);
 					socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
 						device: device,
-						color: color,
+						value: value,
 					},]}));
 				}, true);
 				return slider;

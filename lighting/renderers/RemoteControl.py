@@ -21,7 +21,7 @@ class RemoteControl(AbstractDMXRenderer):
         self.config.render_device(
             self.dmx_universe,
             data.get('device'),
-            parse_rgb_color(data.get('color'))
+            parse_rgb_color(data.get('value'))
         )
 
     def clear(self):
