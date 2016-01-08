@@ -1,4 +1,4 @@
-from libs.misc import parse_rgb_color
+from libs.misc import parse_rgb_color, one_to_limit
 
 from lighting import AbstractDMXRenderer
 
@@ -18,11 +18,13 @@ class RemoteControl(AbstractDMXRenderer):
         self.config = config
 
     def set(self, data):
-        self.config.render_device(
-            self.dmx_universe,
-            data.get('device'),
-            parse_rgb_color(data.get('value'))
-        )
+        #print(data)
+        device = data.get('device')
+        value = data.get('value')
+        try:
+            self.dmx_universe[int(device)] = one_to_limit(float(value), limit=255)
+        except ValueError:
+            self.config.render_device(self.dmx_universe, device, parse_rgb_color(value))
 
     def clear(self):
         # This is really inefficent - Whats a better way?

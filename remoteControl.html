@@ -73,7 +73,7 @@
 				slider.setAttribute('data-device', device);
 				slider.setAttribute('data-type', type);
 				slider.addEventListener('input', function(event){
-					var value = 'black';
+					var value;
 					if (Array.isArray(slider_group)) {
 						var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
 						value = type+':'+values.join(',');
@@ -97,9 +97,9 @@
 				return slider_group;
 			}
 			
-			function addSliders(parent, sliders) {
-				for (var index in sliders) {
-					parent.appendChild(sliders[index]);
+			function appendChildren(parent, children) {
+				for (var index in children) {
+					parent.appendChild(children[index]);
 				}
 			}
 
@@ -108,7 +108,13 @@
 			window.onload = function() {
 				document.getElementById('host_input').value = localStorage.host || DEFAULT_HOST;
 				
-				addSliders(document.getElementById('sliders'), createSliderGroup('all', 'hsv', 4));
+				appendChildren(document.getElementById('sliders'), createSliderGroup('all', 'hsv', 4));
+				
+				var sliders = [];
+				for (var i=0 ; i<8 ; i++) {
+					sliders.push(createSlider(i));
+				}
+				appendChildren(document.getElementById('sliders'), sliders);
 				
 				connect();
 			}
