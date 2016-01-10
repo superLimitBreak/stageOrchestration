@@ -32,7 +32,7 @@
 		
 		
 		<script type="text/javascript">
-			var DEFAULT_HOST = "localhost:9873";
+			var DEFAULT_PORT = "9873";
 
 			
 			// Socket ----------------------------------------------------------
@@ -106,7 +106,7 @@
 			// Init ------------------------------------------------------------
 			
 			window.onload = function() {
-				document.getElementById('host_input').value = localStorage.host || DEFAULT_HOST;
+				document.getElementById('host_input').value = localStorage.host || (window.location.hostname+":"+DEFAULT_PORT);
 				
 				appendChildren(document.getElementById('sliders'), createSliderGroup('all', 'hsv', 4));
 				
