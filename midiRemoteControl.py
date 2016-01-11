@@ -1,4 +1,5 @@
 from libs.pygame_midi_input import MidiInput
+from libs.client_reconnect import SubscriptionClient
 
 import logging
 log = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class MidiRemoteControl(object):
     Send json events over the trigger system to control the lighting
     """
 
-    def __init__(self, midi_device_name):
+    def __init__(self, midi_device_name, displaytrigger_host):
         super().__init__()
 
         self.device_config = DEVICE_CONFIG.get(midi_device_name, {})
@@ -29,9 +30,13 @@ class MidiRemoteControl(object):
         self.midi_input.init_pygame()
         self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
 
+        self.socket = SubscriptionClient(*displaytrigger_host.split(':'), subscriptions=('none',))
+
+        # Poll the midi input per frame (This prevents the need for another thread to monitor the midi state)
         self.running = True
         while self.running:
-            self.midi_input.process_events()  # Poll the midi input per frame (This prevents the need for another thread to monitor the midi state)
+            self.midi_input.process_events()
+
         self.close()
 
     def midi_event(self, event, data1, data2, data3):
@@ -42,6 +47,7 @@ class MidiRemoteControl(object):
 
     def close(self):
         self.midi_input.close()
+        self.socket.clost()
 
 
 def get_args():
@@ -76,7 +82,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=kwargs['log_level'])
 
     def launch():
-        MidiRemoteControl(kwargs['midi_device_name'])
+        MidiRemoteControl(kwargs['midi_device_name'], kwargs['displaytrigger_host'])
     if kwargs.get('postmortem'):
         postmortem(launch)
     else:
