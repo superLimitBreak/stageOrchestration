@@ -69,7 +69,7 @@ run:
 	python3 lightingAutomation.py --postmortem
 
 run_midiRemote:
-	python3 midiRemoteControl.py 'nanoKONTROL2'
+	python3 midiRemoteControl.py 'nanoKONTROL2' --postmortem
 
 run_production:
 	python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111

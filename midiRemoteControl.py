@@ -1,5 +1,7 @@
 import os.path
 
+from libs.misc import postmortem
+
 from libs.pygame_midi_input import MidiInput
 from libs.client_reconnect import SubscriptionClient
 
@@ -24,11 +26,15 @@ class MidiRemoteControl(object):
         self.device_config = open_yaml(os.path.join(yamlpath, midi_device_name+'.yaml'))
         assert self.device_config, 'No configuration was found for your midi device. Add device mapping to YAML'
 
+        self.parse_config()
+
         self.midi_input = MidiInput(midi_device_name)
         self.midi_input.init_pygame()
         self.midi_input.midi_event = self.midi_event  # Dynamic POWER!!!! Remap the midi event to be on this object!
 
         self.socket = SubscriptionClient(*displaytrigger_host.split(':'), subscriptions=('none',))
+
+        self.input_state = {}
 
         # Poll the midi input per frame (This prevents the need for another thread to monitor the midi state)
         self.running = True
@@ -37,11 +43,47 @@ class MidiRemoteControl(object):
 
         self.close()
 
+    def parse_config(self):
+        self.input_lookup = {}
+        for value in self.device_config.values():
+            if not isinstance(value, dict):
+                continue
+            for slider_index in value.get('sliders', ()):
+                self.input_lookup[slider_index] = value
+            #for k, v in value.items():
+            #    pass
+
     def midi_event(self, event, data1, data2, data3):
         dc = self.device_config
-        print(data1, data2, data3)
+        #print(data1, data2, data3)
         if data1 == dc['exit']:
             self.running = False
+
+        self.input_state[data1] = data2
+
+        input_config = self.input_lookup.get(data1)
+        if not input_config:
+            return
+
+        if input_config.get('type') in ('rgb', 'rgbw', 'hsv', ):
+            self.send_light_data(
+                input_config['device'],
+                '{type}:{values}'.format(
+                    type=input_config['type'],
+                    values=','.join(map(str, (self.input_state.get(slider_index, 0)/127 for slider_index in input_config.get('sliders', ()))))
+                )
+            )
+        if input_config.get('type') == 'raw':
+            pass
+            #'self.send_light_data()
+
+    def send_light_data(self, device, value):
+        self.socket.send_message({
+            'deviceid': 'lights',
+            'func': 'lights.set',
+            'device': device,
+            'value': value,
+        })
 
     def close(self):
         self.midi_input.close()
