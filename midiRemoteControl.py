@@ -35,6 +35,7 @@ class MidiRemoteControl(object):
         self.socket = SubscriptionClient(*displaytrigger_host.split(':'), subscriptions=('none',))
 
         self.input_state = {}
+        self.raw_index_offset = 0
 
         # Poll the midi input per frame (This prevents the need for another thread to monitor the midi state)
         self.running = True
@@ -70,12 +71,14 @@ class MidiRemoteControl(object):
                 input_config['device'],
                 '{type}:{values}'.format(
                     type=input_config['type'],
-                    values=','.join(map(str, (self.input_state.get(slider_index, 0)/127 for slider_index in input_config.get('sliders', ()))))
+                    values=','.join(map(str, (self.input_state.get(slider_index, 0)/127 for slider_index in input_config['sliders'])))
                 )
             )
         if input_config.get('type') == 'raw':
-            pass
-            #'self.send_light_data()
+            self.send_light_data(
+                self.raw_index_offset + input_config['sliders'].index(data1),
+                data2/127
+            )
 
     def send_light_data(self, device, value):
         self.socket.send_message({
