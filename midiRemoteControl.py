@@ -53,8 +53,9 @@ def get_args():
 
     parser = argparse.ArgumentParser(
         prog=__name__,
-        description="""DMXManager - Lighting Automation Framework
-        Simple lighting automation for a single DMX universe driven by YAML scene and sequence descriptions.
+        description="""midiRemoteControl
+        Use a midi device input to remotely control a dmx lighting system.
+        Send json lighting events using the displaytrigger subscription server.
         """,
         epilog="""
         """
