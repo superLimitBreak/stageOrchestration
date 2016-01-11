@@ -1,18 +1,16 @@
+import os.path
+
 from libs.pygame_midi_input import MidiInput
 from libs.client_reconnect import SubscriptionClient
+
+from lighting import open_yaml
 
 import logging
 log = logging.getLogger(__name__)
 
 VERSION = '0.01'
 DEFAULT_DISPLAYTRIGGER_HOST = '127.0.0.1'
-
-
-DEVICE_CONFIG = {
-    'nanoKONTROL2': dict(
-        exit=46,
-    ),
-}
+DEFAULT_YAMLPATH = './data/midiRemoteControlDevices/'
 
 
 class MidiRemoteControl(object):
@@ -20,10 +18,10 @@ class MidiRemoteControl(object):
     Send json events over the trigger system to control the lighting
     """
 
-    def __init__(self, midi_device_name, displaytrigger_host):
+    def __init__(self, midi_device_name, displaytrigger_host, yamlpath):
         super().__init__()
 
-        self.device_config = DEVICE_CONFIG.get(midi_device_name, {})
+        self.device_config = open_yaml(os.path.join(yamlpath, midi_device_name+'.yaml'))
         assert self.device_config, 'No configuration was found for your midi device. Add device mapping to YAML'
 
         self.midi_input = MidiInput(midi_device_name)
@@ -47,7 +45,7 @@ class MidiRemoteControl(object):
 
     def close(self):
         self.midi_input.close()
-        self.socket.clost()
+        self.socket.close()
 
 
 def get_args():
@@ -67,6 +65,7 @@ def get_args():
 
     # Core
     parser.add_argument('--displaytrigger_host', action='store', help='display-trigger server to recieve events from', default=DEFAULT_DISPLAYTRIGGER_HOST)
+    parser.add_argument('--yamlpath', action='store', help='folder path for the yaml lighting data.', default=DEFAULT_YAMLPATH)
 
     # Common
     parser.add_argument('--postmortem', action='store_true', help='enter debugger on exception')
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=kwargs['log_level'])
 
     def launch():
-        MidiRemoteControl(kwargs['midi_device_name'], kwargs['displaytrigger_host'])
+        MidiRemoteControl(kwargs['midi_device_name'], kwargs['displaytrigger_host'], kwargs['yamlpath'])
     if kwargs.get('postmortem'):
         postmortem(launch)
     else:
