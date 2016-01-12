@@ -51,6 +51,8 @@ class MidiRemoteControl(object):
                 continue
             for slider_index in value.get('sliders', ()):
                 self.input_lookup[slider_index] = value
+            if 'value' in value:
+                self.input_lookup[value.get('value')] = value
             #for k, v in value.items():
             #    pass
 
@@ -60,7 +62,7 @@ class MidiRemoteControl(object):
         if data1 == dc['exit']:
             self.running = False
 
-        self.input_state[data1] = data2
+        self.input_state[data1] = data2/127
 
         input_config = self.input_lookup.get(data1)
         if not input_config:
@@ -71,14 +73,17 @@ class MidiRemoteControl(object):
                 input_config['device'],
                 '{type}:{values}'.format(
                     type=input_config['type'],
-                    values=','.join(map(str, (self.input_state.get(slider_index, 0)/127 for slider_index in input_config['sliders'])))
+                    values=','.join(map(str, (self.input_state.get(slider_index, 0) for slider_index in input_config['sliders'])))
                 )
             )
         if input_config.get('type') == 'raw':
             self.send_light_data(
-                self.raw_index_offset + input_config['sliders'].index(data1),
-                data2/127
+                (self.raw_index_offset * len(input_config['sliders'])) + input_config['sliders'].index(data1),
+                self.input_state[data1]
             )
+
+        if input_config.get('command'):
+            getattr(self, input_config.get('command'), lambda: None)(self.input_state[data1])
 
     def send_light_data(self, device, value):
         self.socket.send_message({
@@ -87,6 +92,19 @@ class MidiRemoteControl(object):
             'device': device,
             'value': value,
         })
+
+    def next_raw(self, value):
+        if value:
+            self.raw_index_offset += 1
+            log.info('Raw input offset {0}'.format(self.raw_index_offset))
+
+    def prev_raw(self, value):
+        if value:
+            self.raw_index_offset += -1
+            log.info('Raw input offset {0}'.format(self.raw_index_offset))
+
+    def smoke(self, value):
+        self.send_light_data('smoke', value)
 
     def close(self):
         self.midi_input.close()

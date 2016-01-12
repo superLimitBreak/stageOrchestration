@@ -10,5 +10,12 @@ floor:
 raw:
   type: raw
   sliders: [0,1,2,3,4,5,6,7]
-  next: 62
-  prev: 61
+next_raw:
+  command: next_raw
+  value: 62
+prev_raw:
+  command: prev_raw
+  value: 61
+smoke:
+  command: smoke
+  value: 100
