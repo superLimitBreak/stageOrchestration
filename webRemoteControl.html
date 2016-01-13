@@ -45,6 +45,12 @@
 			</div>
 		</div>
 		
+		<div class="buttons">
+			<button onclick="send_lights('all', 'hsv:1,1,1,1')">all</button>
+			<button onclick="send_lights('all', 'hsv:0,0,0,0')">off</button>
+		</div>
+
+		
 		<script type="text/javascript">
 			var DEFAULT_PORT = "9873";
 			var NUM_RAW_SLIDERS = 8;
@@ -74,6 +80,13 @@
 				}
 			}, true);
 
+			function send_lights(device, value) {
+				socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
+					device: device,
+					value: value,
+				},]}));
+            }
+
 			
 			// Slider ----------------------------------------------------------
 			
@@ -96,10 +109,7 @@
 					else {
 						value = event.target.value;
 					}
-					socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
-						device: slider.getAttribute('data-device'),
-						value: value,
-					},]}));
+					send_lights(slider.getAttribute('data-device'), value);
 				}, true);
 				return slider;
 			}
