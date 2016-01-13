@@ -16,6 +16,10 @@
 				height: 175px;
 				padding: 0 5px;
 			}
+			.sliders div {
+				display: inline-block;
+				margin: 1em;
+			}
 		</style>
 		
 
@@ -27,9 +31,11 @@
 			<input id="host_input" type="text">
 		</div>
 		
-		<div id="sliders">
+		<div class="sliders">
+			<div id="hsv_top"    ><h2>hsv top</h2></div>
+			<div id="hsv_floor"  ><h2>hsv floor</h2></div>
+			<div id="raw_sliders"><h2>raw dmx</h2></div>
 		</div>
-		
 		
 		<script type="text/javascript">
 			var DEFAULT_PORT = "9873";
@@ -106,15 +112,16 @@
 			// Init ------------------------------------------------------------
 			
 			window.onload = function() {
-				document.getElementById('host_input').value = localStorage.host || (window.location.hostname+":"+DEFAULT_PORT);
+				document.getElementById('host_input').value = localStorage.host || ((window.location.hostname || 'localhost')+":"+DEFAULT_PORT);
 				
-				appendChildren(document.getElementById('sliders'), createSliderGroup('all', 'hsv', 4));
+				appendChildren(document.getElementById('hsv_top')  , createSliderGroup('top'  , 'hsv', 4));
+				appendChildren(document.getElementById('hsv_floor'), createSliderGroup('floor', 'hsv', 4));
 				
 				var sliders = [];
 				for (var i=0 ; i<8 ; i++) {
 					sliders.push(createSlider(i));
 				}
-				appendChildren(document.getElementById('sliders'), sliders);
+				appendChildren(document.getElementById('raw_sliders'), sliders);
 				
 				connect();
 			}
