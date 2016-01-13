@@ -22,8 +22,10 @@ class RemoteControl(AbstractDMXRenderer):
         device = data.get('device')
         value = data.get('value')
         try:
+            # Device is integer - manipulate dmx index value directly
             self.dmx_universe[int(device)] = one_to_limit(float(value), limit=255)
         except ValueError:
+            # Device is string - lookup/render alias
             self.config.render_device(self.dmx_universe, device, parse_rgb_color(value))
 
     def clear(self):

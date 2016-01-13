@@ -39,6 +39,7 @@
 		
 		<script type="text/javascript">
 			var DEFAULT_PORT = "9873";
+			var NUM_RAW_SLIDERS = 8;
 
 			
 			// Socket ----------------------------------------------------------
@@ -88,7 +89,7 @@
 						value = event.target.value;
 					}
 					socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
-						device: device,
+						device: slider.getAttribute('data-device'),
 						value: value,
 					},]}));
 				}, true);
@@ -109,6 +110,15 @@
 				}
 			}
 
+			function raw_slider_controls() {
+                var container = document.createElement('div');
+				var index_display = document.createElement('input');
+				var button_next = document.createElement('button');
+				var button_prev = document.createElement('button');
+				appendChildren(container, [index_display, button_next, button_prev]);
+				return container;
+            }
+			
 			// Init ------------------------------------------------------------
 			
 			window.onload = function() {
@@ -118,10 +128,11 @@
 				appendChildren(document.getElementById('hsv_floor'), createSliderGroup('floor', 'hsv', 4));
 				
 				var sliders = [];
-				for (var i=0 ; i<8 ; i++) {
+				for (var i=0 ; i<NUM_RAW_SLIDERS ; i++) {
 					sliders.push(createSlider(i));
 				}
 				appendChildren(document.getElementById('raw_sliders'), sliders);
+				
 				
 				connect();
 			}
