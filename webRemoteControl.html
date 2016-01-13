@@ -16,7 +16,7 @@
 				height: 175px;
 				padding: 0 5px;
 			}
-			.sliders div {
+			.sliders>div {
 				display: inline-block;
 				margin: 1em;
 			}
@@ -32,9 +32,17 @@
 		</div>
 		
 		<div class="sliders">
-			<div id="hsv_top"    ><h2>hsv top</h2></div>
-			<div id="hsv_floor"  ><h2>hsv floor</h2></div>
-			<div id="raw_sliders"><h2>raw dmx</h2></div>
+			<div id="hsv_top">
+				<h2>hsv top</h2>
+			</div>
+			<div id="hsv_floor">
+				<h2>hsv floor</h2>
+			</div>
+			<div id="raw">
+				<h2>raw dmx</h2>
+				<div id="raw_sliders"></div>
+				<div id="raw_controls"></div>
+			</div>
 		</div>
 		
 		<script type="text/javascript">
@@ -113,9 +121,32 @@
 			function raw_slider_controls() {
                 var container = document.createElement('div');
 				var index_display = document.createElement('input');
-				var button_next = document.createElement('button');
-				var button_prev = document.createElement('button');
-				appendChildren(container, [index_display, button_next, button_prev]);
+				index_display.value = 0;
+				index_display.onchange = function() {
+					sliders = document.getElementById('raw_sliders').getElementsByTagName('input');
+					for (index in sliders) {
+						var slider = sliders[index];
+						if (!slider.getAttribute) {continue;}
+						slider.setAttribute('data-device', Number(index_display.value) + Number(index));
+						slider.value = 0;
+					}
+				}
+				
+				function create_button(text, increment) {
+					var button = document.createElement('button');
+					button.innerHTML = text;
+					button.onclick = function(event){
+						index_display.value = Math.max(0, Number(index_display.value) + Number(increment));
+						index_display.onchange();
+					};
+					return button;
+                }
+				
+				appendChildren(container, [
+					index_display,
+					create_button('<', -NUM_RAW_SLIDERS),
+					create_button('>',  NUM_RAW_SLIDERS),
+				]);
 				return container;
             }
 			
@@ -133,6 +164,7 @@
 				}
 				appendChildren(document.getElementById('raw_sliders'), sliders);
 				
+				document.getElementById('raw_controls').appendChild(raw_slider_controls());
 				
 				connect();
 			}
