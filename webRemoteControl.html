@@ -47,7 +47,7 @@
 		
 		<div class="buttons">
 			<button onclick="send_lights('all', 'rgb:1,1,1,1')">all</button>
-			<button onclick="send_lights('all', 'rgb:0,0,0,0')">off</button>
+			<button onclick="send_clear()">off</button>
 		</div>
 
 		
@@ -87,6 +87,10 @@
 				},]}));
             }
 
+			function send_clear() {
+				socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.clear'}]}));
+            }
+			
 			
 			// Slider ----------------------------------------------------------
 			

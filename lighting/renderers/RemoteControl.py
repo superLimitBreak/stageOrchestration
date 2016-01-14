@@ -28,7 +28,7 @@ class RemoteControl(AbstractDMXRenderer):
             # Device is string - lookup/render alias
             self.config.render_device(self.dmx_universe, device, parse_rgb_color(value))
 
-    def clear(self):
+    def clear(self, *args, **kwargs):
         # This is really inefficent - Whats a better way?
         for i in range(len(self.dmx_universe)):
             self.dmx_universe[i] = 0
