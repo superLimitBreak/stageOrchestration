@@ -20,7 +20,15 @@ def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1):
 
 
 def FlatPar(config, rgbw):
-    return rgb_calibrate(rgbw, **config['device_config']['FlatPar']) + (rgbw[3], )
+    device_config = config['device_config']['FlatPar']
+    rgb = rgb_calibrate(rgbw, **device_config)
+    w = rgbw[3]
+    return  (
+        rgb[0] + (w * (1-device_config['red_factor'])),
+        rgb[1] + (w * (1-device_config['green_factor'])),
+        rgb[2] + (w * (1-device_config['blue_factor'])),
+        w,
+    )
 
 
 def neoneonfloor(config, rgbw):
