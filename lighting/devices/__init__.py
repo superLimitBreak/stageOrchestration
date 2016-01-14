@@ -20,14 +20,20 @@ def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1):
 
 
 def FlatPar(config, rgbw):
+    WHITE_FACTOR = 0.5
     device_config = config['device_config']['FlatPar']
     rgb = rgb_calibrate(rgbw, **device_config)
     w = rgbw[3]
-    return  (
-        rgb[0] + (w * (1-device_config['red_factor'])),
-        rgb[1] + (w * (1-device_config['green_factor'])),
-        rgb[2] + (w * (1-device_config['blue_factor'])),
-        w,
+    def white_factor(w, factor_key):
+        if w > WHITE_FACTOR:
+            return (w-WHITE_FACTOR) * (1/WHITE_FACTOR) * (1-device_config[factor_key])
+        else:
+            return 0
+    return (
+        rgb[0] + white_factor(w, 'red_factor'),
+        rgb[1] + white_factor(w, 'green_factor'),
+        rgb[2] + white_factor(w, 'blue_factor'),
+        w * (1/WHITE_FACTOR),
     )
 
 
