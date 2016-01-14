@@ -223,6 +223,7 @@ device_config:
         red_factor: 1.0
         green_factor: 0.28
         blue_factor: 0.73
+        white_factor: 0.5
     neoneonfloor:
         mode: 50
     OrionLinkV2:
