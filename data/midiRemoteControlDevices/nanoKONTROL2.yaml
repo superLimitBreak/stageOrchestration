@@ -1,4 +1,6 @@
-exit: 46
+exit:
+  command: exit
+  input_id: 46
 top:
   device: top
   type: hsv
@@ -12,10 +14,19 @@ raw:
   sliders: [0,1,2,3,4,5,6,7]
 next_raw:
   command: next_raw
-  value: 62
+  input_id: 62
 prev_raw:
   command: prev_raw
-  value: 61
+  input_id: 61
 smoke:
   command: smoke
-  value: 100
+  input_id: 100
+all:
+  command: all
+  input_id: 41
+clear:
+  command: clear
+  input_id: 42
+all_hold:
+  command: all_hold
+  input_id: 45

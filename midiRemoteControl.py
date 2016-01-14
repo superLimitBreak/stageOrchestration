@@ -46,22 +46,17 @@ class MidiRemoteControl(object):
 
     def parse_config(self):
         self.input_lookup = {}
-        for value in self.device_config.values():
-            if not isinstance(value, dict):
+        for input_control_config in self.device_config.values():
+            if not isinstance(input_control_config, dict):
                 continue
-            for slider_index in value.get('sliders', ()):
-                self.input_lookup[slider_index] = value
-            if 'value' in value:
-                self.input_lookup[value.get('value')] = value
+            for slider_index in input_control_config.get('sliders', ()):
+                self.input_lookup[slider_index] = input_control_config
+            if 'input_id' in input_control_config:
+                self.input_lookup[input_control_config.get('input_id')] = input_control_config
             #for k, v in value.items():
             #    pass
 
     def midi_event(self, event, data1, data2, data3):
-        dc = self.device_config
-        #print(data1, data2, data3)
-        if data1 == dc['exit']:
-            self.running = False
-
         self.input_state[data1] = data2/127
 
         input_config = self.input_lookup.get(data1)
@@ -105,6 +100,23 @@ class MidiRemoteControl(object):
 
     def smoke(self, value):
         self.send_light_data('smoke', value)
+
+    def all(self, value):
+        if value:
+            self.send_light_data('all', 'rgb:1,1,1,1')
+
+    def clear(self, value):
+        if value:
+            self.socket.send_message({'deviceid': 'lights', 'func': 'lights.clear'})
+
+    def all_hold(self, value):
+        if value:
+            self.all(value)
+        else:
+            self.clear(127)
+
+    def exit(self, *args):
+        self.running = False
 
     def close(self):
         self.midi_input.close()
