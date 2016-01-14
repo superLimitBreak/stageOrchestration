@@ -26,14 +26,14 @@ def FlatPar(config, rgbw):
     w = rgbw[3]
     def white_factor(w, factor_key):
         if w > WHITE_FACTOR:
-            return (w-WHITE_FACTOR) * (1/WHITE_FACTOR) * (1-device_config[factor_key])
+            return ((w-WHITE_FACTOR)/(1-WHITE_FACTOR)) * (1-device_config[factor_key])
         else:
             return 0
     return (
         rgb[0] + white_factor(w, 'red_factor'),
         rgb[1] + white_factor(w, 'green_factor'),
         rgb[2] + white_factor(w, 'blue_factor'),
-        w * (1/WHITE_FACTOR),
+        w / WHITE_FACTOR,
     )
 
 
