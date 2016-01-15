@@ -94,20 +94,27 @@
 			// Midi ------------------------------------------------------------
 			
 			function initMidi() {
+				// http://webaudiodemos.appspot.com/slides/webmidi.html
+				// http://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
+				// http://www.toptal.com/web/creating-browser-based-audio-applications-controlled-by-midi-hardware
+				// https://webaudio.github.io/web-midi-api/
+				// https://www.w3.org/TR/webmidi/
 				function onMidiMessage(message) {
-					//console.log(message.data);
 					var input = message.data[1];
 					var value = message.data[2];
 					if (input == 0) {
 						var slider = document.getElementById('raw_sliders').children.item(0);
 						slider.value = value/127;
+						slider._onupdated();
 					}
 				}
 				function onMIDISuccess(midiAccess) {
-					var inputs = midiAccess.inputs.values();
-					for (var input = inputs.next() ; input && !input.done ; input = inputs.next()) {
-						// Bind to ALL midi interfaces - TODO: do this for named device only
-						input.value.onmidimessage = onMidiMessage;
+					for (var input of midiAccess.inputs.values()) {
+						input.onmidimessage = onMidiMessage;
+					// Bind to ALL midi interfaces - TODO: do this for named device only
+					//var inputs = midiAccess.inputs.values();
+					//for (var input = inputs.next() ; input && !input.done ; input = inputs.next()) {
+					//	input.value.onmidimessage = onMidiMessage;
 					}
 				}
 				function onMIDIFailure() {
@@ -122,13 +129,6 @@
 			
 			// Slider ----------------------------------------------------------
 			
-			function _sliderUpdated(device, type, slider_group, value) {
-				if (Array.isArray(slider_group)) {
-					var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
-					value = type+':'+values.join(',');
-				}
-				send_lights(device, value);  //slider.getAttribute('data-device')
-			}
 			
 			function createSlider(device, type, slider_group) {
 				var slider = document.createElement('input');
@@ -140,10 +140,15 @@
 				slider.setAttribute('value', '0');
 				slider.setAttribute('data-device', device);
 				slider.setAttribute('data-type', type);
-				slider.addEventListener('input', function(event){
-					value = event.target.value;
-					//_sliderUpdated(device, type, slider_group, value);
-				}, true);
+				slider._onupdated = function(){
+					value = slider.value;  //event.target.value;
+					if (Array.isArray(slider_group)) {
+						var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
+						value = type+':'+values.join(',');
+					}
+					send_lights(device, value);  //slider.getAttribute('data-device')
+				};
+				slider.addEventListener('input', function(event){slider._onupdated()}, true);
 				return slider;
 			}
 			
@@ -162,7 +167,7 @@
 			}
 
 			function raw_slider_controls() {
-                var container = document.createElement('div');
+				var container = document.createElement('div');
 				var index_display = document.createElement('input');
 				index_display.value = 0;
 				index_display.onchange = function() {
