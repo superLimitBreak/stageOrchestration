@@ -85,14 +85,50 @@
 					device: device,
 					value: value,
 				},]}));
-            }
+			}
 
 			function send_clear() {
 				socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.clear'}]}));
-            }
+			}
 			
+			// Midi ------------------------------------------------------------
+			
+			function initMidi() {
+				function onMidiMessage(message) {
+					//console.log(message.data);
+					var input = message.data[1];
+					var value = message.data[2];
+					if (input == 0) {
+						var slider = document.getElementById('raw_sliders').children.item(0);
+						slider.value = value/127;
+					}
+				}
+				function onMIDISuccess(midiAccess) {
+					var inputs = midiAccess.inputs.values();
+					for (var input = inputs.next() ; input && !input.done ; input = inputs.next()) {
+						// Bind to ALL midi interfaces - TODO: do this for named device only
+						input.value.onmidimessage = onMidiMessage;
+					}
+				}
+				function onMIDIFailure() {
+					console.warn('MIDI Access Failed');
+				}
+				if (window.navigator.requestMIDIAccess) {
+					window.navigator.requestMIDIAccess({sysex: false}).then(onMIDISuccess, onMIDIFailure);
+				} else {
+					console.warn("No MIDI support in your browser.");
+				}
+			}
 			
 			// Slider ----------------------------------------------------------
+			
+			function _sliderUpdated(device, type, slider_group, value) {
+				if (Array.isArray(slider_group)) {
+					var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
+					value = type+':'+values.join(',');
+				}
+				send_lights(device, value);  //slider.getAttribute('data-device')
+			}
 			
 			function createSlider(device, type, slider_group) {
 				var slider = document.createElement('input');
@@ -105,15 +141,8 @@
 				slider.setAttribute('data-device', device);
 				slider.setAttribute('data-type', type);
 				slider.addEventListener('input', function(event){
-					var value;
-					if (Array.isArray(slider_group)) {
-						var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
-						value = type+':'+values.join(',');
-					}
-					else {
-						value = event.target.value;
-					}
-					send_lights(slider.getAttribute('data-device'), value);
+					value = event.target.value;
+					//_sliderUpdated(device, type, slider_group, value);
 				}, true);
 				return slider;
 			}
@@ -154,7 +183,7 @@
 						index_display.onchange();
 					};
 					return button;
-                }
+				}
 				
 				appendChildren(container, [
 					index_display,
@@ -162,7 +191,7 @@
 					create_button('>',  NUM_RAW_SLIDERS),
 				]);
 				return container;
-            }
+			}
 			
 			// Init ------------------------------------------------------------
 			
@@ -181,6 +210,8 @@
 				document.getElementById('raw_controls').appendChild(raw_slider_controls());
 				
 				connect();
+				
+				initMidi();
 			}
 		</script>
 	</body>
