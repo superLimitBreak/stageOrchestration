@@ -29,6 +29,7 @@ libs:
 		ln -s ../../libs/python3/lib/midi/pygame_midi_wrapper.py pygame_midi_wrapper.py ;\
 		ln -s ../../libs/python3/lib/midi/pygame_midi_input.py pygame_midi_input.py ;\
 		ln -s ../../libs/python3/lib/midi/music.py music.py ;\
+		ln -s ../../libs/python3/lib/pygame_helpers/pygame_base.py pygame_base.py ;\
 	else \
 		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/misc.py;\
 		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py;\
@@ -37,6 +38,7 @@ libs:
 		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py;\
 		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py;\
 		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/music.py;\
+		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/pygame/pygame_base.py;\
 	fi
 
 # PentatonicHero plugin --------------------------------------------------------
@@ -62,7 +64,7 @@ pytweening/__init__.py: pytweening
 
 # Run --------------------------------------------------------------------------
 
-.PHONY: run run_midi_input run_production run_simulator
+.PHONY: run run_midi_input run_production run_simulator run_simulator2
 
 run:
 	python3 lightingAutomation.py --postmortem
@@ -74,7 +76,11 @@ run_production:
 	python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111
 
 run_simulator:
+	# To be replaced by simulator2
 	python3 simulator.py
+
+run_simulator2:
+	python3 simulator2.py
 
 
 # Clean ------------------------------------------------------------------------
