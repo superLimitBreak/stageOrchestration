@@ -1,3 +1,5 @@
+ENV = lightingautomation_env
+ENV_ACTIVATE = $(ENV)/bin/activate
 
 help:
 	# Automated ArtNet3 DMX Lighting System
@@ -12,8 +14,10 @@ help:
 # Install ----------------------------------------------------------------------
 
 .PHONY: install
-install: libs pytweening/__init__.py lighting/renderers/PentatonicHero.py
+install:$(ENV) libs pytweening/__init__.py lighting/renderers/PentatonicHero.py pygame requirements
 
+$(ENV):
+	virtualenv -p python3 $(ENV)
 
 # Python Dependencys -----------------------------------------------------------
 
@@ -41,6 +45,23 @@ libs:
 		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/pygame/pygame_base.py;\
 	fi
 
+# This kind of stuff would make most sense in a setup.py
+.PHONY: requirements
+requirements:
+	. $(ENV_ACTIVATE); pip3 install -r requirements.pip
+
+.Phony: pygame
+pygame:
+	# There is no python3-pygame package - The Pygame wiki suggests compileing it yourself.
+	# http://www.pygame.org/wiki/CompileUbuntu
+	. $(ENV_ACTIVATE);\
+	if [ $$(pip3 list | grep -c pygame) -eq 0 ];\
+		then\
+		echo "Installing pygame";\
+		pip3 install hg+http://bitbucket.org/pygame/pygame;\
+	fi
+
+
 # PentatonicHero plugin --------------------------------------------------------
 
 PENTATONIC_HERO_SOURCE_FILE=PentatonicHero/DMXRendererPentatonicHero.py
@@ -67,25 +88,26 @@ pytweening/__init__.py: pytweening
 .PHONY: run run_midi_input run_production run_simulator run_simulator2
 
 run:
-	python3 lightingAutomation.py --postmortem
+	. $(ENV_ACTIVATE); python3 lightingAutomation.py --postmortem
 
 run_midiRemote:
-	python3 midiRemoteControl.py 'nanoKONTROL2' --postmortem
+	. $(env_activate); python3 midiRemoteControl.py 'nanoKONTROL2' --postmortem
 
 run_production:
-	python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111
+	. $(ENV_ACTIVATE); python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111
 
 run_simulator:
 	# To be replaced by simulator2
-	python3 simulator.py
+	. $(ENV_ACTIVATE); python3 simulator.py
 
 run_simulator2:
-	python3 simulator2.py
+	. $(ENV_ACTIVATE); python3 simulator2.py
 
 
 # Clean ------------------------------------------------------------------------
 
 clean:
+	rm -rf $(ENV)
 	rm -rf libs
 	rm -rf pytweening
 	rm -rf $(PENTATONIC_HERO_DESTINATION_FILE)
