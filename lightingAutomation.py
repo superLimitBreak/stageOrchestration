@@ -3,7 +3,7 @@ from libs.loop import Loop
 from libs.misc import run_funcs, postmortem
 from libs.client_reconnect import SubscriptionClient
 
-from lighting import AbstractDMXRenderer, mix, LightingConfig
+from lighting import AbstractDMXRenderer, mix, LightingConfig, add_default_argparse_args
 from lighting.ArtNet3 import ArtNet3
 from lighting.renderers.LightTiming import LightTiming
 from lighting.renderers.DisplayTriggerEvents import DisplayTriggerEvents
@@ -19,7 +19,6 @@ VERSION = '0.05'
 DEFAULT_DISPLAYTRIGGER_HOST = '127.0.0.1'
 DEFAULT_ARTNET_DMX_HOST = '127.0.0.1'
 DEFAULT_FRAMERATE = 30
-DEFAULT_YAMLPATH = 'data'
 DEFAULT_YAML_SCAN_INTERVAL = 1.0
 
 class DMXManager(AbstractDMXRenderer):
@@ -87,13 +86,9 @@ def get_args():
 
     # Plugin params
     parser.add_argument('--midi_input', action='store', help='name of the midi input port to use')
-    parser.add_argument('--yamlpath', action='store', help='folder path for the yaml lighting data.', default=DEFAULT_YAMLPATH)
     parser.add_argument('--yamlscaninterval', action='store', type=float, help='seconds to scan', default=DEFAULT_YAML_SCAN_INTERVAL)
 
-    # Common
-    parser.add_argument('--postmortem', action='store_true', help='enter debugger on exception')
-    parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
-    parser.add_argument('--version', action='version', version=VERSION)
+    add_default_argparse_args(parser, version=VERSION)
 
     args = parser.parse_args()
     return vars(args)

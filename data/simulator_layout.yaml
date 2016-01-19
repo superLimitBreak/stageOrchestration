@@ -1,0 +1,42 @@
+
+bass_top:
+  x: 80
+  y: 100
+bass_floor:
+  x: 80
+  y: 140
+
+rhythm_top:
+  x: 0
+  y: 120
+rythum_floor:
+  x: 0
+  y: 200
+
+piano_top:
+  x: 20
+  y: 0
+piano_bottom:
+  x: 0
+  y: 60
+  
+drum_top:
+  x: 220
+  y: 0
+drum_bottom:
+  x: 240
+  y: 60
+
+vocal_top:
+  x: 180
+  y: 100
+vocal_floor:
+  x: 180
+  y: 140
+
+lead_top:
+  x: 250
+  y: 120
+lead_bottom:
+  x: 240
+  y: 200

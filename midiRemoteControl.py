@@ -5,14 +5,13 @@ from libs.misc import postmortem
 from libs.pygame_midi_input import MidiInput
 from libs.client_reconnect import SubscriptionClient
 
-from lighting import open_yaml
+from lighting import open_yaml, add_default_argparse_args
 
 import logging
 log = logging.getLogger(__name__)
 
 VERSION = '0.01'
 DEFAULT_DISPLAYTRIGGER_HOST = '127.0.0.1'
-DEFAULT_YAMLPATH = './data/midiRemoteControlDevices/'
 
 
 class MidiRemoteControl(object):
@@ -23,7 +22,7 @@ class MidiRemoteControl(object):
     def __init__(self, midi_device_name, displaytrigger_host, yamlpath):
         super().__init__()
 
-        self.device_config = open_yaml(os.path.join(yamlpath, midi_device_name+'.yaml'))
+        self.device_config = open_yaml(os.path.join(yamlpath, 'midiRemoteControlDevices', midi_device_name+'.yaml'))
         assert self.device_config, 'No configuration was found for your midi device. Add device mapping to YAML'
 
         self.parse_config()
@@ -138,15 +137,9 @@ def get_args():
     parser_input = parser
 
     parser.add_argument('midi_device_name', action='store', help='name of the midi input device to use')
-
-    # Core
     parser.add_argument('--displaytrigger_host', action='store', help='display-trigger server to recieve events from', default=DEFAULT_DISPLAYTRIGGER_HOST)
-    parser.add_argument('--yamlpath', action='store', help='folder path for the yaml lighting data.', default=DEFAULT_YAMLPATH)
 
-    # Common
-    parser.add_argument('--postmortem', action='store_true', help='enter debugger on exception')
-    parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
-    parser.add_argument('--version', action='version', version=VERSION)
+    add_default_argparse_args(parser, version=VERSION)
 
     args = parser.parse_args()
     return vars(args)

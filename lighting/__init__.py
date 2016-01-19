@@ -11,6 +11,18 @@ import logging
 log = logging.getLogger(__name__)
 
 
+DEFAULT_YAMLPATH = 'data'
+DEFAULT_VERSION = '0.0.0'
+
+
+def add_default_argparse_args(parser, version=DEFAULT_VERSION):
+    parser.add_argument('--yamlpath', action='store', help='folder path for the yaml lighting data.', default=DEFAULT_YAMLPATH)
+    parser.add_argument('--postmortem', action='store_true', help='enter debugger on exception')
+    parser.add_argument('--log_level', type=int,  help='log level', default=logging.INFO)
+    parser.add_argument('--version', action='version', version=version)
+
+
+
 class AbstractDMXRenderer(object):
     DEFAULT_DMX_SIZE = 146
 
