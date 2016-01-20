@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 VERSION = '0.0.0'
 DEFAULT_FRAMERATE = 15
 
+RGBW_LIGHTS = ('FlatPar', )
 
 # Device Renderers -------------------------------------------------------------
 
@@ -94,7 +95,9 @@ class DMXSimulator(ArtNet3, SimplePygameBase):
         for device_name, data in open_yaml(os.path.join(yamlpath, 'simulator_layout.yaml')).items():
             x, y, devices = data['x'], data['y'], self.config.device_lookup[device_name]
             for index, device in enumerate(devices):
-                if device['type'] in ('FlatPar', ):  # RGBW lights
+                if device['type'] == 'neoneonfloor':
+                    device['index'] += 2
+                if device['type'] in RGBW_LIGHTS:  # RGBW lights
                     self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x, y))
                 else:  # RGB Lights
                     self._attach_dmx_renderer_to_dmx_array(DMXLightRGB(device['index'], x + (index * DMXLightRGB.DEFAULT_WIDTH), y))
