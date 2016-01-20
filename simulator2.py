@@ -1,5 +1,6 @@
 import os.path
 import random
+import pygame
 
 from libs.misc import postmortem
 from libs.pygame_base import SimplePygameBase
@@ -18,13 +19,15 @@ DEFAULT_FRAMERATE = 15
 # Device Renderers -------------------------------------------------------------
 
 class DMXLightRGB(object):
+    DEFAULT_WIDTH = 16
+    DEFAULT_HEIGHT = 16
     dmx_size = 3
 
-    def __init__(self, address, x, y):
+    def __init__(self, address, x, y, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
         self.address = address
         self.x = x
         self.y = y
-        self.rect = pygame.Rect(self.x, self.y, self.dmx_size * 8, self.dmx_size * 5)
+        self.rect = pygame.Rect(self.x, self.y, width, height)
         self.func_get_data = lambda: []
 
     @property
@@ -88,12 +91,19 @@ class DMXSimulator(ArtNet3, SimplePygameBase):
 
         self.dmx_items = []
 
-        self.layout = open_yaml(os.path.join(yamlpath, 'simulator_layout.yaml'))
-        for device_name, data in self.layout.items():
-            x, y = data['x'], data['y']
-            for index, device in enumerate(self.config.device_lookup[device_name]):
-                
-        exit()
+        for device_name, data in open_yaml(os.path.join(yamlpath, 'simulator_layout.yaml')).items():
+            x, y, devices = data['x'], data['y'], self.config.device_lookup[device_name]
+            for index, device in enumerate(devices):
+                if device['type'] in ('FlatPar', ):  # RGBW lights
+                    self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x, y))
+                else:  # RGB Lights
+                    self._attach_dmx_renderer_to_dmx_array(DMXLightRGB(device['index'], x + (index * DMXLightRGB.DEFAULT_WIDTH), y))
+
+    def _attach_dmx_renderer_to_dmx_array(self, dmx_item):
+        def func_get_data(index, size):
+            return lambda: self.state[index:index + size]
+        dmx_item.func_get_data = func_get_data(dmx_item.address, dmx_item.dmx_size)
+        self.dmx_items.append(dmx_item)
 
     def loop(self):
         for item in self.dmx_items:

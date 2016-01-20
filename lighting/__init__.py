@@ -114,6 +114,9 @@ class LightingConfig(object):
         """
         return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
 
+    def color_calibration(self, device, rgbw):
+        return getattr(devices, device.get('type'))(self.config, rgbw)
+
     def render_device(self, dmx, name, rgbw):
         if rgbw:
             rgbw = self.normalize_rgbw(rgbw)
@@ -125,4 +128,4 @@ class LightingConfig(object):
                 dmx[index+offset] = limit(value)
 
         for device in self.device_lookup.get(name, ()):
-            overlay(device['index'], getattr(devices, device.get('type'))(self.config, rgbw))
+            overlay(device['index'], self.color_calibration(device, rgbw))
