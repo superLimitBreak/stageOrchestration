@@ -1,4 +1,5 @@
 .ropeproject
+*_env/
 env/
 __pycache__
 *.pyc

@@ -3,18 +3,22 @@ ENV_ACTIVATE = $(ENV)/bin/activate
 
 help:
 	# Automated ArtNet3 DMX Lighting System
-	#  - install        : Install dependencys
-	#  - run            :
-	#  - run_production : Drive a remote ArtNet3 server
-	#  - run_midiRemote : Use local midi device ()with pygame) to control a remote lightingAutomation instance
-	#  - run_simulator  : Pygame based visulisation of ArtNet packets
+	#  - install        		: Install dependencies
+	#  - install_development 	: Install optional dependenciees for development
+	#  - run            		:
+	#  - run_production 		: Drive a remote ArtNet3 server
+	#  - run_midiRemote 		: Use local midi device ()with pygame) to control a remote lightingAutomation instance
+	#  - run_simulator  		: Pygame based visulisation of ArtNet packets
 	# Requires python3 + pyyaml lib + [optional pygame for local midi control]
 
 
 # Install ----------------------------------------------------------------------
 
 .PHONY: install
-install:$(ENV) libs pytweening/__init__.py lighting/renderers/PentatonicHero.py pygame requirements
+install:$(ENV) libs pytweening/__init__.py lighting/renderers/PentatonicHero.py requirements
+
+.PHONY: install_development
+install_development: pygame
 
 $(ENV):
 	virtualenv -p python3 $(ENV)
