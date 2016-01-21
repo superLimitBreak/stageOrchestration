@@ -52,7 +52,7 @@ libs:
 # This kind of stuff would make most sense in a setup.py
 .PHONY: requirements
 requirements:
-	. $(ENV_ACTIVATE); pip3 install -r requirements.pip
+	. $(ENV_ACTIVATE); pip3 install --upgrade pip ; pip3 install --upgrade -r requirements.pip
 
 .Phony: pygame
 pygame:
