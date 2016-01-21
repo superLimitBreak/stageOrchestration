@@ -15,7 +15,7 @@ help:
 # Install ----------------------------------------------------------------------
 
 .PHONY: install
-install:$(ENV) libs pytweening/__init__.py lighting/renderers/PentatonicHero.py requirements
+install:$(ENV) libs lighting/renderers/PentatonicHero.py requirements
 
 .PHONY: install_development
 install_development: pygame
@@ -78,14 +78,6 @@ lighting/renderers/PentatonicHero.py:
 	fi
 
 
-# Extneral Python lib dependecys -----------------------------------------------
-
-pytweening:
-	mkdir pytweening
-pytweening/__init__.py: pytweening
-	cd pytweening && wget -qc https://raw.githubusercontent.com/asweigart/pytweening/master/pytweening/__init__.py
-
-
 
 # Run --------------------------------------------------------------------------
 
@@ -109,5 +101,4 @@ run_simulator:
 clean:
 	rm -rf $(ENV)
 	rm -rf libs
-	rm -rf pytweening
 	rm -rf $(PENTATONIC_HERO_DESTINATION_FILE)
