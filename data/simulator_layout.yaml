@@ -1,42 +1,39 @@
 
 bass_top:
-  x: 80
+  x: 120
   y: 100
 bass_floor:
-  x: 80
+  x: 130
   y: 140
 
 rhythm_top:
-  x: 0
-  y: 120
+  x: 40
+  y: 140
 rhythm_floor:
   x: 0
-  y: 200
+  y: 180
 
 piano_top:
   x: 20
-  y: 0
+  y: 5
 piano_floor:
-  x: 0
-  y: 60
+  x: 5
+  y: 45
   
-drum_top_1:
-  x: 220
-  y: 0
-drum_top_2:
-  x: 240
-  y: 60
+drum:
+  x: 200
+  y: 5
 
 vocal_top:
-  x: 180
+  x: 220
   y: 100
 vocal_floor:
-  x: 180
+  x: 230
   y: 140
 
 lead_top:
-  x: 250
-  y: 120
+  x: 316
+  y: 140
 lead_floor:
-  x: 240
-  y: 200
+  x: 276
+  y: 180

@@ -44,6 +44,7 @@ class DMXLightRGB(object):
 
 
 class DMXLightRGBW(object):
+    DEFAULT_WIDTH = 64
     dmx_size = 4
 
     def __init__(self, address, x, y):
@@ -84,7 +85,7 @@ class DMXSimulator(ArtNet3, SimplePygameBase):
         ArtNet3.__init__(self)
         self.listen()
 
-        SimplePygameBase.__init__(self, framerate=framerate)
+        SimplePygameBase.__init__(self, framerate=framerate, width=400, height=200)
 
         self.config = LightingConfig(yamlpath)
         self.state = tuple(random.randint(0, 255) for _ in range(512))  # Startup with a random DMX state
@@ -96,7 +97,7 @@ class DMXSimulator(ArtNet3, SimplePygameBase):
                 if device['type'] == 'neoneonfloor':
                     device['index'] += 2  # Hidious hack to fix index of neoNeon first part
                 if device['type'] in RGBW_LIGHTS:  # RGBW lights
-                    self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x, y))
+                    self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x + + (index * DMXLightRGBW.DEFAULT_WIDTH), y))
                 else:  # RGB Lights
                     self._attach_dmx_renderer_to_dmx_array(DMXLightRGB(device['index'], x + (index * DMXLightRGB.DEFAULT_WIDTH), y))
 
