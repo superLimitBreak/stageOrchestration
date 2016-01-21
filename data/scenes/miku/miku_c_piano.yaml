@@ -1,5 +1,5 @@
 meta:
-    mute_devices: [light1, light3, light6, light8]
+    mute_devices: [bass, vocal]
 
 0.0.0:
     state:
@@ -10,7 +10,7 @@ meta:
         name: cyan_white_1
         
         piano_floor: white
-        drum_floor: white
+        drum_top_2: white
         lead_floor: white
         rhythm_floor: white
         
@@ -25,7 +25,7 @@ meta:
         name: cyan_white_2
         
         piano_floor: cyan
-        drum_floor: cyan
+        drum_top_2: cyan
         lead_floor: cyan
         rhythm_floor: cyan
         

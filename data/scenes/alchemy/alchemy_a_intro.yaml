@@ -4,7 +4,7 @@
 4.0.0:
     state:
         lead_floor: white
-        drum_floor: white
+        drum_top_2: white
         bass_floor: white
 8.0.0:
     

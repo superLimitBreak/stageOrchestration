@@ -3,7 +3,7 @@
         piano_floor: white
 0.1.0:
     state:
-        drum_floor: white
+        drum: white
 0.2.0:
     state:
         rhythm_floor: white

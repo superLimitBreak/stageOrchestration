@@ -1,7 +1,7 @@
 # synth a
 
 meta:
-    mute_devices: [light1, light3, light6, light8]
+    mute_devices: [bass, vocal]
 
 
 0.0.0:

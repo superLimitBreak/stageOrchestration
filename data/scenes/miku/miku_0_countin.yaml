@@ -1,5 +1,5 @@
 meta:
-    mute_devices: [bass, vocal, drum_floor, piano_floor]
+    mute_devices: [bass, vocal, piano_floor]
 
 0.0.0:
     drum: white

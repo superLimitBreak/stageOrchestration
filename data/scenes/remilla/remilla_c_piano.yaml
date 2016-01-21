@@ -1,17 +1,17 @@
 #Piano
 
 meta:
-    mute_devices: [light1, light3, light6, light8]
+    mute_devices: [bass, vocal]
 
 
 0.0.0:
     state:
         lead_floor: yellow
-        drum_floor: yellow
+        drum_top_1: yellow
         piano_floor: yellow
         
         lead_top: white
-        drum_top: white
+        drum_top_2: white
         piano_top: white
 16.0.0:
     

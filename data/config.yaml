@@ -103,7 +103,36 @@ devices:
     floorLarge1h:
         type: OrionLinkV2Final
         index: 137
-    
+
+
+    floorLarge2:
+        type: group
+        group: [floorLarge2a, floorLarge2b, floorLarge2c, floorLarge2d, floorLarge2e, floorLarge2f, floorLarge2g, floorLarge2h]
+    floorLarge2a:
+        type: OrionLinkV2
+        index: 143
+    floorLarge2b:
+        type: OrionLinkV2
+        index: 146
+    floorLarge2c:
+        type: OrionLinkV2
+        index: 149
+    floorLarge2d:
+        type: OrionLinkV2
+        index: 152
+    floorLarge2e:
+        type: OrionLinkV2
+        index: 155
+    floorLarge2f:
+        type: OrionLinkV2
+        index: 158
+    floorLarge2g:
+        type: OrionLinkV2
+        index: 161
+    floorLarge2h:
+        type: OrionLinkV2Final
+        index: 164    
+
 
     smoke:
         type: cauvetHuricane
@@ -114,10 +143,10 @@ devices:
         group: [piano, bass, rhythm, lead, drum, vocal]
     top:
         type: group
-        group: [rhythm_top, lead_top, piano_top, drum_top, bass_top, vocal_top]
+        group: [rhythm_top, lead_top, piano_top, drum_top_1, bass_top, vocal_top]
     floor:
         type: group
-        group: [rhythm_floor, lead_floor, piano_floor, drum_floor, bass_floor, vocal_floor]
+        group: [rhythm_floor, lead_floor, piano_floor, drum_top_2, bass_floor, vocal_floor]
         
     primary:
         type: group
@@ -140,10 +169,10 @@ devices:
 
     back_floor:
         type: group
-        group: [piano_floor, drum_floor]
+        group: [piano_floor, drum_top_2]
     back_top:
         type: group
-        group: [piano_top, drum_top]
+        group: [piano_top, drum_top_1]
     back:
         type: group
         group: [back_floor, back_top]
@@ -166,7 +195,7 @@ devices:
         group: [light2]
     rhythm_floor:
         type: group
-        group: [floor2]
+        group: [floorLarge2]
 
     piano:
         type: group
@@ -176,7 +205,7 @@ devices:
         group: [light4]
     piano_floor:
         type: group
-        group: [floor1]
+        group: [floor1, floor4]
 
     bass:
         type: group
@@ -186,7 +215,7 @@ devices:
         group: [light3]
     bass_floor:
         type: group
-        group: [light1]
+        group: [floor2]
 
     vocal:
         type: group
@@ -196,17 +225,17 @@ devices:
         group: [light6]
     vocal_floor:
         type: group
-        group: [light8]
+        group: [floor3]
 
     drum:
         type: group
-        group: [drum_top, drum_floor]
-    drum_top:
+        group: [drum_top_1, drum_top_2]
+    drum_top_1:
         type: group
-        group: [light5]
-    drum_floor:
+        group: [light5, light8]
+    drum_top_2:
         type: group
-        group: [floor4]
+        group: [light1]
 
     lead:
         type: group
@@ -216,7 +245,7 @@ devices:
         group: [light7]
     lead_floor:
         type: group
-        group: [floor3]
+        group: [floorLarge1]
 
 device_config:
     FlatPar:

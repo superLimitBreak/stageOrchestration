@@ -20,10 +20,10 @@ piano_floor:
   x: 0
   y: 60
   
-drum_top:
+drum_top_1:
   x: 220
   y: 0
-drum_floor:
+drum_top_2:
   x: 240
   y: 60
 
