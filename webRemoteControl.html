@@ -146,7 +146,7 @@
 						var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
 						value = type+':'+values.join(',');
 					}
-					send_lights(device, value);  //slider.getAttribute('data-device')
+					send_lights(slider.getAttribute('data-device'), value);
 				};
 				slider.addEventListener('input', function(event){slider._onupdated()}, true);
 				return slider;
@@ -172,7 +172,7 @@
 				index_display.value = 0;
 				index_display.onchange = function() {
 					sliders = document.getElementById('raw_sliders').getElementsByTagName('input');
-					for (index in sliders) {
+					for (var index in sliders) {
 						var slider = sliders[index];
 						if (!slider.getAttribute) {continue;}
 						slider.setAttribute('data-device', Number(index_display.value) + Number(index));

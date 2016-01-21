@@ -87,16 +87,14 @@ class DMXSimulator(ArtNet3, SimplePygameBase):
         SimplePygameBase.__init__(self, framerate=framerate)
 
         self.config = LightingConfig(yamlpath)
-
         self.state = tuple(random.randint(0, 255) for _ in range(512))  # Startup with a random DMX state
 
         self.dmx_items = []
-
         for device_name, data in open_yaml(os.path.join(yamlpath, 'simulator_layout.yaml')).items():
             x, y, devices = data['x'], data['y'], self.config.device_lookup[device_name]
             for index, device in enumerate(devices):
                 if device['type'] == 'neoneonfloor':
-                    device['index'] += 2
+                    device['index'] += 2  # Hidious hack to fix index of neoNeon first part
                 if device['type'] in RGBW_LIGHTS:  # RGBW lights
                     self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x, y))
                 else:  # RGB Lights
@@ -125,7 +123,7 @@ def get_args():
     parser = argparse.ArgumentParser(
         prog=__name__,
         description="""lightingAutomation simulator
-        Listen to UDP DMX packets and visulise them
+        Listen to ArtNet UDP DMX packets and visulise them
         """,
         epilog="""
         """
