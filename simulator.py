@@ -1,80 +1,34 @@
-import array
+import os.path
 import random
-
-
-# Pygame Helpers ---------------------------------------------------------------
-#  Try to keep underlying implementation/libs of grapics handling away from logic
-
 import pygame
 
-COLOR_BACKGROUND = (0, 0, 0, 255)
+from libs.misc import postmortem
+from libs.pygame_base import SimplePygameBase
+
+from lighting.ArtNet3 import ArtNet3
+from lighting import LightingConfig, open_yaml, add_default_argparse_args
+
+import logging
+log = logging.getLogger(__name__)
 
 
-class PygameBase(object):
+VERSION = '0.0.0'
+DEFAULT_FRAMERATE = 15
 
-    def __init__(self, framerate=3):
-        pygame.init()
-        self.screen = pygame.display.set_mode((320, 240))
-        self.clock = pygame.time.Clock()
-        self.running = True
-        self.framerate = framerate
+RGBW_LIGHTS = ('FlatPar', )
 
-    def start(self):
-        while self.running:
-            self.clock.tick(self.framerate)
-            self.screen.fill(COLOR_BACKGROUND)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    self.running = False
-
-            self.loop()
-
-            pygame.display.flip()
-
-        pygame.quit()
-
-    def stop(self):
-        self.running = False
-
-    def loop(self):
-        assert False, 'loop must be overriden'
-
-
-# DMXUDPMixin ------------------------------------------------------------------
-
-from libs.udp import UDPMixin
-
-class DMXUDPMixin(UDPMixin):
-    """
-    Passthrough to make UDPMixin behave like the ArtNet3 Mixin
-    This allows simple testing of just displaying a binary dmx string to the lights
-    without the need of real artnet packet complexity
-    """
-    def _recieve(self, addr, data):
-        self.recieve_dmx(data)
-
-def _send_example():
-    """
-    DMXUDPMixin send example
-    Use these in a terminal for testing
-    """
-    import socket ; sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(b'HelloWorld', ('127.0.0.1', 5005))
-    sock.sendto(b'\x00'*512, ('127.0.0.1', 5005))
-    sock.sendto(b'Art-Net\x00P\x00\x00\x0e\x00\x00\x00\x00\x00\x04\x00\x01\x02\x03', ('127.0.0.1', 0x1936))
-
-
-# DMX Simulator ----------------------------------------------------------------
+# Device Renderers -------------------------------------------------------------
 
 class DMXLightRGB(object):
+    DEFAULT_WIDTH = 16
+    DEFAULT_HEIGHT = 16
     dmx_size = 3
 
-    def __init__(self, address, x, y):
+    def __init__(self, address, x, y, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
         self.address = address
         self.x = x
         self.y = y
-        self.rect = pygame.Rect(self.x, self.y, self.dmx_size * 8, self.dmx_size * 5)
+        self.rect = pygame.Rect(self.x, self.y, width, height)
         self.func_get_data = lambda: []
 
     @property
@@ -122,52 +76,35 @@ class DMXLightRGBW(object):
         draw_led(white, (255, 255, 255), 3)
 
 
-from lighting.ArtNet3 import ArtNet3
+# Simulator --------------------------------------------------------------------
 
+class DMXSimulator(ArtNet3, SimplePygameBase):
 
-class DMXSimulator(ArtNet3, PygameBase):
-
-    def __init__(self, framerate=30):
+    def __init__(self, yamlpath, framerate=DEFAULT_FRAMERATE, **kwargs):
         ArtNet3.__init__(self)
         self.listen()
 
-        PygameBase.__init__(self, framerate=framerate)
+        SimplePygameBase.__init__(self, framerate=framerate)
 
-        self._init_dmx_items(
-            DMXLightRGBW(0, 80, 140),    # light1 - allan_bass_floor
-            DMXLightRGBW(8, 0, 120),     # light2 - matt_top
-            DMXLightRGBW(16, 80, 100),   # light3 - allan_bass_top
-            DMXLightRGBW(24, 20, 0),     # light4 - allan_piano_top
-            DMXLightRGBW(32, 220, 0),    # light5 - joe_top
-            DMXLightRGBW(40, 180, 100),    # light6 - choco_top
-            DMXLightRGBW(48, 250, 120),    # light7 - lyle_top
-            DMXLightRGBW(56, 180, 140),  # light8 - choco_floor
+        self.config = LightingConfig(yamlpath)
+        self.state = tuple(random.randint(0, 255) for _ in range(512))  # Startup with a random DMX state
 
-            DMXLightRGB(66, 0, 60),    # floor1 - allan_piano_bottom
-            DMXLightRGB(69, 0+24, 60),
-            DMXLightRGB(72, 0+48, 60),
+        self.dmx_items = []
+        for device_name, data in open_yaml(os.path.join(yamlpath, 'simulator_layout.yaml')).items():
+            x, y, devices = data['x'], data['y'], self.config.device_lookup[device_name]
+            for index, device in enumerate(devices):
+                if device['type'] == 'neoneonfloor':
+                    device['index'] += 2  # Hidious hack to fix index of neoNeon first part
+                if device['type'] in RGBW_LIGHTS:  # RGBW lights
+                    self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x, y))
+                else:  # RGB Lights
+                    self._attach_dmx_renderer_to_dmx_array(DMXLightRGB(device['index'], x + (index * DMXLightRGB.DEFAULT_WIDTH), y))
 
-            DMXLightRGB(77, 0, 200),     # floor2 - matt_bottom
-            DMXLightRGB(80, 0+24, 200),
-            DMXLightRGB(83, 0+48, 200),
-
-            DMXLightRGB(88, 240, 200),   # floor3 - lyle_bottom
-            DMXLightRGB(91, 240+24, 200),
-            DMXLightRGB(94, 240+48, 200),
-
-            DMXLightRGB(99, 240, 60),   # floor4 - joe_bottom
-            DMXLightRGB(102, 240+24, 60),
-            DMXLightRGB(105, 240+48, 60),
-
-        )
-        self.state = [random.randint(0, 255) for i in range(512)]  # Startup with a completlty random DMX state
-
-    def _init_dmx_items(self, *dmx_items):
-        self.dmx_items = dmx_items
-        for dmx_item in dmx_items:
-            def func_get_data(index, size):
-                return lambda: self.state[index:index + size]
-            dmx_item.func_get_data = func_get_data(dmx_item.address, dmx_item.dmx_size)
+    def _attach_dmx_renderer_to_dmx_array(self, dmx_item):
+        def func_get_data(index, size):
+            return lambda: self.state[index:index + size]
+        dmx_item.func_get_data = func_get_data(dmx_item.address, dmx_item.dmx_size)
+        self.dmx_items.append(dmx_item)
 
     def loop(self):
         for item in self.dmx_items:
@@ -177,13 +114,39 @@ class DMXSimulator(ArtNet3, PygameBase):
         self.state = state
 
     def recieve_dmx(self, data):
-        #if (hasattr(self, 'state') and data != self.state):
-        #    print(data)
         self.update(data)
+
+
+def get_args():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        prog=__name__,
+        description="""lightingAutomation simulator
+        Listen to ArtNet UDP DMX packets and visulise them
+        """,
+        epilog="""
+        """
+    )
+    parser_input = parser
+
+    parser.add_argument('-f', '--framerate', action='store', help='Frames per second to update the display. Should be in line with ArtNet rate', default=DEFAULT_FRAMERATE)
+
+    add_default_argparse_args(parser, version=VERSION)
+
+    args = parser.parse_args()
+    return vars(args)
 
 
 # Main -------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    dmx = DMXSimulator()
-    dmx.start()
+    kwargs = get_args()
+    logging.basicConfig(level=kwargs['log_level'])
+
+    dmx = DMXSimulator(**kwargs)
+
+    if kwargs.get('postmortem'):
+        postmortem(dmx.start)
+    else:
+        dmx.start()

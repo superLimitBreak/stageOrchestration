@@ -101,11 +101,7 @@ run_production:
 	. $(ENV_ACTIVATE); python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111
 
 run_simulator:
-	# To be replaced by simulator2
 	. $(ENV_ACTIVATE); python3 simulator.py
-
-run_simulator2:
-	. $(ENV_ACTIVATE); python3 simulator2.py
 
 
 # Clean ------------------------------------------------------------------------
