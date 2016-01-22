@@ -46,7 +46,13 @@ class LightTiming(AbstractDMXRenderer):
         super().__init__(*args, **kwargs)
         self.config = config
         self.yamlpath = yamlpath
+
         self._sequence_index = None
+        self.time_mutator = None
+        self.sequence = None
+        self.time_start = None
+        self.bpm = None
+
         file_scan_diff_thread(yamlpath, lambda *args, **kwargs: self.reload(), rescan_interval=rescan_interval)
         self.reload()
         self.stop()
@@ -92,7 +98,9 @@ class LightTiming(AbstractDMXRenderer):
         self.timesigniture = DEFAULT_TIMESIGNITURE_
 
     def seek(self, data={}):
-        time_offset = data.get('currentTime', 0)
+        self._seek(data.get('currentTime', 0))
+
+    def _seek(self, time_offset):
         if (time.time() - self.time_start) < 0.1:
             log.info('Seek recived within 100ms of start - Assuming this is a bounceback from test_audio - applying automatic time mutator of {0}s'.format(time_offset))
             self.time_mutator = time_offset
@@ -133,10 +141,10 @@ class LightTiming(AbstractDMXRenderer):
         return (self.scenes.get(scene_name, ) for scene_name in self.sequence) if self.sequence else self.default_sequence
 
     def render(self, frame):
-        #print(beat_to_timecode(self.current_bar, self.timesigniture), self.current_bar)
+        # print(beat_to_timecode(self.current_bar, self.timesigniture), self.current_bar)
         scene, scene_beat, sequence_index = self.get_scene_at_beat(self.current_bar)
         self.sequence_index = sequence_index
-            #self.dmx_universe_previous = copy.copy(self.dmx_universe)
+        # self.dmx_universe_previous = copy.copy(self.dmx_universe)
         scene.render(self.dmx_universe, scene_beat)  # self.dmx_universe_previous,  # previous universe was taken out to simplify scene parsing. Every scene was now self contained. We might reinstate the previous state at a later date
         return self.dmx_universe
 
