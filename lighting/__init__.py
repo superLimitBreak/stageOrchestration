@@ -56,6 +56,8 @@ def mix(destination, sources, mix_func=max):
 def get_value_at(sequence, target, get_value_item_func):
     current = 0
     for index, item in enumerate(sequence):
+        if not item:
+            continue
         item_value = get_value_item_func(item)
         if target >= current and target < current + item_value:
             return item, target - current, index
