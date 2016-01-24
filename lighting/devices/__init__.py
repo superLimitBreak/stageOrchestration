@@ -39,7 +39,7 @@ def FlatPar(config, rgbw):
 
 def neoneonfloor(config, rgbw):
     return (
-        50,  # Constant to enter 3 light mode
+        0.196,  # Constant to enter 3 light mode - this float translates to the byte value of 50
         0,
     ) + neoneonfloorPart(config, rgbw)
 

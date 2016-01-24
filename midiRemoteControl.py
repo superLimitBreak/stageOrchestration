@@ -90,12 +90,12 @@ class MidiRemoteControl(object):
     def next_raw(self, value):
         if value:
             self.raw_index_offset += 1
-            log.info('Raw input offset {0}'.format(self.raw_index_offset))
+            log.info('Raw input offset {0}'.format(self.raw_index_offset * 8)) # The x8 is a hidious hard coded hack, as we should be dynamic about the number of sliders
 
     def prev_raw(self, value):
         if value:
             self.raw_index_offset += -1
-            log.info('Raw input offset {0}'.format(self.raw_index_offset))
+            log.info('Raw input offset {0}'.format(self.raw_index_offset * 8))
 
     def smoke(self, value):
         self.send_light_data('smoke', value)
