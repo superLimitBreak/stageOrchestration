@@ -39,7 +39,7 @@ def FlatPar(config, rgbw):
 
 def neoneonfloor(config, rgbw):
     return (
-        0.196,  # Constant to enter 3 light mode - this float translates to the byte value of 50
+        0.196,  # Constant to enter 3 light mode - this float translates to the byte value of '50'
         0,
     ) + neoneonfloorPart(config, rgbw)
 
@@ -55,5 +55,5 @@ def OrionLinkV2(config, rgbw):
 def OrionLinkV2Final(config, rgbw):
     return OrionLinkV2(config, rgbw) + (
         0,  # No flash
-        255,  # Master dim
+        1,  # Master dim - the value '1' (max) is transformed to byte '255'
     )
