@@ -1,9 +1,8 @@
-.ropeproject
-*_env/
-env/
 __pycache__
 *.pyc
 .cache
+
+*_env/
 
 libs
 lighting/renderers/PentatonicHero.py

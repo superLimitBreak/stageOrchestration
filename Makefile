@@ -1,5 +1,6 @@
-ENV = lightingautomation_env
-ENV_ACTIVATE = $(ENV)/bin/activate
+ENV = _env
+PYTHON = $(ENV)/bin/python3
+PIP = $(ENV)/bin/pip3
 
 help:
 	# Automated ArtNet3 DMX Lighting System
@@ -15,7 +16,7 @@ help:
 # Install ----------------------------------------------------------------------
 
 .PHONY: install
-install:$(ENV) libs lighting/renderers/PentatonicHero.py requirements
+install: $(ENV) libs lighting/renderers/PentatonicHero.py requirements
 
 .PHONY: install_development
 install_development: pygame
@@ -52,17 +53,16 @@ libs:
 # This kind of stuff would make most sense in a setup.py
 .PHONY: requirements
 requirements:
-	. $(ENV_ACTIVATE); pip3 install --upgrade pip ; pip3 install --upgrade -r requirements.pip
+	$(PIP) install --upgrade pip ; $(PIP) install --upgrade -r requirements.pip
 
 .Phony: pygame
 pygame:
 	# There is no python3-pygame package - The Pygame wiki suggests compileing it yourself.
 	# http://www.pygame.org/wiki/CompileUbuntu
-	. $(ENV_ACTIVATE);\
-	if [ $$(pip3 list | grep -c pygame) -eq 0 ];\
+	if [ $$($(PIP) list | grep -c pygame) -eq 0 ];\
 		then\
 		echo "Installing pygame";\
-		pip3 install hg+http://bitbucket.org/pygame/pygame;\
+		$(PIP) install hg+http://bitbucket.org/pygame/pygame;\
 	fi
 
 
@@ -84,16 +84,16 @@ lighting/renderers/PentatonicHero.py:
 .PHONY: run run_midi_input run_production run_simulator run_simulator2
 
 run:
-	. $(ENV_ACTIVATE); python3 lightingAutomation.py --postmortem
+	$(PYTHON) lightingAutomation.py --postmortem
 
 run_midiRemote:
-	. $(env_activate); python3 midiRemoteControl.py 'nanoKONTROL2' --postmortem
+	$(PYTHON) midiRemoteControl.py 'nanoKONTROL2' --postmortem
 
 run_production:
-	. $(ENV_ACTIVATE); python3 lightingAutomation.py --artnet_dmx_host 192.168.0.111
+	$(PYTHON) lightingAutomation.py --artnet_dmx_host 192.168.0.111
 
 run_simulator:
-	. $(ENV_ACTIVATE); python3 simulator.py
+	$(PYTHON) simulator.py
 
 
 # Clean ------------------------------------------------------------------------
