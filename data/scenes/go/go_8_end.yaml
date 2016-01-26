@@ -1,3 +1,6 @@
+meta:
+    mute_devices: [piano]
+
 0.0.0:
   state:
     all: blue
