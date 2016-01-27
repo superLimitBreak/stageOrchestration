@@ -8,9 +8,9 @@ help:
 	#  - install_development 	: Install optional dependenciees for development
 	#  - run            		:
 	#  - run_production 		: Drive a remote ArtNet3 server
-	#  - run_midiRemote 		: Use local midi device ()with pygame) to control a remote lightingAutomation instance
+	#  - run_midiRemote 		: Use local midi device (with pygame) to control a remote lightingAutomation instance
 	#  - run_simulator  		: Pygame based visulisation of ArtNet packets
-	# Requires python3 + pyyaml lib + [optional pygame for local midi control]
+	# Requires python3 + virtualenv
 
 
 # Install ----------------------------------------------------------------------
