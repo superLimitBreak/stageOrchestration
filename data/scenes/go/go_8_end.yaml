@@ -2,11 +2,27 @@ meta:
     mute_devices: [piano]
 
 0.0.0:
-  state:
-    all: blue
+    state:
+        top: red
+        floor: black
 1.0.0:
-  state:
-    all: white
+    state:
+        all: white
+1.1.0:
+    state:
+        all: red
+1.1.1:
+    state:
+        rhythm: black
+1.1.2:
+    state:
+        bass: black
+1.1.3:
+    state:
+        vocal: black
+1.1.3:
+    state:
+        lead: black
 1.2.0:
   
   
