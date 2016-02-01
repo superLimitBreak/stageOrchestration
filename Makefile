@@ -5,11 +5,11 @@ PIP = $(ENV)/bin/pip3
 help:
 	# Automated ArtNet3 DMX Lighting System
 	#  - install        		: Install dependencies
-	#  - install_development 	: Install optional dependenciees for development
+	#  - install_development 	: Install optional dependenciees for development (simulator and midiRemote)
 	#  - run            		:
 	#  - run_production 		: Drive a remote ArtNet3 server
 	#  - run_midiRemote 		: Use local midi device (with pygame) to control a remote lightingAutomation instance
-	#  - run_simulator  		: Pygame based visulisation of ArtNet packets
+	#  - run_simulator  		: Pygame based visulisation of ArtNet packets directed at localhost
 	# Requires python3 + virtualenv
 
 
@@ -81,13 +81,14 @@ lighting/renderers/PentatonicHero.py:
 
 # Run --------------------------------------------------------------------------
 
-.PHONY: run run_midi_input run_production run_simulator run_simulator2
+.PHONY: run run_midi_input run_production run_simulator
 
 run:
 	$(PYTHON) lightingAutomation.py --postmortem
 
 run_midiRemote:
-	$(PYTHON) midiRemoteControl.py 'nanoKONTROL2' --postmortem
+	# To be depricated. We should move to Chrome midi web input.
+	$(PYTHON) midiRemoteControl.py 'nanoKONTROL2' --postmortem --displaytrigger_host 192.168.2.1
 
 run_production:
 	$(PYTHON) lightingAutomation.py --artnet_dmx_host 192.168.0.111
