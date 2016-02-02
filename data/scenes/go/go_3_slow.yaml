@@ -4,5 +4,6 @@ meta:
 
 0.0.0:
   state:
-    all: blue
+    top: green
+    floor: blue
 8.0.0:
