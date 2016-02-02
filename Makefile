@@ -91,7 +91,7 @@ run_midiRemote:
 	$(PYTHON) midiRemoteControl.py 'nanoKONTROL2' --postmortem --displaytrigger_host 192.168.2.1
 
 run_production:
-	$(PYTHON) lightingAutomation.py --artnet_dmx_host 192.168.0.111
+	$(PYTHON) lightingAutomation.py --yamlscaninterval 0 --artnet_dmx_host 192.168.0.111
 
 run_simulator:
 	$(PYTHON) simulator.py

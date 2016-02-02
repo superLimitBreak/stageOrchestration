@@ -42,7 +42,7 @@ class LightTiming(AbstractDMXRenderer):
     DEFAULT_SEQUENCE_NAME = 'none'
     DEFAULT_BPM = 120.0
 
-    def __init__(self, config, yamlpath, rescan_interval=1.0, *args, **kwargs):
+    def __init__(self, config, yamlpath, rescan_interval=2.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = config
         self.yamlpath = yamlpath
@@ -363,7 +363,7 @@ class Scene(object):
         return get_value_at(self.scene_items, target_beat, operator.itemgetter('duration'))
 
     def render(self, dmx_universe, beat):
-        log.debug(beat_to_timecode(beat, self.timesigniture), beat)
+        #log.debug(beat_to_timecode(beat, self.timesigniture), beat)
         scene_item, beat_in_item, _ = self.get_scene_item_beat(beat)
         progress = beat_in_item / scene_item['duration']
         previous = scene_item.get(Scene.SCENE_ITEM_DMX_STATE_KEY, {}).get('previous')  # or dmx_universe_previous
