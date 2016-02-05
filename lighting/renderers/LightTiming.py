@@ -59,8 +59,12 @@ class LightTiming(AbstractDMXRenderer):
 
     def reload(self):
         log.info('Loading scenes {0}'.format(self.yamlpath))
-        self.scenes = open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneParser(self.config).create_scene)
-        self.sequences = open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
+        try:
+            self.scenes = open_path(os.path.join(self.yamlpath, self.PATH_SCENES_FOLDER), SceneParser(self.config).create_scene)
+            self.sequences = open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
+        except Exception as e:
+            log.error('Failed to load scenes, data is buggered. Lets get out of here')
+            exit()
 
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 

@@ -5,26 +5,34 @@ meta:
 0.0.0:
     state:
         name: right_here_1
-        drum: yellow
-        lead: full
-        rhythm: yellow
-        bass: yellow
-        vocal: yellow
+        all: yellow
+        #drum: yellow
+        #lead: full
+        #rhythm: yellow
+        #bass: yellow
+        #vocal: yellow
 0.1.0:
     state:
         name: right_here_2
-        drum: yellow
+        drum: red
         lead: yellow
-        rhythm: full
+        rhythm: yellow
         bass: yellow
         vocal: yellow
 0.2.0:
     state: right_here_1
 0.3.0:
-    state: right_here_2
+    #state: right_here_2
+    state:
+        name: burn
+        all: full
+    tween: easeOutQuad
+0.3.2:
+
 
 1.0.0:
     state: right_here_1
+    tween: easeOutQuad
 1.1.0:
     state: right_here_2
 1.2.0:
@@ -40,19 +48,14 @@ meta:
 2.2.0:
     state: right_here_1
 2.3.0:
-    state: right_here_2
-
-2.0.0:
-    state: right_here_1
-2.1.0:
-    state: right_here_2
-2.2.0:
-    state: right_here_1
-2.3.0:
-    state: right_here_2
+    #state: right_here_2
+    state: burn
+    tween: easeInQuad
+2.3.2:
 
 3.0.0:
     state: right_here_1
+    tween: easeOutQuad
 3.1.0:
     state: right_here_2
 3.2.0:
@@ -67,10 +70,14 @@ meta:
 4.2.0:
     state: right_here_1
 4.3.0:
-    state: right_here_2
+    #state: right_here_2
+    state: burn
+    tween: easeInQuad
+4.3.2:
 
 5.0.0:
     state: right_here_1
+    tween: easeOutQuad
 5.1.0:
     state: right_here_2
 5.2.0:
@@ -85,7 +92,10 @@ meta:
 6.2.0:
     state: right_here_1
 6.3.0:
-    state: right_here_2
+    #state: right_here_2
+    state: burn
+    tween: easeInQuad
+6.3.2:
 
 7.0.0:
     state:
