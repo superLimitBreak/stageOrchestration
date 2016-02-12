@@ -4,5 +4,8 @@ meta:
 
 0.0.0:
   state:
-    all: cyan
+    lead: full
+    rhythm: cyan
+    bass: cyan
+    drum: purple
 8.0.0:

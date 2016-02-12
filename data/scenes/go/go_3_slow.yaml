@@ -3,7 +3,135 @@ meta:
 
 
 0.0.0:
-  state:
-    top: green
-    floor: blue
+    state:
+        name: slow0
+        drum_top_1: red
+        lead_top: red
+        rhythm_top: full
+        bass_top: red
+        vocal_top: red
+        floor: [0,0,0,0.5]
+    tween: linear
+0.1.0:
+    state:
+        name: slow1
+        drum_top_1: purple
+        lead_top: red
+        rhythm_top: red
+        bass_top: full
+        vocal_top: red
+        floor: [0,0,0,0.5]
+    tween: linear
+0.2.0:
+    state:
+        name: slow2
+        drum_top_1: red
+        lead_top: red
+        rhythm_top: red
+        bass_top: red
+        vocal_top: full
+        floor: [0,0,0,0.5]
+    tween: linear
+0.3.0:
+    state:
+        name: slow3
+        drum_top_1: purple
+        lead_top: full
+        rhythm_top: red
+        bass_top: red
+        vocal_top: red
+        floor: [0,0,0,0.5]
+    tween: linear
+
+1.0.0:
+    state: slow0
+    tween: linear
+1.1.0:
+    state: slow1
+    tween: linear
+1.2.0:
+    state: slow2
+    tween: linear
+1.3.0:
+    state: slow3
+    tween: linear
+
+2.0.0:
+    state: slow0
+    tween: linear
+2.1.0:
+    state: slow1
+    tween: linear
+2.2.0:
+    state: slow2
+    tween: linear
+2.3.0:
+    state: slow3
+    tween: linear
+
+3.0.0:
+    state: slow0
+    tween: linear
+3.1.0:
+    state: slow1
+    tween: linear
+3.2.0:
+    state: slow2
+    tween: linear
+3.3.0:
+    state: slow3
+    tween: linear
+
+4.0.0:
+    state: slow0
+    tween: linear
+4.1.0:
+    state: slow1
+    tween: linear
+4.2.0:
+    state: slow2
+    tween: linear
+4.3.0:
+    state: slow3
+    tween: linear
+
+5.0.0:
+    state: slow0
+    tween: linear
+5.1.0:
+    state: slow1
+    tween: linear
+5.2.0:
+    state: slow2
+    tween: linear
+5.3.0:
+    state: slow3
+    tween: linear
+
+6.0.0:
+    state: slow0
+    tween: linear
+6.1.0:
+    state: slow1
+    tween: linear
+6.2.0:
+    state: slow2
+    tween: linear
+6.3.0:
+    state: slow3
+    tween: linear
+
+7.0.0:
+    state: slow0
+    tween: linear
+7.1.0:
+    state: slow1
+    tween: linear
+7.2.0:
+    state: slow2
+    tween: linear
+7.3.0:
+    state: slow3
+    tween: linear
+
 8.0.0:
