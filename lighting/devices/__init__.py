@@ -61,3 +61,11 @@ def OrionLinkV2Final(config, rgbw):
         0,  # No flash
         1,  # Master dim - the value '1' (max) is transformed to byte '255'
     )
+
+
+def cauvetHuricane(config, data):
+    """
+    2 byte device (Fan speed, Smoke)
+    """
+    import pdb ; pdb.set_trace()
+    return (6, data)
