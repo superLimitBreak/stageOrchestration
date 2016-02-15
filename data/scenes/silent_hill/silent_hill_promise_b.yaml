@@ -1,3 +1,6 @@
+meta:
+    mute_devices: [piano, vocal]
+
 
 0.0.0:
     state:

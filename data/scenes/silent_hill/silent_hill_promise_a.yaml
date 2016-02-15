@@ -1,3 +1,6 @@
+meta:
+    mute_devices: [piano, vocal]
+
 0.0.0:
     state_start:
         rhythm_top: dim_50
@@ -6,9 +9,12 @@
     tween:
         linear
 
-4.0.0:
-    state_start:
+3.0.0:
+    state:
         lead_top: dim_50
+    tween:
+        linear
+4.0.0:
     state:
         lead_floor: white
     tween:
@@ -16,12 +22,14 @@
 
 # Second repeat
 
-8.0.0:
+6.0.0:
     state:
         lead_top: dim_50
         rhythm_top: dim_50
     tween:
         linear
+
+8.0.0:
 
 # Lead rise
 
