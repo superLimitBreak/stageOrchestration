@@ -81,7 +81,7 @@ def get_args():
 
     # Core
     parser.add_argument('--displaytrigger_host', action='store', help='display-trigger server to recieve events from', default=DEFAULT_DISPLAYTRIGGER_HOST)
-    parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', default=DEFAULT_FRAMERATE)
+    parser.add_argument('-f', '--framerate', action='store', help='Frames per second to send ArtNet3 packets', type=int, default=DEFAULT_FRAMERATE)
     parser.add_argument('--artnet_dmx_host', action='store', help='ArtNet3 ip address', default=DEFAULT_ARTNET_DMX_HOST)
 
     # Plugin params

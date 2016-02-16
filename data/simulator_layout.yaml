@@ -39,5 +39,5 @@ lead_floor:
   y: 180
 
 smoke:
-  x: 200
-  y: 200
+  x: 130
+  y: 10
