@@ -3,6 +3,8 @@ Each def renders the bytes for config.yaml/device
 """
 
 
+# Utils ------------------------------------------------------------------------
+
 def rgbw_to_rgb(_, rgbw):
     """
     TODO: Depricate this!
@@ -22,6 +24,8 @@ def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1, **kwargs):
         rgb[2] * blue_factor,
     )
 
+
+# Devices ----------------------------------------------------------------------
 
 def FlatPar(config, rgbw):
     device_config = config['device_config']['FlatPar']
@@ -66,6 +70,6 @@ def OrionLinkV2Final(config, rgbw):
 def cauvetHuricane(config, data):
     """
     2 byte device (Fan speed, Smoke)
+    6 is the minimum fan speed to activate the system
     """
-    import pdb ; pdb.set_trace()
-    return (6, data)
+    return (6/255, float(data))

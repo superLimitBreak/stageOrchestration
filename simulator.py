@@ -17,6 +17,7 @@ DEFAULT_FRAMERATE = 15
 
 RGBW_LIGHTS = ('FlatPar', )
 
+
 # Device Renderers -------------------------------------------------------------
 
 class DMXLightRGB(object):
@@ -77,6 +78,29 @@ class DMXLightRGBW(object):
         draw_led(white, (255, 255, 255), 3)
 
 
+class DMXSmoke(object):
+    DEFAULT_WIDTH = 64
+    dmx_size = 2
+
+    def __init__(self, address, x, y):
+        self.address = address
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(self.x, self.y, self.DEFAULT_WIDTH, self.DEFAULT_WIDTH)
+        self.func_get_data = lambda: []
+
+    @property
+    def data(self):
+        return self.func_get_data()
+
+    @property
+    def color(self):
+        return (self.data[0],)*3 + (255,)
+
+    def render(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+
 # Simulator --------------------------------------------------------------------
 
 class DMXSimulator(ArtNet3, SimplePygameBase):
@@ -90,16 +114,24 @@ class DMXSimulator(ArtNet3, SimplePygameBase):
         self.config = LightingConfig(yamlpath)
         self.state = tuple(random.randint(0, 255) for _ in range(512))  # Startup with a random DMX state
 
+        def get_dmx_device_format(device_name):
+            return self.config.config['device_config'].get(device_name, {}).get('format', 'rgb')
+
         self.dmx_items = []
         for device_name, data in open_yaml(os.path.join(yamlpath, 'simulator_layout.yaml')).items():
             x, y, devices = data['x'], data['y'], self.config.device_lookup[device_name]
             for index, device in enumerate(devices):
+                device_format = get_dmx_device_format(device['type'])
                 if device['type'] == 'neoneonfloor':
                     device['index'] += 2  # Hidious hack to fix index of neoNeon first part
-                if device['type'] in RGBW_LIGHTS:  # RGBW lights
+                if device['type'] == 'cauvetHuricane':
+                    device['index'] += 1  # Hidious hack to fix index of neoNeon first part
+                if device_format == 'rgbw':
                     self._attach_dmx_renderer_to_dmx_array(DMXLightRGBW(device['index'], x + + (index * DMXLightRGBW.DEFAULT_WIDTH), y))
-                else:  # RGB Lights
+                if device_format == 'rgb':
                     self._attach_dmx_renderer_to_dmx_array(DMXLightRGB(device['index'], x + (index * DMXLightRGB.DEFAULT_WIDTH), y))
+                if device_format == 'byte':
+                    self._attach_dmx_renderer_to_dmx_array(DMXSmoke(device['index'], x, y))
 
     def _attach_dmx_renderer_to_dmx_array(self, dmx_item):
         def func_get_data(index, size):

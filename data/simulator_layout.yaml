@@ -37,3 +37,7 @@ lead_top:
 lead_floor:
   x: 276
   y: 180
+
+smoke:
+  x: 200
+  y: 200

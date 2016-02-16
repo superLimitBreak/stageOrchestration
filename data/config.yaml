@@ -249,14 +249,18 @@ devices:
 
 device_config:
     FlatPar:
+        format: rgbw
         red_factor: 1.0
         green_factor: 0.28
         blue_factor: 0.73
         white_factor: 0.5
     OrionLinkV2:
+        format: rgb
         red_factor: 1.0
         green_factor: 1.0
         blue_factor: 1.0
+    cauvetHuricane:
+        format: byte
 
 
 colors:

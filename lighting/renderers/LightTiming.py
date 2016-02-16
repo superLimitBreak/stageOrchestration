@@ -64,7 +64,7 @@ class LightTiming(AbstractDMXRenderer):
             self.sequences = open_path(os.path.join(self.yamlpath, self.PATH_SEQUENCE_FOLDER))
         except Exception as e:
             log.error('Failed to load scenes, data is buggered. Lets get out of here')
-            exit()
+            exit(2)
 
         self.dmx_universe_previous = copy.copy(self.dmx_universe)
 
@@ -76,7 +76,7 @@ class LightTiming(AbstractDMXRenderer):
         """
         Originates from external call from trigger system
         """
-        print(data)
+        log.info(data)
         self.stop()
         self.time_start = time.time() - data.get('time_offset', 0) - self.time_offset
         self.bpm = float(data.get('bpm', self.DEFAULT_BPM))
