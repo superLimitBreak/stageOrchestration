@@ -18,7 +18,6 @@ class RemoteControl(AbstractDMXRenderer):
         self.config = config
 
     def set(self, data):
-        #print(data)
         device = data.get('device')
         value = data.get('value')
         try:

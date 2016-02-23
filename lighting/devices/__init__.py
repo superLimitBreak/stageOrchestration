@@ -72,4 +72,9 @@ def cauvetHuricane(config, data):
     2 byte device (Fan speed, Smoke)
     6 is the minimum fan speed to activate the system
     """
+    try:
+        # Please remove this hack. It was to facilitate midi control in a hurry
+        data = data.__iter__().__next__()
+    except AttributeError:
+        pass
     return (6/255, float(data))

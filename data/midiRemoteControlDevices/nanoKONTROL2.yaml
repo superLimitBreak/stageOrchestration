@@ -20,7 +20,7 @@ prev_raw:
   input_id: 61
 smoke:
   command: smoke
-  input_id: 100
+  input_id: 43
 all:
   command: all
   input_id: 41

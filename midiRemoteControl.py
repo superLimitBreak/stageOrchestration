@@ -56,6 +56,7 @@ class MidiRemoteControl(object):
             #    pass
 
     def midi_event(self, event, data1, data2, data3):
+        #print(data1,data2,data3)
         self.input_state[data1] = data2/127
 
         input_config = self.input_lookup.get(data1)
@@ -98,7 +99,8 @@ class MidiRemoteControl(object):
             log.info('Raw input offset {0}'.format(self.raw_index_offset * 8))
 
     def smoke(self, value):
-        self.send_light_data('smoke', value)
+        if value:
+            self.send_light_data('smoke', value)
 
     def all(self, value):
         if value:
