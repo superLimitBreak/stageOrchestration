@@ -1,5 +1,5 @@
 meta:
-    mute_devices: [bass_floor, bass_top, vocal_floor, vocal_top]
+    mute_devices: [bass, vocal]
 
 
 

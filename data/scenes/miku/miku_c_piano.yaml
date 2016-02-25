@@ -15,7 +15,7 @@ meta:
         rhythm_floor: white
         
         piano_top: dim_25
-        drum_top: dim_25
+        drum_top_1: dim_25
         
         rhythm_top: cyan
         lead_top: cyan
@@ -30,7 +30,7 @@ meta:
         rhythm_floor: cyan
         
         piano_top: dim_25
-        drum_top: dim_25
+        drum_top_1: dim_25
         
         rhythm_top: white
         lead_top: white
