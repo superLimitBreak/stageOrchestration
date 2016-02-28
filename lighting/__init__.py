@@ -76,7 +76,7 @@ def open_path(path, target_class=None):
     Open all yamls in a path by constructing an object for each file based on the 'target' class
     """
     objs = {}
-    for file_info in file_scan(path, r'.*\.yaml$'):
+    for file_info in sorted(file_scan(path, r'.*\.yaml$'), key=lambda f: f.absolute):
         objs[file_info.file_no_ext] = open_yaml(file_info.absolute, target_class)
     return objs
 
