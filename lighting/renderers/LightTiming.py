@@ -334,7 +334,8 @@ class SceneParser(object):
         if isinstance(target_state, str):
             target_state = {'use': target_state}
         alias_name = target_state.get('use')
-        if alias_name and alias_name in self.dmx_universe_alias:
+        if alias_name:
+            assert alias_name in self.dmx_universe_alias, "alias '{0}' not defined".format(alias_name)
             dmx_universe_target[:] = self.dmx_universe_alias[alias_name]
 
         # Render items
