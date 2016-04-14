@@ -7,7 +7,7 @@ meta:
         name: go_fighting_a
         
         lead_top: [0,0,1,0.5]
-        lead_bottom: red
+        lead_floor: red
     
         vocal_top: red
         vocal_floor: [0,0,1,0.5]
@@ -16,7 +16,7 @@ meta:
         bass_floor: red
     
         rhythm_top: red
-        rhythm_bottom: [0,0,1,0.5]
+        rhythm_floor: [0,0,1,0.5]
         
         drum_top_1: [0,0,1,0.5]
         drum_top_2: red
@@ -26,7 +26,7 @@ meta:
         name: go_fighting_b
         
         lead_top: red
-        lead_bottom: [0,0,1,0.5]
+        lead_floor: [0,0,1,0.5]
     
         vocal_top: [0,0,1,0.5]
         vocal_floor: red
@@ -35,7 +35,7 @@ meta:
         bass_floor: [0,0,1,0.5]
     
         rhythm_top: [0,0,1,0.5]
-        rhythm_bottom: red
+        rhythm_floor: red
         
         drum_top_1: red
         drum_top_2: [0,0,1,0.5]

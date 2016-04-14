@@ -257,8 +257,8 @@ device_config:
     OrionLinkV2:
         format: rgb
         red_factor: 1.0
-        green_factor: 1.0
-        blue_factor: 1.0
+        green_factor: 0.3
+        blue_factor: 0.5
     cauvetHuricane:
         format: byte
 

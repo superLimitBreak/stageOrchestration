@@ -117,16 +117,16 @@ class LightingConfig(object):
     def normalize_rgb(self, color_value):
         """
         Passthough color array
-        >>> normalize_rgb((1.0, 0, 0, 0))
-        (1.0, 0, 0, 0)
+        >>> normalize_rgb((1.0, 0, 0))
+        (1.0, 0, 0)
 
         Get alias
         >>> normalize_rgb('red')
-        [1.0, 0, 0, 0]
+        [1.0, 0, 0]
 
         Parse color string
-        >>> normalize_rgb('1, 0, 0, 0')
-        [1.0, 0, 0, 0]
+        >>> normalize_rgb('1, 0, 0')
+        [1.0, 0, 0]
 
         """
         return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value

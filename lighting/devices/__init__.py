@@ -2,7 +2,6 @@
 Each def renders the bytes for config.yaml/device
 """
 
-
 # Utils ------------------------------------------------------------------------
 
 def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1, **kwargs):
@@ -17,20 +16,7 @@ def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1, **kwargs):
 
 def FlatPar(config, rgb):
     device_config = config['device_config']['FlatPar']
-    # WHITE_FACTOR = device_config['white_factor']   # Broken and will only work for WHITE_FACTOR 0.5. FIX THIS
-    rgb = rgb_calibrate(rgb, **device_config)
-    w = 0  #  TODO rgb[3]
-    #def white_factor(w, factor_key):
-    #    if w > WHITE_FACTOR:
-    #        return ((w-WHITE_FACTOR)/(1-WHITE_FACTOR)) * (1-device_config[factor_key])
-    #    else:
-    #        return 0
-    return (
-        rgb[0],  # white_factor(w, 'red_factor'),
-        rgb[1],  # white_factor(w, 'green_factor'),
-        rgb[2],  # white_factor(w, 'blue_factor'),
-        w,  # / WHITE_FACTOR,
-    )
+    return rgb_calibrate(rgb, **device_config) + (min(rgb),)
 
 
 def neoneonfloor(config, rgb):
@@ -45,7 +31,8 @@ def neoneonfloorPart(_, rgb):
 
 
 def OrionLinkV2(config, rgb):
-    return tuple(v for v in rgb_calibrate(rgb, **config['device_config']['OrionLinkV2']))
+    device_config = config['device_config']['OrionLinkV2']
+    return rgb_calibrate(rgb, **device_config)
 
 
 def OrionLinkV2Final(config, rgb):
