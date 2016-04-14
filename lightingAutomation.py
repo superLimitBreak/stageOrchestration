@@ -85,7 +85,6 @@ def get_args():
     parser.add_argument('--artnet_dmx_host', action='store', help='ArtNet3 ip address', default=DEFAULT_ARTNET_DMX_HOST)
 
     # Plugin params
-    parser.add_argument('--midi_input', action='store', help='name of the midi input port to use')
     parser.add_argument('--yamlscaninterval', action='store', type=float, help='seconds to scan', default=DEFAULT_YAML_SCAN_INTERVAL)
 
     add_default_argparse_args(parser, version=VERSION)
@@ -103,12 +102,6 @@ def main(**kwargs):
     renderers.append(light_renderer)
     renderers.append(remote_control_renderer)
     renderers.append(DisplayTriggerEvents((light_renderer, remote_control_renderer)))
-
-    if kwargs.get('midi_input'):
-        # To be depricated
-        from lighting.renderers.LocalMidiInput import LocalMidiInput
-        renderers.append(LocalMidiInput(kwargs['midi_input']))
-        log.info('Init: LocalMidiInput')
 
     try:
         from lighting.renderers.PentatonicHero import DMXRendererPentatonicHero

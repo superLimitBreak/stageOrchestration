@@ -1,6 +1,8 @@
 ENV = _env
 PYTHON = $(ENV)/bin/python3
 PIP = $(ENV)/bin/pip3
+PYTEST=$(ENV)/bin/py.test
+
 
 help:
 	# Automated ArtNet3 DMX Lighting System
@@ -95,6 +97,14 @@ run_production:
 
 run_simulator:
 	$(PYTHON) simulator.py
+
+
+# Tests ------------------------------------------------------------------------
+
+.PHONY: test
+
+test:
+	PYTHONPATH=./ $(PYTEST) libs lighting tests --doctest-modules --pdb --maxfail=3
 
 
 # Clean ------------------------------------------------------------------------

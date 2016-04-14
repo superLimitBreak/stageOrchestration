@@ -46,8 +46,8 @@
 		</div>
 		
 		<div class="buttons">
-			<button onclick="send_lights('all', 'rgb:1,1,1,1')">all</button>
-			<button onclick="send_clear()">off</button>
+			<button onclick="send_lights('all', 'rgb:1,1,1');">all</button>
+			<button onclick="send_clear();">off</button>
 		</div>
 
 		
@@ -83,18 +83,18 @@
 					devices: {
 						top: {
 							type: "hsv",
-							sliders: [16,17,18,19]
+							sliders: [16,17,18]
 						},
 						floor: {
 							type: "hsv",
-							sliders: [20,21,22,23]
+							sliders: [20,21,22]
 						}
 					},
 					raw: {
 						sliders: [0,1,2,3,4,5,6,7]
 					}
 				}
-			}
+			};
 			
 			// Socket ----------------------------------------------------------
 			
@@ -111,7 +111,7 @@
 				};
 				socket.onclose = function() {
 					console.log("connection lost ", host);
-				}
+				};
 			}
 
 			document.getElementById('host_input').addEventListener('keydown', function(event) {
@@ -123,8 +123,8 @@
 			function send_lights(device, value) {
 				socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
 					device: device,
-					value: value,
-				},]}));
+					value: value
+				}]}));
 			}
 
 			function send_clear() {
@@ -150,7 +150,7 @@
 				}
 				function bindMidiDevices(midiAccess) {
 					for (var input of midiAccess.inputs.values()) {
-						var midiDeviceConfig = midiDeviceConfigs[input.name]
+						var midiDeviceConfig = midiDeviceConfigs[input.name];
 						if (midiDeviceConfig) {
 							input.onmidimessage = onMidiMessage;
 							console.log(midiDeviceConfig);
@@ -243,8 +243,9 @@
 			window.onload = function() {
 				document.getElementById('host_input').value = localStorage.host || ((window.location.hostname || 'localhost')+":"+DEFAULT_PORT);
 				
-				appendChildren(document.getElementById('hsv_top')  , createSliderGroup('top'  , 'hsv', 4));
-				appendChildren(document.getElementById('hsv_floor'), createSliderGroup('floor', 'hsv', 4));
+				// TODO: get these details from json config dynamically
+				appendChildren(document.getElementById('hsv_top')  , createSliderGroup('top'  , 'hsv', 3));
+				appendChildren(document.getElementById('hsv_floor'), createSliderGroup('floor', 'hsv', 3));
 				
 				var sliders = [];
 				for (var i=0 ; i<NUM_RAW_SLIDERS ; i++) {

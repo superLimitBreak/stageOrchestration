@@ -4,11 +4,11 @@ exit:
 top:
   device: top
   type: hsv
-  sliders: [16,17,18,19]
+  sliders: [16,17,18]
 floor:
   device: floor
   type: hsv
-  sliders: [20,21,22,23]
+  sliders: [20,21,22]
 raw:
   type: raw
   sliders: [0,1,2,3,4,5,6,7]

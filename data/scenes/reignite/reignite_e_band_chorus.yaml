@@ -8,7 +8,7 @@ meta:
             
         side_top: red
         side_floor: blue
-        middle_top: [1,0,0,1]
+        middle_top: [1,0.25,0.25]
         middle_floor: blue
         back_top: blue
         back_floor: red

@@ -63,7 +63,7 @@ class MidiRemoteControl(object):
         if not input_config:
             return
 
-        if input_config.get('type') in ('rgb', 'rgbw', 'hsv', ):
+        if input_config.get('type') in ('rgb', 'hsv', ):
             self.send_light_data(
                 input_config['device'],
                 '{type}:{values}'.format(
@@ -104,7 +104,7 @@ class MidiRemoteControl(object):
 
     def all(self, value):
         if value:
-            self.send_light_data('all', 'rgb:1,1,1,1')
+            self.send_light_data('all', 'rgb:1,1,1')
 
     def clear(self, value):
         if value:

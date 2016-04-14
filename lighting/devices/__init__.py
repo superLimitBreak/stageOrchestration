@@ -5,18 +5,6 @@ Each def renders the bytes for config.yaml/device
 
 # Utils ------------------------------------------------------------------------
 
-def rgbw_to_rgb(_, rgbw):
-    """
-    TODO: Depricate this!
-    There should be no concept of rgbw anymore. White can be derived and added automatically
-    """
-    return (
-        rgbw[0] + rgbw[3],
-        rgbw[1] + rgbw[3],
-        rgbw[2] + rgbw[3],
-    )
-
-
 def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1, **kwargs):
     return (
         rgb[0] * red_factor,
@@ -27,11 +15,11 @@ def rgb_calibrate(rgb, red_factor=1, green_factor=1, blue_factor=1, **kwargs):
 
 # Devices ----------------------------------------------------------------------
 
-def FlatPar(config, rgbw):
+def FlatPar(config, rgb):
     device_config = config['device_config']['FlatPar']
     # WHITE_FACTOR = device_config['white_factor']   # Broken and will only work for WHITE_FACTOR 0.5. FIX THIS
-    rgb = rgb_calibrate(rgbw, **device_config)
-    w = rgbw[3]
+    rgb = rgb_calibrate(rgb, **device_config)
+    w = rgb[3]
     #def white_factor(w, factor_key):
     #    if w > WHITE_FACTOR:
     #        return ((w-WHITE_FACTOR)/(1-WHITE_FACTOR)) * (1-device_config[factor_key])
@@ -45,23 +33,23 @@ def FlatPar(config, rgbw):
     )
 
 
-def neoneonfloor(config, rgbw):
+def neoneonfloor(config, rgb):
     return (
         0.196,  # Constant to enter 3 light mode - this float translates to the byte value of '50'
         0,
-    ) + neoneonfloorPart(config, rgbw)
+    ) + neoneonfloorPart(config, rgb)
 
 
-def neoneonfloorPart(_, rgbw):
-    return rgbw_to_rgb(_, rgbw)
+def neoneonfloorPart(_, rgb):
+    return rgb
 
 
-def OrionLinkV2(config, rgbw):
-    return tuple(v + rgbw[3] for v in rgb_calibrate(rgbw, **config['device_config']['OrionLinkV2']))
+def OrionLinkV2(config, rgb):
+    return tuple(v for v in rgb_calibrate(rgb, **config['device_config']['OrionLinkV2']))
 
 
-def OrionLinkV2Final(config, rgbw):
-    return OrionLinkV2(config, rgbw) + (
+def OrionLinkV2Final(config, rgb):
+    return OrionLinkV2(config, rgb) + (
         0,  # No flash
         1,  # Master dim - the value '1' (max) is transformed to byte '255'
     )

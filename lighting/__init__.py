@@ -49,11 +49,20 @@ class AbstractDMXRenderer(object):
 
 
 def mix(destination, sources, mix_func=max):
+    """
+    >>> destination = [1, 2, 3]
+    >>> mix(destination, [[10, 5, 6],[7, 8, 9]])
+    >>> destination
+    [10, 8, 9]
+    """
     for index, values in enumerate(zip(*sources)):
         destination[index] = mix_func(values)
 
 
 def get_value_at(sequence, target, get_value_item_func):
+    """
+    TODO: Doctests
+    """
     current = 0
     for index, item in enumerate(sequence):
         if not item:
@@ -99,35 +108,38 @@ class LightingConfig(object):
         for name, device in self.config['devices'].items():
             self.device_lookup[name] += list(_generate_group_lookup(device))
 
-    def normalize_rgbw(self, color_value):
+    def get_dmx_size(self):
+        """
+        TODO: Aquire minimum array size dynamically from config
+        """
+        assert False
+
+    def normalize_rgb(self, color_value):
         """
         Passthough color array
-        >>> normalize_rgbw((1.0, 0, 0, 0))
+        >>> normalize_rgb((1.0, 0, 0, 0))
         (1.0, 0, 0, 0)
 
         Get alias
-        >>> normalize_rgbw('red')
+        >>> normalize_rgb('red')
         [1.0, 0, 0, 0]
 
         Parse color string
-        >>> normalize_rgbw('1, 0, 0, 0')
+        >>> normalize_rgb('1, 0, 0, 0')
         [1.0, 0, 0, 0]
 
         """
         return self.config['colors'].get(color_value, parse_rgb_color(color_value)) if isinstance(color_value, str) else color_value
 
-    def color_calibration(self, device, rgbw):
-        return getattr(devices, device.get('type'))(self.config, rgbw)
+    def color_calibration(self, device, rgb):
+        return getattr(devices, device.get('type'))(self.config, rgb)
 
-    def render_device(self, dmx, name, rgbw):
-        if rgbw:
-            rgbw = self.normalize_rgbw(rgbw)
-        else:
-            rgbw = (0, 0, 0, 0)
+    def render_device(self, dmx, name, rgb):
+        rgb = self.normalize_rgb(rgb) if rgb else (0, 0, 0)
 
         def overlay(index, values):
             for offset, value in enumerate(values):
                 dmx[index+offset] = limit(value)
 
         for device in self.device_lookup.get(name, ()):
-            overlay(device['index'], self.color_calibration(device, rgbw))
+            overlay(device['index'], self.color_calibration(device, rgb))
