@@ -19,7 +19,7 @@ def FlatPar(config, rgb):
     device_config = config['device_config']['FlatPar']
     # WHITE_FACTOR = device_config['white_factor']   # Broken and will only work for WHITE_FACTOR 0.5. FIX THIS
     rgb = rgb_calibrate(rgb, **device_config)
-    w = rgb[3]
+    w = 0  #  TODO rgb[3]
     #def white_factor(w, factor_key):
     #    if w > WHITE_FACTOR:
     #        return ((w-WHITE_FACTOR)/(1-WHITE_FACTOR)) * (1-device_config[factor_key])
@@ -41,7 +41,7 @@ def neoneonfloor(config, rgb):
 
 
 def neoneonfloorPart(_, rgb):
-    return rgb
+    return tuple(rgb)
 
 
 def OrionLinkV2(config, rgb):
