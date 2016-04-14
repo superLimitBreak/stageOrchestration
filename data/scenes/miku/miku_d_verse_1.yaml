@@ -1,3 +1,6 @@
+meta:
+    mute_devices: [bass, vocal]
+
 0.0.0:
     state: cyan_white_1
 8.0.0:
