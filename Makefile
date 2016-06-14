@@ -106,6 +106,10 @@ run_simulator:
 test:
 	PYTHONPATH=./ $(PYTEST) libs lighting tests --doctest-modules --pdb --maxfail=3
 
+.PHONY: cloc
+cloc:
+	cloc --exclude-dir=$(ENV),libs ./
+
 
 # Clean ------------------------------------------------------------------------
 
