@@ -1,3 +1,8 @@
+"""
+To be depricated
+Will be replaced by the `stageViewer` project
+"""
+
 import os.path
 import random
 import pygame

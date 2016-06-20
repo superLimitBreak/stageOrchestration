@@ -1,3 +1,8 @@
+"""
+To be depricated
+Will be replaced by `webRemoveControl`
+"""
+
 import os.path
 
 from libs.misc import postmortem

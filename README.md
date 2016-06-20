@@ -1,5 +1,5 @@
-Lighting Auomation
-==================
+lightingAuomation
+=================
 
 Overview
 --------
