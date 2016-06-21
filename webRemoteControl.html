@@ -52,12 +52,14 @@
 
 		
 		<script type="text/javascript">
-			var DEFAULT_PORT = "9873";
-			var NUM_RAW_SLIDERS = 8;
+			try {const console = console || {};} catch(e) {}  // Define 'console' to surpress lint errors
+			
+			const DEFAULT_PORT = "9873";
+			const NUM_RAW_SLIDERS = 8;
 
 			// MidiConfig (To be removed and served as json) -------------------
 			
-			var midiDeviceConfigs = {
+			const midiDeviceConfigs = {
 				"nanoKONTROL2 SLIDER/KNOB": {
 					commands: {
 						next_raw: {
@@ -101,21 +103,21 @@
 			var socket = null;
 			
 			function connect() {
-				var host = document.getElementById('host_input').value;
+				let host = document.getElementById('host_input').value;
 				socket = new WebSocket("ws://"+host+"/");
-				socket.onopen = function() {
+				socket.onopen = () => {
 					socket.send(JSON.stringify({action: "subscribe", data: ["None"]}));
 				};
-				socket.onopen = function() {
+				socket.onopen = () => {
 					localStorage.host = host;
 				};
-				socket.onclose = function() {
+				socket.onclose = () => {
 					console.log("connection lost ", host);
 				};
 			}
 
 			document.getElementById('host_input').addEventListener('keydown', function(event) {
-				if (event.keyCode==13) {
+				if (event.keyCode === 13) {
 					connect();
 				}
 			}, true);
@@ -142,8 +144,8 @@
 				function onMidiMessage(message) {
 					var input = message.data[1];
 					var value = message.data[2];
-					if (input == 0) {
-						var slider = document.getElementById('raw_sliders').children.item(0);
+					if (input === 0) {
+						let slider = document.getElementById('raw_sliders').children.item(0);
 						slider.value = value/127;
 						slider._onupdated();
 					}
@@ -171,7 +173,7 @@
 			
 			
 			function createSlider(device, type, slider_group) {
-				var slider = document.createElement('input');
+				let slider = document.createElement('input');
 				slider.setAttribute('type', 'range');
 				slider.setAttribute('orient', 'vertical');
 				slider.setAttribute('min', '0');
@@ -181,9 +183,9 @@
 				slider.setAttribute('data-device', device);
 				slider.setAttribute('data-type', type);
 				slider._onupdated = function(){
-					value = slider.value;  //event.target.value;
+					let value = slider.value;  //event.target.value;
 					if (Array.isArray(slider_group)) {
-						var values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
+						let values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
 						value = type+':'+values.join(',');
 					}
 					send_lights(slider.getAttribute('data-device'), value);
@@ -207,29 +209,29 @@
 			}
 
 			function raw_slider_controls() {
-				var container = document.createElement('div');
 				var index_display = document.createElement('input');
 				index_display.value = 0;
 				index_display.onchange = function() {
-					sliders = document.getElementById('raw_sliders').getElementsByTagName('input');
+					let sliders = document.getElementById('raw_sliders').getElementsByTagName('input');
 					for (var index in sliders) {
-						var slider = sliders[index];
+						let slider = sliders[index];
 						if (!slider.getAttribute) {continue;}
 						slider.setAttribute('data-device', Number(index_display.value) + Number(index));
 						slider.value = 0;
 					}
-				}
+				};
 				
 				function create_button(text, increment) {
 					var button = document.createElement('button');
 					button.innerHTML = text;
-					button.onclick = function(event){
+					button.onclick = event => {
 						index_display.value = Math.max(0, Number(index_display.value) + Number(increment));
 						index_display.onchange();
 					};
 					return button;
 				}
 				
+				let container = document.createElement('div');
 				appendChildren(container, [
 					index_display,
 					create_button('<', -NUM_RAW_SLIDERS),
@@ -258,7 +260,7 @@
 				connect();
 				
 				initMidi();
-			}
+			};
 		</script>
 	</body>
 </html>
