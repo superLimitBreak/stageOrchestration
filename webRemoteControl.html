@@ -103,7 +103,7 @@
 			var socket = null;
 			
 			function connect() {
-				let host = document.getElementById('host_input').value;
+				const host = document.getElementById('host_input').value;
 				socket = new WebSocket("ws://"+host+"/");
 				socket.onopen = () => {
 					socket.send(JSON.stringify({action: "subscribe", data: ["None"]}));
@@ -173,7 +173,7 @@
 			
 			
 			function createSlider(device, type, slider_group) {
-				let slider = document.createElement('input');
+				const slider = document.createElement('input');
 				slider.setAttribute('type', 'range');
 				slider.setAttribute('orient', 'vertical');
 				slider.setAttribute('min', '0');
@@ -186,16 +186,16 @@
 					let value = slider.value;  //event.target.value;
 					if (Array.isArray(slider_group)) {
 						let values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
-						value = type+':'+values.join(',');
+						value = `${type}:${values.join(',')}`;
 					}
 					send_lights(slider.getAttribute('data-device'), value);
 				};
-				slider.addEventListener('input', function(event){slider._onupdated()}, true);
+				slider.addEventListener('input', event => slider._onupdated(), true);
 				return slider;
 			}
 			
 			function createSliderGroup(device, type, size) {
-				var slider_group = [];
+				const slider_group = [];
 				for (var i=0 ; i<size ; i++) {
 					slider_group.push(createSlider(device, type, slider_group));
 				}
@@ -203,17 +203,17 @@
 			}
 			
 			function appendChildren(parent, children) {
-				for (var index in children) {
-					parent.appendChild(children[index]);
+				for (let child of children) {
+					parent.appendChild(child);
 				}
 			}
 
 			function raw_slider_controls() {
-				var index_display = document.createElement('input');
+				const index_display = document.createElement('input');
 				index_display.value = 0;
 				index_display.onchange = function() {
-					let sliders = document.getElementById('raw_sliders').getElementsByTagName('input');
-					for (var index in sliders) {
+					const sliders = document.getElementById('raw_sliders').getElementsByTagName('input');
+					for (let index in sliders) {
 						let slider = sliders[index];
 						if (!slider.getAttribute) {continue;}
 						slider.setAttribute('data-device', Number(index_display.value) + Number(index));
@@ -222,7 +222,7 @@
 				};
 				
 				function create_button(text, increment) {
-					var button = document.createElement('button');
+					const button = document.createElement('button');
 					button.innerHTML = text;
 					button.onclick = event => {
 						index_display.value = Math.max(0, Number(index_display.value) + Number(increment));
@@ -231,7 +231,7 @@
 					return button;
 				}
 				
-				let container = document.createElement('div');
+				const container = document.createElement('div');
 				appendChildren(container, [
 					index_display,
 					create_button('<', -NUM_RAW_SLIDERS),
