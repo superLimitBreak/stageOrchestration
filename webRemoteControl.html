@@ -46,8 +46,8 @@
 		</div>
 		
 		<div class="buttons">
-			<button onclick="send_lights('all', 'rgb:1,1,1');">all</button>
-			<button onclick="send_clear();">off</button>
+			<button onclick="socket.send_lights('all', 'rgb:1,1,1');">all</button>
+			<button onclick="socket.send_clear();">off</button>
 		</div>
 
 		
@@ -100,38 +100,43 @@
 			
 			// Socket ----------------------------------------------------------
 			
-			var socket = null;
-			
-			function connect() {
-				const host = document.getElementById('host_input').value;
-				socket = new WebSocket("ws://"+host+"/");
-				socket.onopen = () => {
-					socket.send(JSON.stringify({action: "subscribe", data: ["None"]}));
-				};
-				socket.onopen = () => {
-					localStorage.host = host;
-				};
-				socket.onclose = () => {
-					console.log("connection lost ", host);
-				};
-			}
-
-			document.getElementById('host_input').addEventListener('keydown', function(event) {
-				if (event.keyCode === 13) {
-					connect();
+			class LightingSocket {
+				constructor(hostFieldId) {
+					this.hostFieldId = hostFieldId;
+					this.socket = null;
+					document.getElementById(this.hostFieldId).addEventListener('keydown', function(event) {
+						if (event.keyCode === 13) {
+							this.connect();
+						}
+					}, true);
 				}
-			}, true);
 
-			function send_lights(device, value) {
-				socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
-					device: device,
-					value: value
-				}]}));
+				connect() {
+					const host = document.getElementById(this.hostFieldId).value;
+					this.socket = new WebSocket("ws://"+host+"/");
+					this.socket.onopen = () => {
+						this.socket.send(JSON.stringify({action: "subscribe", data: ["None"]}));
+					};
+					this.socket.onopen = () => {
+						localStorage.host = host;
+					};
+					this.socket.onclose = () => {
+						console.log("connection lost ", host);
+					};
+				}
+	
+				send_lights(device, value) {
+					this.socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
+						device: device,
+						value: value
+					}]}));
+				}
+	
+				send_clear() {
+					this.socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.clear'}]}));
+				}
 			}
-
-			function send_clear() {
-				socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.clear'}]}));
-			}
+			const socket = new LightingSocket('host_input');
 			
 			// Midi ------------------------------------------------------------
 			
@@ -188,7 +193,7 @@
 						let values = []; for (var index in slider_group) {values.push(slider_group[index].value);}
 						value = `${type}:${values.join(',')}`;
 					}
-					send_lights(slider.getAttribute('data-device'), value);
+					socket.send_lights(slider.getAttribute('data-device'), value);
 				};
 				slider.addEventListener('input', event => slider._onupdated(), true);
 				return slider;
@@ -257,7 +262,7 @@
 				
 				document.getElementById('raw_controls').appendChild(raw_slider_controls());
 				
-				connect();
+				socket.connect();
 				
 				initMidi();
 			};
