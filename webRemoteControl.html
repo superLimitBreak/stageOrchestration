@@ -104,11 +104,14 @@
 				constructor(hostFieldId) {
 					this.hostFieldId = hostFieldId;
 					this.socket = null;
-					document.getElementById(this.hostFieldId).addEventListener('keydown', function(event) {
+					
+					const hostField = document.getElementById(this.hostFieldId);
+					hostField.addEventListener('keydown', function(event) {
 						if (event.keyCode === 13) {
 							this.connect();
 						}
 					}, true);
+					hostField.value = localStorage.host || ((window.location.hostname || 'localhost')+":"+DEFAULT_PORT);
 				}
 
 				connect() {
@@ -121,7 +124,7 @@
 						localStorage.host = host;
 					};
 					this.socket.onclose = () => {
-						console.log("connection lost ", host);
+						console.warn("connection lost ", host);
 					};
 				}
 	
@@ -250,7 +253,6 @@
 			// Init ------------------------------------------------------------
 			
 			window.onload = function() {
-				document.getElementById('host_input').value = localStorage.host || ((window.location.hostname || 'localhost')+":"+DEFAULT_PORT);
 				
 				// TODO: get these details from json config dynamically
 				appendChildren(document.getElementById('hsv_top')  , createSliderGroup('top'  , 'hsv', 3));
