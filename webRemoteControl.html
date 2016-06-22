@@ -46,8 +46,8 @@
 		</div>
 		
 		<div class="buttons">
-			<button onclick="socket.send_lights('all', 'rgb:1,1,1');">all</button>
-			<button onclick="socket.send_clear();">off</button>
+			<button onclick="lightingCommands.all()">all</button>
+			<button onclick="lightingCommands.clear()">off</button>
 		</div>
 
 		
@@ -57,6 +57,15 @@
 			const DEFAULT_PORT = "9873";
 			const NUM_RAW_SLIDERS = 8;
 
+			const lightingCommands = {
+				all: () => {
+					socket.send_lights('all', 'rgb:1,1,1');
+				},
+				clear: () => {
+					socket.send_clear();
+				}
+			};
+			
 			// MidiConfig (To be removed and served as json) -------------------
 			
 			const midiDeviceConfigs = {
@@ -129,32 +138,33 @@
 				}
 	
 				send_lights(device, value) {
-					this.socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.set',
-						device: device,
-						value: value
-					}]}));
+					this.socket.send(
+						JSON.stringify({action: "message", data: [{
+							deviceid: 'lights',
+							func: 'lights.set',
+							device: device,
+							value: value,
+						}]}
+					));
 				}
 	
 				send_clear() {
-					this.socket.send(JSON.stringify({action: "message", data: [{deviceid: 'lights', func: 'lights.clear'}]}));
+					this.socket.send(
+						JSON.stringify({action: "message", data: [{
+							deviceid: 'lights',
+							func: 'lights.clear',
+						}]})
+					);
 				}
 			}
 			const socket = new LightingSocket('host_input');
 			
 			// Midi ------------------------------------------------------------
 
-			function onMidiMessage(message) {
-				var input = message.data[1];
-				var value = message.data[2];
-				if (input === 0) {
-					let slider = document.getElementById('raw_sliders').children.item(0);
-					slider.value = value/127;
-					slider._onupdated();
-				}
-			}
-
-			
-			function initMidi(onMidiMessage) {
+			const setOnMidiMessageListener = ({
+					onMidiMessage=(message)=>{console.log(message)},
+					shouldBindMidiInput=(input)=>{return true;},
+			}={}) => {
 				// http://webaudiodemos.appspot.com/slides/webmidi.html
 				// http://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
 				// http://www.toptal.com/web/creating-browser-based-audio-applications-controlled-by-midi-hardware
@@ -162,10 +172,8 @@
 				// https://www.w3.org/TR/webmidi/
 				function bindMidiDevices(midiAccess) {
 					for (let input of midiAccess.inputs.values()) {
-						const midiDeviceConfig = midiDeviceConfigs[input.name];
-						if (midiDeviceConfig) {
+						if (shouldBindMidiInput(input)) {
 							input.onmidimessage = onMidiMessage;
-							//console.log(midiDeviceConfig);
 						}
 					}
 				}
@@ -178,6 +186,41 @@
 					console.warn("No browser MIDI support");
 				}
 			}
+
+			
+			class LightingMidiManager {
+				constructor() {
+					this._midiDeviceConfig = null;
+					this._midiDeviceLookup = null;
+					setOnMidiMessageListener({
+						onMidiMessage: (message) => {
+							this.onMidiMessage(message);
+						},
+						shouldBindMidiInput: (input) => {
+							this.midiDeviceConfig = midiDeviceConfigs[input.name];
+							return this.midiDeviceConfig;
+						},
+					});
+				}
+
+				get midiDeviceConfig() {return this._midiDeviceConfig;}
+				set midiDeviceConfig(midiDeviceConfig) {
+					this._midiDeviceConfig = midiDeviceConfig;
+					this._midiDeviceLookup = 'poop';
+				}
+				
+				onMidiMessage(message) {
+					const [_, input, value] = message.data;
+					if (input === 0) {
+						let slider = document.getElementById('raw_sliders').children.item(0);
+						slider.value = value/127;
+						slider._onupdated();
+					}
+				}
+			}
+			const midi = new LightingMidiManager();
+			
+			
 			
 			// Slider ----------------------------------------------------------
 			
@@ -267,8 +310,6 @@
 				document.getElementById('raw_controls').appendChild(raw_slider_controls());
 				
 				socket.connect();
-				
-				initMidi(onMidiMessage);
 			};
 		</script>
 	</body>
