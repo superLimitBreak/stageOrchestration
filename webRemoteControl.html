@@ -139,28 +139,30 @@
 			const socket = new LightingSocket('host_input');
 			
 			// Midi ------------------------------------------------------------
+
+			function onMidiMessage(message) {
+				var input = message.data[1];
+				var value = message.data[2];
+				if (input === 0) {
+					let slider = document.getElementById('raw_sliders').children.item(0);
+					slider.value = value/127;
+					slider._onupdated();
+				}
+			}
+
 			
-			function initMidi() {
+			function initMidi(onMidiMessage) {
 				// http://webaudiodemos.appspot.com/slides/webmidi.html
 				// http://www.keithmcmillen.com/blog/making-music-in-the-browser-web-midi-api/
 				// http://www.toptal.com/web/creating-browser-based-audio-applications-controlled-by-midi-hardware
 				// https://webaudio.github.io/web-midi-api/
 				// https://www.w3.org/TR/webmidi/
-				function onMidiMessage(message) {
-					var input = message.data[1];
-					var value = message.data[2];
-					if (input === 0) {
-						let slider = document.getElementById('raw_sliders').children.item(0);
-						slider.value = value/127;
-						slider._onupdated();
-					}
-				}
 				function bindMidiDevices(midiAccess) {
-					for (var input of midiAccess.inputs.values()) {
-						var midiDeviceConfig = midiDeviceConfigs[input.name];
+					for (let input of midiAccess.inputs.values()) {
+						const midiDeviceConfig = midiDeviceConfigs[input.name];
 						if (midiDeviceConfig) {
 							input.onmidimessage = onMidiMessage;
-							console.log(midiDeviceConfig);
+							//console.log(midiDeviceConfig);
 						}
 					}
 				}
@@ -254,7 +256,7 @@
 				appendChildren(document.getElementById('hsv_top')  , createSliderGroup('top'  , 'hsv', 3));
 				appendChildren(document.getElementById('hsv_floor'), createSliderGroup('floor', 'hsv', 3));
 				
-				var sliders = [];
+				const sliders = [];
 				for (var i=0 ; i<NUM_RAW_SLIDERS ; i++) {
 					sliders.push(createSlider(i));
 				}
@@ -264,7 +266,7 @@
 				
 				socket.connect();
 				
-				initMidi();
+				initMidi(onMidiMessage);
 			};
 		</script>
 	</body>
