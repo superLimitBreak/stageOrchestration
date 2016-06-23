@@ -88,10 +88,6 @@ lighting/renderers/PentatonicHero.py:
 run:
 	$(PYTHON) lightingAutomation.py --postmortem
 
-run_midiRemote:
-	# To be depricated. We should move to Chrome midi web input.
-	$(PYTHON) midiRemoteControl.py 'nanoKONTROL2' --postmortem --displaytrigger_host 192.168.2.1
-
 run_production:
 	$(PYTHON) lightingAutomation.py --yamlscaninterval 0 --artnet_dmx_host 192.168.0.111
 
