@@ -48,6 +48,7 @@
 		<div class="buttons">
 			<button onclick="lightingCommands.all()">all</button>
 			<button onclick="lightingCommands.clear()">off</button>
+			<button onclick="lightingCommands.smoke()">smoke</button>
 		</div>
 
 		
@@ -70,6 +71,9 @@
 				raw_prev: () => {
 					document.getElementById('raw_prev').onclick();
 				},
+				smoke: () => {
+					socket.send_lights('smoke', 1);
+				}
 			};
 			
 			// MidiConfig (To be removed and served as json) -------------------
@@ -84,7 +88,7 @@
 							input_id: 61
 						},
 						smoke: {
-							input_id: 100
+							input_id: 43
 						},
 						all: {
 							input_id: 41
@@ -92,10 +96,6 @@
 						clear: {
 							input_id: 42
 						},
-						all_hold: {
-							type: "hold",
-							input_id: 45
-						}
 					},
 					devices: {
 						hsv_top: [16,17,18],
@@ -206,9 +206,14 @@
 					if (!midiDeviceConfig) {return;}
 					this._midiDeviceConfig = midiDeviceConfig;
 					this._midiDeviceLookup = {};
-					for (let command_name in midiDeviceConfig.commands) {
+					for (let command in midiDeviceConfig.commands) {
+						const command_name = command;
 						const command_data = midiDeviceConfig.commands[command_name];
-						this._midiDeviceLookup[command_data.input_id] = lightingCommands[command_name];
+						this._midiDeviceLookup[command_data.input_id] = (value) => {
+							if (value) {
+								lightingCommands[command_name]();
+							}
+						}
 					}
 					for (let device_name in midiDeviceConfig.devices) {
 						const device_data = midiDeviceConfig.devices[device_name];
@@ -303,8 +308,8 @@
 				const container = document.createElement('div');
 				appendChildren(container, [
 					index_display,
-					create_button('raw_next', '<', -NUM_RAW_SLIDERS),
-					create_button('raw_prev', '>',  NUM_RAW_SLIDERS),
+					create_button('raw_prev', '<', -NUM_RAW_SLIDERS),
+					create_button('raw_next', '>',  NUM_RAW_SLIDERS),
 				]);
 				return container;
 			}
