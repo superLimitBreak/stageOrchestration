@@ -63,7 +63,13 @@
 				},
 				clear: () => {
 					socket.send_clear();
-				}
+				},
+				raw_next: () => {
+					document.getElementById('raw_next').onclick();
+				},
+				raw_prev: () => {
+					document.getElementById('raw_prev').onclick();
+				},
 			};
 			
 			// MidiConfig (To be removed and served as json) -------------------
@@ -71,10 +77,10 @@
 			const midiDeviceConfigs = {
 				"nanoKONTROL2 SLIDER/KNOB": {
 					commands: {
-						next_raw: {
+						raw_next: {
 							input_id: 62
 						},
-						prev_raw: {
+						raw_prev: {
 							input_id: 61
 						},
 						smoke: {
@@ -92,18 +98,10 @@
 						}
 					},
 					devices: {
-						top: {
-							type: "hsv",
-							sliders: [16,17,18]
-						},
-						floor: {
-							type: "hsv",
-							sliders: [20,21,22]
-						}
+						hsv_top: [16,17,18],
+						hsv_floor: [20,21,22],
+						raw_sliders: [0,1,2,3,4,5,6,7],  // Not sufficent as the slider_id IS the input_id. Refactoring to do here
 					},
-					raw: {
-						sliders: [0,1,2,3,4,5,6,7]  // Not sufficent as the slider_id IS the input_id. Refactoring to do here
-					}
 				}
 			};
 			
@@ -212,18 +210,18 @@
 						const command_data = midiDeviceConfig.commands[command_name];
 						this._midiDeviceLookup[command_data.input_id] = lightingCommands[command_name];
 					}
-					if (midiDeviceConfig.raw) {
-						for (let input_id in midiDeviceConfig.raw.sliders) {
-							this._midiDeviceLookup[input_id] = (value) => {
-								const slider = document.getElementById('raw_sliders').children.item(input_id);
-								slider.value = value/127;
-								slider._onupdated();								
-							};
-						}
-					}
 					for (let device_name in midiDeviceConfig.devices) {
 						const device_data = midiDeviceConfig.devices[device_name];
-						//this._midiDeviceLookup[] = (value) => {}
+						for (let i=0 ; i<device_data.length ; i++) {
+							const index = i;
+							const input_id = device_data[index];
+							const device_id = device_name;
+							this._midiDeviceLookup[input_id] = (value) => {
+								const slider = document.getElementById(device_id).getElementsByTagName('input').item(index);
+								slider.value = value/127;
+								slider._onupdated();
+							};
+						}
 					}
 				}
 				
@@ -266,7 +264,7 @@
 			
 			function createSliderGroup(device, type, size) {
 				const slider_group = [];
-				for (var i=0 ; i<size ; i++) {
+				for (let i=0 ; i<size ; i++) {
 					slider_group.push(createSlider(device, type, slider_group));
 				}
 				return slider_group;
@@ -291,8 +289,9 @@
 					}
 				};
 				
-				function create_button(text, increment) {
+				function create_button(id, text, increment) {
 					const button = document.createElement('button');
+					button.id = id;
 					button.innerHTML = text;
 					button.onclick = event => {
 						index_display.value = Math.max(0, Number(index_display.value) + Number(increment));
@@ -304,8 +303,8 @@
 				const container = document.createElement('div');
 				appendChildren(container, [
 					index_display,
-					create_button('<', -NUM_RAW_SLIDERS),
-					create_button('>',  NUM_RAW_SLIDERS),
+					create_button('raw_next', '<', -NUM_RAW_SLIDERS),
+					create_button('raw_prev', '>',  NUM_RAW_SLIDERS),
 				]);
 				return container;
 			}
