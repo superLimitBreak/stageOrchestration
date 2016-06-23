@@ -102,7 +102,7 @@
 						}
 					},
 					raw: {
-						sliders: [0,1,2,3,4,5,6,7]
+						sliders: [0,1,2,3,4,5,6,7]  // Not sufficent as the slider_id IS the input_id. Refactoring to do here
 					}
 				}
 			};
@@ -205,16 +205,33 @@
 
 				get midiDeviceConfig() {return this._midiDeviceConfig;}
 				set midiDeviceConfig(midiDeviceConfig) {
+					if (!midiDeviceConfig) {return;}
 					this._midiDeviceConfig = midiDeviceConfig;
-					this._midiDeviceLookup = 'poop';
+					this._midiDeviceLookup = {};
+					for (let command_name in midiDeviceConfig.commands) {
+						const command_data = midiDeviceConfig.commands[command_name];
+						this._midiDeviceLookup[command_data.input_id] = lightingCommands[command_name];
+					}
+					if (midiDeviceConfig.raw) {
+						for (let input_id in midiDeviceConfig.raw.sliders) {
+							this._midiDeviceLookup[input_id] = (value) => {
+								const slider = document.getElementById('raw_sliders').children.item(input_id);
+								slider.value = value/127;
+								slider._onupdated();								
+							};
+						}
+					}
+					for (let device_name in midiDeviceConfig.devices) {
+						const device_data = midiDeviceConfig.devices[device_name];
+						//this._midiDeviceLookup[] = (value) => {}
+					}
 				}
 				
 				onMidiMessage(message) {
 					const [_, input, value] = message.data;
-					if (input === 0) {
-						let slider = document.getElementById('raw_sliders').children.item(0);
-						slider.value = value/127;
-						slider._onupdated();
+					const functionForInputId = this._midiDeviceLookup[input];
+					if (functionForInputId) {
+						functionForInputId(value);
 					}
 				}
 			}
