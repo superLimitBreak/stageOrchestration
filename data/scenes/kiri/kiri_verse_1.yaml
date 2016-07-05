@@ -2,4 +2,12 @@
     state:
         all: yellow
 8.0.0:
-    
+    state:
+        all: red
+16.0.0:
+    state:
+        all: yellow
+24.0.0:
+    state:
+        all: red
+32.0.0:
