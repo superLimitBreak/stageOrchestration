@@ -5,6 +5,7 @@ meta:
     state:
         name: kiri_verse_a
         floor: [1,0.3,0.3]
+        vocal_top: white
 6.0.0:
     state:
         name: kiri_verse_b

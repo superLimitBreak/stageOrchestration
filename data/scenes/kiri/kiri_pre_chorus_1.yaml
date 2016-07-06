@@ -1,0 +1,74 @@
+0.0.0:
+    state:
+        name: kiri_pre_1
+        top: cyan
+        rhythm_floor: blue
+        bass_floor: black
+        vocal_floor: black
+        lead_floor: blue
+    tween: easeOutQuart
+0.1.0:
+    state:
+        name: kiri_pre_2
+        top: cyan
+        rhythm_floor: blue
+        bass_floor: blue
+        vocal_floor: black
+        lead_floor: black
+    tween: easeOutQuart
+0.2.0:
+    state:
+        name: kiri_pre_3
+        top: cyan
+        rhythm_floor: black
+        bass_floor: blue
+        vocal_floor: blue
+        lead_floor: black
+    tween: easeOutQuart
+0.3.0:
+    state:
+        top: cyan
+        name: kiri_pre_4
+        rhythm_floor: black
+        bass_floor: black
+        vocal_floor: blue
+        lead_floor: blue
+    tween: easeOutQuart
+1.0.0:
+    state: kiri_pre_1
+    tween: easeOutQuart
+1.1.0:
+    state: kiri_pre_2
+    tween: easeOutQuart
+1.2.0:
+    state: kiri_pre_3
+    tween: easeOutQuart
+1.3.0:
+    state: kiri_pre_4
+    tween: easeOutQuart
+2.0.0:
+    state: kiri_pre_1
+    tween: easeOutQuart
+2.1.0:
+    state: kiri_pre_2
+    tween: easeOutQuart
+2.2.0:
+    state: kiri_pre_3
+    tween: easeOutQuart
+2.3.0:
+    state: kiri_pre_4
+    tween: easeOutQuart
+3.0.0:
+    state: kiri_pre_1
+    tween: easeOutQuart
+3.1.0:
+    state: kiri_pre_2
+    tween: easeOutQuart
+3.2.0:
+    state: kiri_pre_3
+    tween: easeOutQuart
+3.3.0:
+    state: kiri_pre_4
+    tween: easeOutQuart    
+4.0.0:
+    
