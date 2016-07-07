@@ -1,4 +1,13 @@
+meta:
+    mute_devices: [piano]
+
+
 0.0.0:
     state:
-        all: cyan
+        drum_top_1: black
+        drum_top_2: white
+        vocal: white
+        lead: black
+        rhythm: black
+        bass: black
 8.0.0:

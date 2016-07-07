@@ -1,4 +1,8 @@
+meta:
+    mute_devices: [piano]
+
 0.0.0:
     state:
-        all: purple
+        top: yellow
+        floor: red
 32.0.0:

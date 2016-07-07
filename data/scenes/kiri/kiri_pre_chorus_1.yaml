@@ -1,7 +1,12 @@
+meta:
+    mute_devices: [piano]
+
+
 0.0.0:
     state:
         name: kiri_pre_1
         top: cyan
+        drum_top_2: cyan
         rhythm_floor: blue
         bass_floor: black
         vocal_floor: black
@@ -11,6 +16,7 @@
     state:
         name: kiri_pre_2
         top: cyan
+        drum_top_2: purple
         rhythm_floor: blue
         bass_floor: blue
         vocal_floor: black
