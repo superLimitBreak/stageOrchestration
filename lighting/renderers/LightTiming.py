@@ -105,7 +105,20 @@ class LightTiming(AbstractDMXRenderer):
         self._seek(data.get('currentTime', 0))
 
     def _seek(self, time_offset):
-        if (time.time() - self.time_start) < 0.1:
+        """
+        When a track is started we receve  a lighting.start event
+        The audio in the html5 player may have a seek time.
+        This is to start part way into a test recording
+        This seek time update is fired the moment the audio starts playing
+        and within milliseconds of the lighting.start event.
+        This 'first seek' sent within milliseconds of the 'start' event
+        should not actually seek in the lighting scene.
+
+        As self.time_start is calculated with global offset.
+        We need to know the ACTUAL time since the 'trigger started' to
+        detect our seek to ignore
+        """
+        if (time.time() - (self.time_start + self.time_offset)) < 0.1:
             log.info('Seek recived within 100ms of start - Assuming this is a bounceback from test_audio - applying automatic time mutator of {0}s'.format(time_offset))
             self.time_mutator = time_offset
         self.time_start = time.time() - time_offset
