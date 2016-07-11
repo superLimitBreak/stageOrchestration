@@ -3,11 +3,28 @@ meta:
 
 
 0.0.0:
-    state:
+    state_start:
         drum_top_1: black
-        drum_top_2: white
-        vocal: white
-        lead: black
+        lead: yellow
+        vocal: yellow
         rhythm: black
         bass: black
+    state:
+        drum: black
+        lead: dim_50
+        vocal: black
+        rhythm: black
+        bass: black
+    tween: linear
+2.0.0:
+
+5.2.0:
+    state:
+        drum: white
+6.0.0:
+    state:
+        lead_top: white
+        rhythm_top: white
+        drum_top_1: white
+        bass_top: white
 8.0.0:
