@@ -205,7 +205,7 @@ devices:
         group: [light4]
     piano_floor:
         type: group
-        group: [floor1, floor4]
+        group: [floor1]
 
     bass:
         type: group
@@ -235,7 +235,7 @@ devices:
         group: [light5, light8]
     drum_top_2:
         type: group
-        group: [light1]
+        group: [light1, floor4]
 
     lead:
         type: group
