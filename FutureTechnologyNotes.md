@@ -1,5 +1,5 @@
-Summary
-=======
+Lighting Future Technologies
+============================
 
 `lightingAutomation` will become the system that manages subsiquent triggers.
 (This project name could change in the future as it's responsibilitys shift)
@@ -14,7 +14,7 @@ This is will be visulised by the `stageViewer` project.
 
 
 Feature Roadmap
-===============
+---------------
 
 * Render the entire output to byte arrays in memory on system start
     * Byte arrays directly relate to stage aliased lights
@@ -30,7 +30,7 @@ Feature Roadmap
 
 
 Device Examples
-===============
+---------------
 
 * Particles on Holographic Screen
     * Devices could be a the main holographic projector with particle effects. Maybe creating particles or flashs timed to the beat.
@@ -38,3 +38,43 @@ Device Examples
     * Devices could be wireless performers with rgb led's attached to their cloaths.
     * With network timesyncing it may be possible to use the performers with leds as part of the lighting rig.
     * Think 'Tron' style effects.
+
+
+High Level Descriptions
+-----------------------
+
+Currently lights are described as `performer`_`top/bottom`.
+We may perform in a range of differnt enviroments with a range of differnt lights.
+It would be good to develop some kind of *higher level abstraction* to describe lights.
+
+If we can describe the stage in general and add additional direction to highlight
+performers we could come up with a very flexable general purpuse system that allows us
+to create lights for new songs quickly and facilitates us using fourign lighting rigs
+with relative ease.
+
+There are lights with moving heads and patern projection.
+Different lighting rigs have differnt layouts.
+Below are some of the variables we may wish to consider when designing a lighting description system.
+
+* Performer
+    * Performers have a rough stage position. With narrow beam lights
+* Color
+* Motion
+    * Some lights can rotate multiple narrow beams. Slow songs may require slow rotation. Some songs may require tween of spinning faster and faster to build tension for a release.
+* Focus
+    * Lights can be focused into a narrow beam or a wash
+* Intensity
+    * Slow vocal songs may require intensity on the vocalist. We may want the whole stage to light up as the audience chants the lyrics.
+    * Although the colors may be the same for performers, some may have intence moments (drum fills, etc)
+* Beat/Pulse
+    * (Could overlap with motion?)
+    * Could pulse with tween to the heartbeat of a song
+* Direction
+    * towards audience from behind perofmers (silouet)
+    * from above the performer
+    * from below the performer
+    * from beside the performer
+* From/To
+    * What if we wanted to describe a sweep of beams across the stage that waved from left to right.
+      Maybe finishing pointing at one performer? Maybe sweaping from left to right then when a chorus starts the beams dispurse in random directions.
+
