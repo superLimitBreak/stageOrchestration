@@ -3,6 +3,8 @@ PYTHON = $(ENV)/bin/python3
 PIP = $(ENV)/bin/pip3
 PYTEST=$(ENV)/bin/py.test
 
+LIB_URL=https://raw.githubusercontent.com/calaldees/libs/master/python3/lib
+LIB_PATH=../../libs/python3/lib
 
 help:
 	# Automated ArtNet3 DMX Lighting System
@@ -32,24 +34,20 @@ libs:
 	mkdir libs
 	touch libs/__init__.py
 	cd libs && \
-	if [ -d ../../libs/ ] ; then \
-		ln -s ../../libs/python3/lib/misc.py misc.py ;\
-		ln -s ../../libs/python3/lib/loop.py loop.py ;\
-		ln -s ../../libs/python3/lib/net/udp.py udp.py ;\
-		ln -s ../../libs/python3/lib/net/client_reconnect.py client_reconnect.py ;\
-		ln -s ../../libs/python3/lib/midi/pygame_midi_wrapper.py pygame_midi_wrapper.py ;\
-		ln -s ../../libs/python3/lib/midi/pygame_midi_input.py pygame_midi_input.py ;\
-		ln -s ../../libs/python3/lib/midi/music.py music.py ;\
-		ln -s ../../libs/python3/lib/pygame_helpers/pygame_base.py pygame_base.py ;\
+	if [ -d $(LIB_PATH)/ ] ; then \
+		ln -s $(LIB_PATH)/misc.py misc.py ;\
+		ln -s $(LIB_PATH)/loop.py loop.py ;\
+		ln -s $(LIB_PATH)/net/udp.py udp.py ;\
+		ln -s $(LIB_PATH)/net/client_reconnect.py client_reconnect.py ;\
+		ln -s $(LIB_PATH)/midi/music.py music.py ;\
+		ln -s $(LIB_PATH)/pygame_helpers/pygame_base.py pygame_base.py ;\
 	else \
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/misc.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/loop.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/udp.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/net/client_reconnect.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_wrapper.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/pygame_midi_input.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/midi/music.py;\
-		wget -cq https://raw.githubusercontent.com/calaldees/libs/master/python3/lib/pygame/pygame_base.py;\
+		wget -cq $(LIB_URL)/misc.py;\
+		wget -cq $(LIB_URL)/loop.py;\
+		wget -cq $(LIB_URL)/net/udp.py;\
+		wget -cq $(LIB_URL)/net/client_reconnect.py;\
+		wget -cq $(LIB_URL)/midi/music.py;\
+		wget -cq $(LIB_URL)/pygame/pygame_base.py;\
 	fi
 
 # This kind of stuff would make most sense in a setup.py
