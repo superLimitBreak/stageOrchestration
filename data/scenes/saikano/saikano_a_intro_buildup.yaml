@@ -1,9 +1,0 @@
-0.0.0:
-    state:
-        rhythm_floor: red
-        rhythm_top: yellow
-2.0.0:
-    state:
-        lead: white
-    tween: linear
-4.0.0:

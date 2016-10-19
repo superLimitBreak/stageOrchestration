@@ -2,7 +2,7 @@ __pycache__
 *.pyc
 .cache
 
-*_env/
+_env/
+ext/
 
-libs
-lighting/renderers/PentatonicHero.py
+config.yaml

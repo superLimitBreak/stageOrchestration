@@ -1,9 +1,0 @@
-meta:
-    mute_devices: [piano]
-
-
-0.0.0:
-  state:
-    all: purple
-8.0.0:
-  

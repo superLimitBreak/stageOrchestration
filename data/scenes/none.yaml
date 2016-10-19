@@ -1,6 +1,0 @@
-0.0.0:
-    duration: 4
-    tween:
-        transition_to_state
-    state:
-        all: black
