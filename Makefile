@@ -84,8 +84,9 @@ cloc:
 # Clean ------------------------------------------------------------------------
 
 clean:
-	find . -iname *.pyc --delete
-	find . -iname __pycache__ --delete
+	find . -iname *.pyc -delete
+	find . -iname __pycache__ -delete
+	find . -iname .cache -delete
 	rm -rf $(ENV)
 	rm -rf $(EXT)
 	rm -rf $(CONFIG)
