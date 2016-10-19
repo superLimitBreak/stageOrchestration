@@ -26,7 +26,7 @@ help:
 # Install ----------------------------------------------------------------------
 
 .PHONY: install
-install: $(ENV) $(CONFIG) libs dependencys test
+install: $(ENV) $(CONFIG) $(EXT) dependencys test
 
 $(ENV):
 	virtualenv -p python3 $(ENV)
@@ -40,12 +40,12 @@ $(EXT):
 	mkdir $(EXT)
 	touch $(EXT)/__init__.py
 	cd $(EXT) && \
-	if [ -d $(LIB_PATH)/ ] ; then \
-		ln -s $(LIB_PATH)/misc.py misc.py ;\
-		ln -s $(LIB_PATH)/loop.py loop.py ;\
-		ln -s $(LIB_PATH)/net/udp.py udp.py ;\
-		ln -s $(LIB_PATH)/net/client_reconnect.py client_reconnect.py ;\
-		ln -s $(LIB_PATH)/midi/music.py music.py ;\
+	if [ -d $(EXT_LOCAL_PATH)/ ] ; then \
+		ln -s $(EXT_LOCAL_PATH)/misc.py misc.py ;\
+		ln -s $(EXT_LOCAL_PATH)/loop.py loop.py ;\
+		ln -s $(EXT_LOCAL_PATH)/net/udp.py udp.py ;\
+		ln -s $(EXT_LOCAL_PATH)/net/client_reconnect.py client_reconnect.py ;\
+		ln -s $(EXT_LOCAL_PATH)/midi/music.py music.py ;\
 	else \
 		wget -cq $(LIB_URL)/misc.py ;\
 		wget -cq $(LIB_URL)/loop.py ;\
@@ -74,16 +74,18 @@ run_production:
 
 .PHONY: test
 test:
-	PYTHONPATH=./ $(PYTEST) libs lighting tests --doctest-modules --pdb --maxfail=3
+	PYTHONPATH=./ $(PYTEST) $(EXT) tests --doctest-modules --pdb --maxfail=3
 
 .PHONY: cloc
 cloc:
-	cloc --exclude-dir=$(ENV),libs ./
+	cloc --exclude-dir=$(ENV),$(EXT) ./
 
 
 # Clean ------------------------------------------------------------------------
 
 clean:
+	find . -iname *.pyc --delete
+	find . -iname __pycache__ --delete
 	rm -rf $(ENV)
 	rm -rf $(EXT)
 	rm -rf $(CONFIG)
