@@ -4,7 +4,7 @@ import yaml
 
 from ext.misc import postmortem
 
-from . import VERSION
+from __init__ import VERSION
 
 log = logging.getLogger(__name__)
 
