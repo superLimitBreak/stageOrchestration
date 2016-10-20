@@ -51,6 +51,8 @@ def get_args():
     return kwargs
 
 
+# Main -------------------------------------------------------------------------
+
 def main(**kwargs):
     log.info('lightingAutomation')
 

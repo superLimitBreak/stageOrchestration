@@ -1,0 +1,3 @@
+
+class BaseLight(object):
+    pass
