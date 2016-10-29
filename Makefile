@@ -62,7 +62,8 @@ pygame:
 	if [ $$($(PIP) list | grep -c pygame) -eq 0 ];\
 		then\
 		echo "Installing pygame";\
-		$(PIP) install hg+http://bitbucket.org/pygame/pygame;\
+		#$(PIP) install hg+http://bitbucket.org/pygame/pygame;\
+		$(PIP) install pygame ;\
 	fi
 
 
