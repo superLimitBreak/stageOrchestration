@@ -43,6 +43,7 @@ $(EXT):
 	if [ -d $(EXT_LOCAL_PATH)/ ] ; then \
 		ln -s $(EXT_LOCAL_PATH)/misc.py misc.py ;\
 		ln -s $(EXT_LOCAL_PATH)/loop.py loop.py ;\
+		ln -s $(EXT_LOCAL_PATH)/attribute_packer.py attribute_packer.py ;\
 		ln -s $(EXT_LOCAL_PATH)/net/udp.py udp.py ;\
 		ln -s $(EXT_LOCAL_PATH)/net/client_reconnect.py client_reconnect.py ;\
 		ln -s $(EXT_LOCAL_PATH)/midi/music.py music.py ;\
@@ -50,6 +51,7 @@ $(EXT):
 	else \
 		wget -cq $(LIB_URL)/misc.py ;\
 		wget -cq $(LIB_URL)/loop.py ;\
+		wget -cq $(LIB_URL)/attribute_packer.py ;\
 		wget -cq $(LIB_URL)/net/udp.py ;\
 		wget -cq $(LIB_URL)/net/client_reconnect.py ;\
 		wget -cq $(LIB_URL)/midi/music.py ;\

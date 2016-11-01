@@ -6,3 +6,7 @@ _env/
 ext/
 
 config.yaml
+
+# Old path - can be removed once move to v2 is complete
+libs/
+lighting/
