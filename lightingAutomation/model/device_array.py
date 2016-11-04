@@ -1,5 +1,6 @@
 from copy import copy
 from collections import OrderedDict
+from itertools import chain
 
 from pysistence import make_dict
 
@@ -14,13 +15,16 @@ from .devices.dmx_passthrough import DMXPassthru
 
 class DeviceCollection(CollectionPackerMixin):
     """
-    A collection of lights with positions.
-    This models the stage layout and devices
     """
     def __init__(self, devices):
         self._devices = make_dict(devices)
-        self.groups = dict()
         CollectionPackerMixin.__init__(self, tuple(self._devices.values()))
+        self._device_lookup = {device_name: (device, ) for device_name, device in self._devices.items()}
 
-    def get(self, name):
-        pass
+    def add_group(self, group_name, device_names):
+        self._device_lookup[group_name] = tuple(chain(*(
+            self.device_lookup[device_name] for device_name in device_names
+        )))
+
+    def get_devices(self, name):
+        return self._device_lookup.get(name, ())
