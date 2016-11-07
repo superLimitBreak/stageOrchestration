@@ -1,5 +1,11 @@
-from lightingAutomation.model.device_collection import DeviceCollection
-from lightingAutomation.model.devices.rgb_light import RGBLight
+import math
+
+from lightingAutomation.lightingAutomation.model.device_collection import DeviceCollection
+from lightingAutomation.lightingAutomation.model.devices.rgb_light import RGBLight
+
+
+def isclose(a, b):
+    assert math.isclose(a, b, rel_tol=0.02)
 
 
 def test_device_collection():
@@ -16,28 +22,31 @@ def test_device_collection():
     assert device_collection.get_devices('all') == (light1, light2)
 
     for device in (light1, light2):
-        device.red = 0
-        device.green = 1
-        device.blue = 2
+        device.red = 0.0
+        device.green = 0.1
+        device.blue = 0.2
     device_collection.save_frame()
 
-    light1.red = 3
-    light1.green = 4
-    light1.blue = 5
-    light2.red = 6
-    light2.green = 7
-    light2.blue = 8
+    light1.red = 0.3
+    light1.green = 0.4
+    light1.blue = 0.5
+    light2.red = 0.6
+    light2.green = 0.7
+    light2.blue = 0.8
     device_collection.save_frame()
 
     device_collection.restore_frame(0)
-    assert light1.red == light2.red == 0
-    assert light1.green == light2.green == 1
-    assert light1.blue == light2.blue == 2
+    isclose(light1.red, 0)
+    isclose(light2.red, 0)
+    isclose(light1.green, 0.1)
+    isclose(light2.green, 0.1)
+    isclose(light1.blue, 0.2)
+    isclose(light2.blue, 0.2)
 
     device_collection.restore_frame(1)
-    assert light1.red == 3
-    assert light1.green == 4
-    assert light1.blue == 5
-    assert light2.red == 6
-    assert light2.green == 7
-    assert light2.blue == 8
+    isclose(light1.red, 0.3)
+    isclose(light1.green, 0.4)
+    isclose(light1.blue, 0.5)
+    isclose(light2.red, 0.6)
+    isclose(light2.green, 0.7)
+    isclose(light2.blue, 0.8)

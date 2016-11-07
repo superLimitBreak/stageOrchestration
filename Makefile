@@ -78,7 +78,7 @@ run_production:
 
 .PHONY: test
 test:
-	PYTHONPATH=./ $(PYTEST) $(EXT) lightingAutomation --doctest-modules --pdb --maxfail=3
+	PYTHONPATH=./ $(PYTEST) $(EXT) lightingAutomation --doctest-modules --pdb -x
 
 .PHONY: cloc
 cloc:

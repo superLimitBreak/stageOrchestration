@@ -24,7 +24,7 @@ class DeviceCollection(CollectionPackerMixin, MemoryFramePacker):
 
     def add_group(self, group_name, device_names):
         self._device_lookup[group_name] = tuple(chain(*(
-            self.device_lookup[device_name] for device_name in device_names
+            self._device_lookup[device_name] for device_name in device_names
         )))
 
     def get_devices(self, name):
