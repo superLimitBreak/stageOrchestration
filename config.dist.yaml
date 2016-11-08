@@ -1,4 +1,6 @@
-DEFAULT_DISPLAYTRIGGER_HOST: localhost
-DEFAULT_ARTNET_DMX_HOST: localhost
-DEFAULT_FRAMERATE: 30
-DEFAULT_YAML_SCAN_INTERVAL: 1.0
+displaytrigger_host: localhost
+framerate: 30.0
+artnet_dmx_host: localhost
+scaninterval: 2.0
+postmortem: True
+log_level: 20
