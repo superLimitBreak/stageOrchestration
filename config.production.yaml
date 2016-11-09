@@ -4,3 +4,5 @@ framerate: 30.0
 scaninterval: 0
 postmortem: False
 log_level: 20
+path_sequences: lightingSequences/
+path_stage_description: stageDescription/simple.yaml

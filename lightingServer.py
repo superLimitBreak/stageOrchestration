@@ -1,5 +1,4 @@
 import logging
-
 import yaml
 
 from ext.misc import postmortem
@@ -32,6 +31,9 @@ def get_args():
     parser.add_argument('--displaytrigger_host', action='store', help='display-trigger server to recieve events from')
     parser.add_argument('--framerate', action='store', help='Frames per second', type=float)
     parser.add_argument('--artnet_dmx_host', action='store', help='ArtNet3 ip address')
+
+    parser.add_argument('--path_sequences', action='store', help='Path for lighting sequences')
+    parser.add_argument('--path_stage_description', action='store', help='Path for a single stage configuration file')
     parser.add_argument('--scaninterval', action='store', type=float, help='seconds to scan datafiles for changes')
 
     parser.add_argument('--postmortem', action='store_true', help='Enter debugger on exception')
@@ -52,7 +54,8 @@ def get_args():
 # Main -------------------------------------------------------------------------
 
 def main(**kwargs):
-    log.info('lightingAutomation')
+    from lightingAutomation import lightingServer
+    lightingServer.serve(**kwargs)
 
 
 if __name__ == "__main__":
