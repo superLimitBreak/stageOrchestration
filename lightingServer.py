@@ -36,7 +36,7 @@ def get_args():
     parser.add_argument('--path_stage_description', action='store', help='Path for a single stage configuration file')
     parser.add_argument('--scaninterval', action='store', type=float, help='seconds to scan datafiles for changes')
 
-    parser.add_argument('--postmortem', action='store_true', help='Enter debugger on exception')
+    parser.add_argument('--postmortem', action='store', help='Enter debugger on exception')
     parser.add_argument('--log_level', type=int, help='log level', default=logging.INFO)
 
     parser.add_argument('--version', action='version', version=VERSION)
