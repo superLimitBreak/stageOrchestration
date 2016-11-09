@@ -7,16 +7,16 @@ EXT=ext
 EXT_SOURCE_URL=https://raw.githubusercontent.com/calaldees/libs/master/python3/lib
 EXT_LOCAL_PATH=../../libs/python3/lib
 
-CONFIG=config.yaml
-CONFIG_SOURCE=config.dist.yaml
+CONFIG_DEVELOPMENT=config.development.yaml
+CONFIG_PRODUCTION=config.production.yaml
+CONFIG_DIST=config.dist.yaml
 
-ARTNET_ADDRESS=192.168.0.111
 
 help:
 	#
 	# lightingAutomation - Triggerable timed stage lighting + projector orchistration
 	#  - install                :
-	#    - dependencys          : Update python dependencys
+	#    - upgrade_pip          : Update python dependencys
 	#  - run                    : Run in development mode
 	#    - run_production       : Braudcast to Artnet3:$(ARTNET_ADDRESS)
 	#  - test                   :
@@ -25,8 +25,9 @@ help:
 
 # Install ----------------------------------------------------------------------
 
-.PHONY: install
-install: $(ENV) $(CONFIG) $(EXT) dependencys test
+.PHONY: install dependencys
+dependencys: $(ENV) $(EXT)
+install: dependencys upgrade_pip test
 
 $(ENV):
 	virtualenv -p python3 $(ENV)
@@ -58,8 +59,8 @@ $(EXT):
 		wget -cq $(LIB_URL)/animation/timeline.py ;\
 	fi
 
-.PHONY: dependencys
-dependencys:
+.PHONY: upgrade_pip
+upgrade_pip:
 	$(PIP) install --upgrade pip ; $(PIP) install --upgrade -r dependencys.pip
 
 
@@ -67,11 +68,11 @@ dependencys:
 
 .PHONY: run run_production
 
-run:
-	$(PYTHON) lightingAutomation.py --postmortem
+run: $(CONFIG_DEVELOPMENT)
+	$(PYTHON) lightingServer.py --config $(CONFIG_DEVELOPMENT)
 
-run_production:
-	$(PYTHON) lightingAutomation.py --yamlscaninterval 0 --artnet_dmx_host $(ARTNET_ADDRESS)
+run_production: $(CONFIG_PRODUCTION)
+	$(PYTHON) lightingServer.py --config $(CONFIG_PRODUCTION)
 
 
 # Tests ------------------------------------------------------------------------

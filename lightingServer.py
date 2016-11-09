@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 # Constants --------------------------------------------------------------------
 
 DESCRIPTION = """
-    lightingAutomation - Stage Orchistration Framework
+    lightingAutomation - Stage Orchestration Framework
 """
 
 DEFAULT_CONFIG_FILENAME = 'config.yaml'

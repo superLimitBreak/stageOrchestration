@@ -5,7 +5,7 @@ __pycache__
 _env/
 ext/
 
-config.yaml
+config.development.yaml
 
 # Old path - can be removed once move to v2 is complete
 libs/
