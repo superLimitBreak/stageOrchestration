@@ -3,4 +3,4 @@ pytweening
 pytest
 decorator
 pysistence
-clint
+progressbar2
