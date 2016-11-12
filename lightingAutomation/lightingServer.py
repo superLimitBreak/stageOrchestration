@@ -8,6 +8,9 @@ from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter
 from ext.loop import Loop
 
+import progressbar
+
+
 log = logging.getLogger(__name__)
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')
@@ -23,6 +26,7 @@ class LightingServer(object):
 
     def __init__(self, **kwargs):
         self.framerate = kwargs['framerate']
+        self.path_sequences = kwargs['path_sequences']
 
         self.network_event_queue = multiprocessing.Queue()
         if kwargs.get('displaytrigger_host'):
@@ -37,7 +41,6 @@ class LightingServer(object):
                 rescan_interval=kwargs['scaninterval']
             )
 
-        self.path_sequences = kwargs['path_sequences']
         self.sequences = {}
         self.reload_sequences()
 
@@ -59,25 +62,41 @@ class LightingServer(object):
     # Sequences -------------------------------------------------------------
 
     def reload_sequences(self, sequence_files=None):
+        """
+        Traps for the Unwary in Python’s Import System
+          http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html
+        """
+
+        bar = progressbar.ProgressBar(
+            widgets=(
+                'Rendering Sequences: ', progressbar.Counter(),
+                ' ', progressbar.Bar(),
+                ' ', progressbar.Percentage(),
+                ' ', progressbar.ETA(),
+            ),
+            #redirect_stdout=True,
+            #redirect_stderr=True,
+        )
+
         def _all_sequence_files():
             return tuple(
                 (f.relative, f.abspath)
                 for f in fast_scan(self.path_sequences, search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES)
             )
 
-        for f_relative, f_absolute in (sequence_files or _all_sequence_files()):
+        for f_relative, f_absolute in bar(sequence_files or _all_sequence_files()):
             package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
             if package_name in self.sequences:
                 importlib.reload(self.sequences[package_name])
             else:
                 self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
-            self.pre_render_sequence[package_name]
+            self.pre_render_sequence(package_name)
 
     def pre_render_sequence(self, name):
         """
         Render a lighting sequence to a binary intermediary
         """
-        log.info(f'PreRender {name}')
+        pass
 
     def run_sequence(self, name):
         """
