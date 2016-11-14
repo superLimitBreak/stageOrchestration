@@ -6,12 +6,6 @@ from pysistence import make_dict
 
 from ext.attribute_packer import CollectionPackerMixin, BasePackerMixin, MemoryFramePacker
 
-from .devices.rgb_light import RGBLight
-from .devices.rgb_strip_light import RGBStripLight
-from .devices.effect_light import EffectRGBLight
-from .devices.smoke import Smoke
-from .devices.dmx_passthrough import DMXPassthru
-
 
 class DeviceCollection(CollectionPackerMixin, MemoryFramePacker):
     """

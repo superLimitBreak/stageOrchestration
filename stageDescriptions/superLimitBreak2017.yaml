@@ -1,0 +1,44 @@
+devices:
+
+    lead_top:
+        device: RBGLight
+    lead_floor:
+        device: RGBStripLight
+        size: 8
+
+    rhythm_top:
+        device: RGBLight
+    rhythm_floor:
+        device: RGBStripLight
+        size: 8
+
+    drum_top_1:
+        device: RGBLight
+    drum_top_2:
+        device: RGBLight
+    drum_floor_1: 
+        device: RGBStripLight
+        size: 3
+    drum_floor_2:
+        device: RGBStripLight
+        size: 3
+
+
+groups:
+    -
+        lead:
+            - lead_top
+            - lead_floor
+        rhythm:
+            - rhythm_top
+            - rhythm_floor
+    -
+        sides_top:
+            - lead_top
+            - rhythm_top
+        sides_floor:
+            - lead_floor
+            - rhythm_floor
+        sides:
+            - sides_top
+            - sides_floor

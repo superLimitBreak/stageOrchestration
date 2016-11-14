@@ -3,9 +3,11 @@ import multiprocessing
 import importlib
 import os.path
 import re
+import tempfile
 
 import progressbar
 
+from ext.attribute_packer import PersistentFramePacker
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter
 
@@ -44,8 +46,13 @@ class LightingServer(object):
                 rescan_interval=kwargs['scaninterval']
             )
 
+        self.tempdir = tempfile.TemporaryDirectory()
         self.sequences = {}
         self.reload_sequences()
+
+    # File Handling --------------------------------------------------------
+    def _get_filename(self, package_name):
+        return os.path.join(self.tempdir.name, package_name)
 
     # Event Handling -------------------------------------------------------
 
@@ -58,6 +65,7 @@ class LightingServer(object):
 
     def close(self):
         self.stop_sequence()
+        self.tempdir.cleanup()
 
     def network_event(self, event):
         log.info(event)
@@ -90,13 +98,23 @@ class LightingServer(object):
                 for f in fast_scan(self.path_sequences, search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES)
             )
 
+        stage_description = self.path_stage_description  # Todo - open the
+
         for f_relative, f_absolute in bar(sequence_files or _all_sequence_files()):
             package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
             if package_name in self.sequences:
                 importlib.reload(self.sequences[package_name])
             else:
                 self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
-            render_sequence(package_name, self.sequences[package_name])
+
+            packer = PersistentFramePacker(self._get_filename(package_name))
+            render_sequence(
+                packer=packer,
+                sequence_module=self.sequences[package_name],
+            )
+            packer.close()
+
+    # Render Loop --------------------------------------------------------------
 
     def stop_sequence(self):
         if self.render_process_close_event:
@@ -110,11 +128,10 @@ class LightingServer(object):
         Run a timing loop for a sequence
         """
         self.stop_sequence()
-        path_sequence = name  # TODO: derive path to sequence filename
 
         self.render_process_close_event = multiprocessing.Event()
         self.render_process = multiprocessing.Process(
             target=render_loop,
-            args=(self.path_stage_description, path_sequence, self.framerate, self.render_process_close_event)
+            args=(self.path_stage_description, self._get_filename(name), self.framerate, self.render_process_close_event)
         )
         self.render_process.start()
