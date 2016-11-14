@@ -40,10 +40,8 @@ def device_collection_loader(path=None, data=None):
         for device_name, device_spec in data['devices']
     }))
 
-    for groups in data['groups']:
-        for group in groups:
-            for group_name, device_names in group:
-                device_collection.add_group(group_name, device_names)
+    for group_name, device_names in data['groups'].items():
+        device_collection.add_group(group_name, device_names)
 
     #log.info(f'Loaded device_collection: {}'.format({})) groupby RGBLight*8 RGBStripLight*4
     return device_collection

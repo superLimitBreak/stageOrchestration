@@ -1,9 +1,11 @@
 import pytest
 import math
+from collections import OrderedDict
 
 from ext.attribute_packer import MemoryFramePacker, PersistentFramePacker
 
 from lightingAutomation.lightingAutomation.model.device_collection import DeviceCollection
+from lightingAutomation.lightingAutomation.model.device_collection_loader import device_collection_loader
 from lightingAutomation.lightingAutomation.model.devices.rgb_light import RGBLight
 
 
@@ -61,3 +63,25 @@ def test_device_collection(packer_class):
     isclose(light2.blue, 0.8)
 
     device_collection_frame_packer.close()
+
+
+def test_device_collection_loader():
+    data = {
+        'devices': {
+            'light1': 'RGBLight',
+            'light2': {'device': 'RGBLight'},
+            'lightX': {'device': 'RGBLight'},
+        },
+        'groups': OrderedDict((
+            ('numbers', ('light1', 'light2')),
+            ('letters', ('lightX',)),
+            ('all', ('numbers', 'letters')),
+        )),
+    }
+    device_collection = device_collection_loader(data=data)
+
+    def get_device_types(devices):
+        return tuple(type(device) for device in devices)
+    assert get_device_types(device_collection.get_devices('light1')) == (RGBLight, )
+    assert get_device_types(device_collection.get_devices('numbers')) == (RGBLight, RGBLight)
+    assert get_device_types(device_collection.get_devices('all')) == (RGBLight, RGBLight, RGBLight)

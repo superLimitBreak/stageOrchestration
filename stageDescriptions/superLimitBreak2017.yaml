@@ -25,20 +25,8 @@ devices:
 
 
 groups:
-    -
-        lead:
-            - lead_top
-            - lead_floor
-        rhythm:
-            - rhythm_top
-            - rhythm_floor
-    -
-        sides_top:
-            - lead_top
-            - rhythm_top
-        sides_floor:
-            - lead_floor
-            - rhythm_floor
-        sides:
-            - sides_top
-            - sides_floor
+    lead: [lead_top, lead_floor]
+    rhythm: [rhythm_top, rhythm_floor]
+    sides_top: [lead_top, rhythm_top]
+    sides_floor: [lead_floor, rhythm_floor]
+    sides: [sides_top, sides_floor]
