@@ -11,8 +11,8 @@ from ext.attribute_packer import PersistentFramePacker
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter
 
-from render_sequence import render_sequence
-from render_loop import render_loop
+from .render_sequence import render_sequence
+from .render_loop import render_loop
 
 log = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class LightingServer(object):
                 for f in fast_scan(self.path_sequences, search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES)
             )
 
-        stage_description = self.path_stage_description  # Todo - open the
+        device_collection = device_collection_loader(self.path_stage_description)
 
         for f_relative, f_absolute in bar(sequence_files or _all_sequence_files()):
             package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
@@ -111,6 +111,7 @@ class LightingServer(object):
             render_sequence(
                 packer=packer,
                 sequence_module=self.sequences[package_name],
+                device_collection=device_collection,
             )
             packer.close()
 
