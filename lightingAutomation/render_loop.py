@@ -12,28 +12,34 @@ log = logging.getLogger(__name__)
 
 
 def render_loop(path_stage_description, path_sequence, framerate, close_event):
-    sequence_length = 100  # Temp test
     loop = Loop(framerate)
-    device_collection = device_collection_loader(self.path_stage_description)
+    device_collection = device_collection_loader(path_stage_description)
     packer = PersistentFramePacker(device_collection, path_sequence)
 
+    max_frames = 100  #packer.frames
     bar = progressbar.ProgressBar(
-        widgets=[progressbar.SimpleProgress()],
-        #max_value=packer.frames,
-        max_value=sequence_length,
+        widgets=(
+            'Rendering - Frame: ', progressbar.Counter(),
+            ' ', progressbar.Bar(),
+            ' ', progressbar.Percentage(),
+            ' ', progressbar.Timer(),
+            ' ', progressbar.ETA(),
+            ),
+        max_value=max_frames,
     ).start()
 
     def render(frame):
         #log.info(f'Render frame {frame}')
-        sleep(0.1)
-        bar.update(frame)
-        if frame > sequence_length:
-            close_event.set()
+        #sleep(0.01)
+        bar.update(min(frame, max_frames))
+        if frame >= max_frames:
+            raise Loop.LoopInterruptException()
 
     loop.render = render
     loop.running = lambda: not close_event.is_set()
 
     loop.run()
 
+    log.debug('Exited render loop')
     bar.finish()
     packer.close()

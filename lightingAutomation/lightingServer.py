@@ -73,6 +73,7 @@ class LightingServer(object):
 
     def network_event(self, event):
         log.info(event)
+        self.run_sequence('test')
 
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)
