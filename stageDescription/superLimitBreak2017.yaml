@@ -1,7 +1,7 @@
 devices:
 
     lead_top:
-        device: RBGLight
+        device: RGBLight
     lead_floor:
         device: RGBStripLight
         size: 8
@@ -16,7 +16,7 @@ devices:
         device: RGBLight
     drum_top_2:
         device: RGBLight
-    drum_floor_1: 
+    drum_floor_1:
         device: RGBStripLight
         size: 3
     drum_floor_2:

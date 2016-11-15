@@ -37,9 +37,13 @@ def device_collection_loader(path=None, data=None):
 
     device_collection = DeviceCollection(make_dict({
         device_name: create_device(device_spec)
-        for device_name, device_spec in data['devices']
+        for device_name, device_spec in data['devices'].items()
     }))
 
+    # TODO: Possible bug?
+    #   If yaml does not return ordered dict's this may fail.
+    #   If pysistence does not support ordered dicts this may fail
+    #   We may have to chnage the data structure to accomadate repeatable item order or build dependency order ourselfs
     for group_name, device_names in data['groups'].items():
         device_collection.add_group(group_name, device_names)
 

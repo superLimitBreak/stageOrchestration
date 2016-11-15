@@ -3,8 +3,8 @@ from .rgb_light import RGBLight
 
 
 class RGBStripLight(CollectionPackerMixin):
-    def __init__(self, count):
-        self.lights = tuple(RGBLight() for i in range(count))
+    def __init__(self, size):
+        self.lights = tuple(RGBLight() for i in range(size))
         CollectionPackerMixin.__init__(self, self.lights)
 
     def _average_group_attr(self, attr):

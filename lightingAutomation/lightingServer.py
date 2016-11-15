@@ -13,6 +13,7 @@ from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue,
 
 from .render_sequence import render_sequence
 from .render_loop import render_loop
+from .model.device_collection_loader import device_collection_loader
 
 log = logging.getLogger(__name__)
 
@@ -46,8 +47,10 @@ class LightingServer(object):
                 rescan_interval=kwargs['scaninterval']
             )
 
+        self.render_process_close_event = None
         self.tempdir = tempfile.TemporaryDirectory()
         self.sequences = {}
+
         self.reload_sequences()
 
     # File Handling --------------------------------------------------------
@@ -64,6 +67,7 @@ class LightingServer(object):
         self.close()
 
     def close(self):
+        log.info('Removed temporary sequence files')
         self.stop_sequence()
         self.tempdir.cleanup()
 
@@ -107,7 +111,7 @@ class LightingServer(object):
             else:
                 self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
 
-            packer = PersistentFramePacker(self._get_filename(package_name))
+            packer = PersistentFramePacker(device_collection, self._get_filename(package_name))
             render_sequence(
                 packer=packer,
                 sequence_module=self.sequences[package_name],
