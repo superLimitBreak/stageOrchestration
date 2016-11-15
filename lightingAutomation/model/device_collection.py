@@ -12,7 +12,7 @@ class DeviceCollection(CollectionPackerMixin):
     """
     def __init__(self, devices):
         self._devices = make_dict(devices)
-        CollectionPackerMixin.__init__(self, tuple(self._devices.values()))
+        CollectionPackerMixin.__init__(self, tuple(self._devices.values()))  # TODO: Unless we can guarantee the order of values, this approach is flawed
         self._device_lookup = {device_name: (device, ) for device_name, device in self._devices.items()}
 
     def add_group(self, group_name, device_names):
