@@ -4,6 +4,7 @@ import importlib
 import os.path
 import re
 import tempfile
+from time import sleep
 
 import progressbar
 
@@ -86,17 +87,6 @@ class LightingServer(object):
           http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html
         """
 
-        bar = progressbar.ProgressBar(
-            widgets=(
-                'Rendering Sequences: ', progressbar.Counter(),
-                ' ', progressbar.Bar(),
-                ' ', progressbar.Percentage(),
-                ' ', progressbar.ETA(),
-            ),
-            #redirect_stdout=True,
-            #redirect_stderr=True,
-        )
-
         def _all_sequence_files():
             return tuple(
                 (f.relative, f.abspath)
@@ -104,8 +94,23 @@ class LightingServer(object):
             )
 
         device_collection = device_collection_loader(self.path_stage_description)
+        sequences = sequence_files or _all_sequence_files()
 
-        for f_relative, f_absolute in bar(sequence_files or _all_sequence_files()):
+        bar_sequence_name_label = progressbar.FormatCustomText('%(sequence_name)s', {'sequence_name': '-'})  # {sequence_name: <10}
+        bar = progressbar.ProgressBar(
+            widgets=(
+                'Rendering: ', bar_sequence_name_label,
+                ' ', progressbar.Bar(marker='=', left='[', right=']'),
+                #' ', progressbar.Percentage(),
+                #' ', progressbar.ETA(),
+            ),
+            max_value=len(sequences),
+            #redirect_stdout=True,
+            #redirect_stderr=True,
+        )
+
+        for f_relative, f_absolute in bar(sequences):
+            bar_sequence_name_label.update_mapping(sequence_name=f_relative)
             package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
             if package_name in self.sequences:
                 importlib.reload(self.sequences[package_name])
@@ -119,6 +124,7 @@ class LightingServer(object):
                 device_collection=device_collection,
             )
             packer.close()
+            sleep(1)
 
     # Render Loop --------------------------------------------------------------
 
