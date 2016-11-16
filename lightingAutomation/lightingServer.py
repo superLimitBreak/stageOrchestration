@@ -55,7 +55,7 @@ class LightingServer(object):
         self.reload_sequences()
 
     # File Handling --------------------------------------------------------
-    def _get_filename(self, package_name):
+    def _get_persistent_sequence_filename(self, package_name):
         return os.path.join(self.tempdir.name, package_name)
 
     # Event Handling -------------------------------------------------------
@@ -94,37 +94,38 @@ class LightingServer(object):
             )
 
         device_collection = device_collection_loader(self.path_stage_description)
-        sequences = sequence_files or _all_sequence_files()
 
-        bar_sequence_name_label = progressbar.FormatCustomText('%(sequence_name)s', {'sequence_name': '-'})  # {sequence_name: <10}
+        bar_sequence_name_label = progressbar.FormatCustomText('%(sequence_name)-20s', {'sequence_name': ''})
         bar = progressbar.ProgressBar(
             widgets=(
-                'Rendering: ', bar_sequence_name_label,
-                ' ', progressbar.Bar(marker='=', left='[', right=']'),
-                #' ', progressbar.Percentage(),
-                #' ', progressbar.ETA(),
+                'Rendering: ', bar_sequence_name_label, ' ', progressbar.Bar(marker='=', left='[', right=']'),
             ),
-            max_value=len(sequences),
-            #redirect_stdout=True,
-            #redirect_stderr=True,
         )
 
-        for f_relative, f_absolute in bar(sequences):
+        for f_relative, f_absolute in bar(sequence_files or _all_sequence_files()):
             bar_sequence_name_label.update_mapping(sequence_name=f_relative)
-            package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
-            if package_name in self.sequences:
-                importlib.reload(self.sequences[package_name])
-            else:
-                self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
-
-            packer = PersistentFramePacker(device_collection, self._get_filename(package_name))
-            render_sequence(
-                packer=packer,
-                sequence_module=self.sequences[package_name],
-                device_collection=device_collection,
+            self._render_sequence_module(
+                self._load_sequence_module(f_relative),
+                device_collection,
             )
-            packer.close()
-            sleep(1)
+            sleep(1)  # TODO: Temp remove
+
+    def _load_sequence_module(self, f_relative):
+        package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
+        if package_name in self.sequences:
+            importlib.reload(self.sequences[package_name])
+        else:
+            self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
+        return self.sequences[package_name]
+
+    def _render_sequence_module(self, sequence_module, device_collection,):
+        packer = PersistentFramePacker(device_collection, self._get_persistent_sequence_filename(sequence_module.__name__))
+        render_sequence(
+            packer=packer,
+            sequence_module=sequence_module,
+            device_collection=device_collection,
+        )
+        packer.close()
 
     # Render Loop --------------------------------------------------------------
 
@@ -135,7 +136,7 @@ class LightingServer(object):
             self.render_process_close_event = None
             self.render_process = None
 
-    def run_sequence(self, name):
+    def run_sequence(self, sequence_module_name):
         """
         Run a timing loop for a sequence
         """
@@ -144,6 +145,11 @@ class LightingServer(object):
         self.render_process_close_event = multiprocessing.Event()
         self.render_process = multiprocessing.Process(
             target=render_loop,
-            args=(self.path_stage_description, self._get_filename(name), self.framerate, self.render_process_close_event)
+            args=(
+                self.path_stage_description,
+                self._get_persistent_sequence_filename(sequence_module_name),
+                self.framerate,
+                self.render_process_close_event,
+            ),
         )
         self.render_process.start()

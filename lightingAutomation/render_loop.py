@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 def render_loop(path_stage_description, path_sequence, framerate, close_event):
     loop = Loop(framerate)
+
     device_collection = device_collection_loader(path_stage_description)
     packer = PersistentFramePacker(device_collection, path_sequence)
 
@@ -22,8 +23,8 @@ def render_loop(path_stage_description, path_sequence, framerate, close_event):
             'Rendering - Frame: ', progressbar.Counter(),
             ' ', progressbar.Bar(),
             ' ', progressbar.Percentage(),
-            '|', progressbar.Timer(),
-            '|', progressbar.ETA(),
+            ' | ', progressbar.Timer(),
+            ' | ', progressbar.ETA(),
             ),
         max_value=max_frames,
     ).start()

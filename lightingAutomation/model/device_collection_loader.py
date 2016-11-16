@@ -22,7 +22,7 @@ DEVICE_TYPES = make_dict({
 def device_collection_loader(path=None, data=None):
     assert bool(path) ^ bool(data), 'Provide either a path or data'
     if path:
-        log.info(f'Loading device_collection: {path}')
+        log.debug(f'Loading device_collection: {path}')
         with open(path, 'rt') as filehandle:
             data = yaml.load(filehandle)
     data = make_dict(data)
