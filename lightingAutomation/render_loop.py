@@ -1,3 +1,4 @@
+import os.path
 import logging
 from time import sleep
 
@@ -12,10 +13,14 @@ log = logging.getLogger(__name__)
 
 
 def render_loop(path_stage_description, path_sequence, framerate, close_event):
+    assert os.path.exists(path_stage_description), f'Unable to render: {path_stage_description} does not exist'
+    assert os.path.exists(path_sequence), f'Unable to render: {path_sequence} does not exist'
+
     loop = Loop(framerate)
 
     device_collection = device_collection_loader(path_stage_description)
     packer = PersistentFramePacker(device_collection, path_sequence)
+    assert packer.frames, 'Nothing to render, packer is empty'
 
     max_frames = 100  #packer.frames  # TODO: Temp test
     bar = progressbar.ProgressBar(

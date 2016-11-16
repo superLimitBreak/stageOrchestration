@@ -116,16 +116,21 @@ class LightingServer(object):
             importlib.reload(self.sequences[package_name])
         else:
             self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
-        return self.sequences[package_name]
+        sequence_module = self.sequences[package_name]
+        setattr(sequence_module, '_sequence_name', sequence_module.__name__.replace(f'{sequence_module.__package__}.', ''))
+        return sequence_module
 
     def _render_sequence_module(self, sequence_module, device_collection,):
-        packer = PersistentFramePacker(device_collection, self._get_persistent_sequence_filename(sequence_module.__name__))
+        log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
+        sequence_filename = self._get_persistent_sequence_filename(sequence_module._sequence_name)
+        packer = PersistentFramePacker(device_collection, sequence_filename)
         render_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=device_collection,
         )
         packer.close()
+        assert os.path.exists(sequence_filename), f'Should have generated sequence file {sequence_filename}'
 
     # Render Loop --------------------------------------------------------------
 
