@@ -16,3 +16,10 @@ class EffectRGBLight(RGBLight):
             AttributePackerMixin.Attribute('globo', 'byte'),
             AttributePackerMixin.Attribute('globo_rotation', 'plusminusonebyte'),
         ))
+
+    def reset(self):
+        super().reset()
+        self.x = 0
+        self.y = 0
+        self.globo = 0
+        self.globo_rotation = 0

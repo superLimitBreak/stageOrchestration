@@ -16,5 +16,8 @@ class RGBLight(AttributePackerMixin):
     def rgb(self):
         return (self.red, self.green, self.blue)
     @rgb.setter
-    def _rgb_setter(self, rgb):
+    def rgb(self, rgb):
         self.red, self.green, self.blue = rgb
+
+    def reset(self):
+        self.rgb = (0, 0, 0)

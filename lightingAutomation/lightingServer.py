@@ -10,10 +10,11 @@ import progressbar
 
 from ext.attribute_packer import PersistentFramePacker
 from ext.client_reconnect import SubscriptionClient
-from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter
+from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
 
 from .render_binary_sequence import render_binary_sequence
-from .output.timer_loop import timer_loop
+from .output.realtime.timer_loop import timer_loop
+from .output.realtime import RealtimeOutputManager
 from .model.device_collection_loader import device_collection_loader
 
 log = logging.getLogger(__name__)
@@ -34,8 +35,6 @@ class LightingServer(object):
         self.frame_rate = kwargs['framerate']
         self.path_sequences = kwargs['path_sequences']
 
-        self.device_collection = device_collection_loader(kwargs['path_stage_description'])
-
         self.network_event_queue = multiprocessing.Queue()
         if kwargs.get('displaytrigger_host'):
             self.net = SubscriptionClient(host=kwargs['displaytrigger_host'], subscriptions=('lights', 'all'))
@@ -49,6 +48,15 @@ class LightingServer(object):
                 rescan_interval=kwargs['scaninterval']
             )
 
+        self.device_collection = device_collection_loader(kwargs['path_stage_description'])
+        output_settings = {
+            'artnet_dmx_host': kwargs['artnet_dmx_host'],
+            'json_send': None,
+        }
+        if hasattr(self, 'net'):
+            output_settings['json_send']: lambda data: self.net.send_message({'deviceid': 'lightVisulisation', 'func': 'lightState', 'data': data})
+        self.output_realtime = RealtimeOutputManager(self.device_collection, output_settings)
+
         self.timer_process_queue = multiprocessing.Queue(1)
         self.timer_process = None
         self.timer_process_close_event = None
@@ -59,6 +67,7 @@ class LightingServer(object):
         self.reload_sequences()
 
     # File Handling --------------------------------------------------------
+
     def _get_persistent_sequence_filename(self, package_name):
         return os.path.join(self.tempdir.name, package_name)
 
@@ -75,6 +84,7 @@ class LightingServer(object):
 
     def close(self):
         log.info('Removed temporary sequence files')
+        self.device_collection.reset()
         self.stop_sequence()
         self.tempdir.cleanup()
 
@@ -84,9 +94,11 @@ class LightingServer(object):
         if func == 'LightTiming.start':
             self.start_sequence(event.get("scene"))
         if func == 'lights.set':
-            pass  #device: device, value: value,
+            rgb = parse_rgb_color(event.get('value'))
+            for device in self.device_collection.get_devices(event.get('device')):
+                device.rgb = rgb
         if func == 'lights.clear':
-            pass
+            self.device_collection.reset()
 
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)

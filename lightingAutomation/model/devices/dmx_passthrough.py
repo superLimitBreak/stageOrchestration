@@ -1,9 +1,7 @@
 from ext.attribute_packer import AttributePackerMixin
 
-from ._base_device import BaseDevice
 
-
-class DMXPassthru(BaseDevice):
+class DMXPassthru(AttributePackerMixin):
     """
     A stub for manipulating dmx bytes directly.
     This could be due to interacting with a device that was not known in development

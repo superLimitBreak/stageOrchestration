@@ -6,6 +6,7 @@ class RGBStripLight(CollectionPackerMixin):
     def __init__(self, size):
         self.lights = tuple(RGBLight() for i in range(size))
         CollectionPackerMixin.__init__(self, self.lights)
+        self.reset()
 
     def _average_group_attr(self, attr):
         return sum(getattr(light, attr) for light in self.lights) / len(self.lights)
@@ -17,19 +18,30 @@ class RGBStripLight(CollectionPackerMixin):
     def red(self):
         return self._average_attr('red')
     @red.setter
-    def _red_setter(self, value):
+    def red(self, value):
         self._set_group_attr('red', value)
 
     @property
     def green(self):
         return self._average_attr('green')
     @green.setter
-    def _green_setter(self, value):
+    def green(self, value):
         self._set_group_attr('green', value)
 
     @property
     def blue(self):
         return self._average_attr('blue')
     @blue.setter
-    def _blue_setter(self, value):
+    def blue(self, value):
         self._set_group_attr('blue', value)
+
+    @property
+    def rgb(self):
+        return (self.red, self.green, self.blue)
+    @rgb.setter
+    def rgb(self, rgb):
+        self.red, self.green, self.blue = rgb
+
+    def reset(self):
+        for light in self.lights:
+            light.reset()
