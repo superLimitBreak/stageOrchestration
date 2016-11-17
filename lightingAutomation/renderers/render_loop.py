@@ -7,7 +7,7 @@ import progressbar
 from ext.loop import Loop
 from ext.attribute_packer import PersistentFramePacker
 
-from .model.device_collection_loader import device_collection_loader
+from ..model.device_collection_loader import device_collection_loader
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ def render_loop(path_stage_description, path_sequence, framerate, close_event):
     def render(frame):
         packer.restore_frame(frame)
 
-        # TODO: output data_collection to DMX and json
+        render_formats(frame, device_collection)
 
         bar.update(frame)
         if frame >= packer.frames - 1:
@@ -51,3 +51,8 @@ def render_loop(path_stage_description, path_sequence, framerate, close_event):
 
     bar.finish()
     packer.close()
+
+
+def render_formats(frame, device_collection):
+    # TODO: output data_collection to DMX and json
+    pass

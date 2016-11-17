@@ -13,7 +13,7 @@ from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter
 
 from .render_sequence import render_sequence
-from .render_loop import render_loop
+from .renderers.render_loop import render_loop
 from .model.device_collection_loader import device_collection_loader
 
 log = logging.getLogger(__name__)
@@ -74,7 +74,8 @@ class LightingServer(object):
 
     def network_event(self, event):
         log.info(event)
-        self.run_sequence('test')
+        if event.get('func') == 'LightTiming.start':
+            self.run_sequence(event.get("scene"))
 
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)
