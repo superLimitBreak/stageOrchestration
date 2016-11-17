@@ -90,7 +90,7 @@ class LightingServer(object):
         self.tempdir.cleanup()
 
     def network_event(self, event):
-        log.info(event)
+        log.debug(event)
         func = event.get('func')
         if func == 'LightTiming.start':
             self.start_sequence(event.get("scene"))
@@ -136,7 +136,6 @@ class LightingServer(object):
             self._render_sequence_module(
                 self._load_sequence_module(f_relative),
             )
-            sleep(1)  # TODO: Temp remove
 
     def _load_sequence_module(self, f_relative):
         package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')

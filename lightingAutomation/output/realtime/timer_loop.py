@@ -20,7 +20,7 @@ def timer_loop(path_sequence, frame_size, frame_rate, close_event, data_queue):
     bar = progressbar.ProgressBar(
         widgets=(
             'Rendering - Frame: ', progressbar.Counter(),
-            ' ', progressbar.Bar(),
+            ' ', progressbar.Bar(marker='=', left='[', right=']'),
             ' ', progressbar.Percentage(),
             ' | ', progressbar.Timer(),
             ' | ', progressbar.ETA(),
