@@ -31,9 +31,10 @@ def serve(**kwargs):
 class LightingServer(object):
 
     def __init__(self, **kwargs):
-        self.framerate = kwargs['framerate']
+        self.frame_rate = kwargs['framerate']
         self.path_sequences = kwargs['path_sequences']
-        self.path_stage_description = kwargs['path_stage_description']
+
+        self.device_collection = device_collection_loader(kwargs['path_stage_description'])
 
         self.network_event_queue = multiprocessing.Queue()
         if kwargs.get('displaytrigger_host'):
@@ -48,7 +49,10 @@ class LightingServer(object):
                 rescan_interval=kwargs['scaninterval']
             )
 
+        self.render_process_queue = multiprocessing.Queue(1)
+        self.render_process = None
         self.render_process_close_event = None
+
         self.tempdir = tempfile.TemporaryDirectory()
         self.sequences = {}
 
@@ -64,7 +68,9 @@ class LightingServer(object):
         multiprocessing_process_event_queue({
             self.network_event_queue: self.network_event,
             self.scan_update_event_queue: self.scan_update_event,
+            self.render_process_queue: self.render_frame_event,
         })
+        # Blocks infinitely and is terminated by ctrl+c or exit event
         self.close()
 
     def close(self):
@@ -80,6 +86,10 @@ class LightingServer(object):
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)
 
+    def render_frame_event(self, data):
+        log.debug('render_frame_event')
+        log.debug(data)
+
     # Sequences -------------------------------------------------------------
 
     def reload_sequences(self, sequence_files=None):
@@ -94,8 +104,6 @@ class LightingServer(object):
                 for f in fast_scan(self.path_sequences, search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES)
             )
 
-        device_collection = device_collection_loader(self.path_stage_description)
-
         bar_sequence_name_label = progressbar.FormatCustomText('%(sequence_name)-20s', {'sequence_name': ''})
         bar = progressbar.ProgressBar(
             widgets=(
@@ -107,7 +115,6 @@ class LightingServer(object):
             bar_sequence_name_label.update_mapping(sequence_name=f_relative)
             self._render_sequence_module(
                 self._load_sequence_module(f_relative),
-                device_collection,
             )
             sleep(1)  # TODO: Temp remove
 
@@ -121,14 +128,14 @@ class LightingServer(object):
         setattr(sequence_module, '_sequence_name', sequence_module.__name__.replace(f'{sequence_module.__package__}.', ''))
         return sequence_module
 
-    def _render_sequence_module(self, sequence_module, device_collection,):
+    def _render_sequence_module(self, sequence_module):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
         sequence_filename = self._get_persistent_sequence_filename(sequence_module._sequence_name)
-        packer = PersistentFramePacker(device_collection, sequence_filename)
+        packer = PersistentFramePacker(self.device_collection, sequence_filename)
         render_sequence(
             packer=packer,
             sequence_module=sequence_module,
-            device_collection=device_collection,
+            device_collection=self.device_collection,
         )
         packer.close()
         assert os.path.exists(sequence_filename), f'Should have generated sequence file {sequence_filename}'
@@ -152,10 +159,12 @@ class LightingServer(object):
         self.render_process = multiprocessing.Process(
             target=render_loop,
             args=(
-                self.path_stage_description,
                 self._get_persistent_sequence_filename(sequence_module_name),
-                self.framerate,
+                self.device_collection.pack_size,
+                self.frame_rate,
                 self.render_process_close_event,
+                self.render_process_queue
             ),
         )
         self.render_process.start()
+
