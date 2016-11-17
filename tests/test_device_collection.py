@@ -4,9 +4,9 @@ from collections import OrderedDict
 
 from ext.attribute_packer import MemoryFramePacker, PersistentFramePacker
 
-from lightingAutomation.lightingAutomation.model.device_collection import DeviceCollection
-from lightingAutomation.lightingAutomation.model.device_collection_loader import device_collection_loader
-from lightingAutomation.lightingAutomation.model.devices.rgb_light import RGBLight
+from lightingAutomation.model.device_collection import DeviceCollection
+from lightingAutomation.model.device_collection_loader import device_collection_loader
+from lightingAutomation.model.devices.rgb_light import RGBLight
 
 
 def isclose(a, b):

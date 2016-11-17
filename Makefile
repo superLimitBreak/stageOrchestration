@@ -79,7 +79,7 @@ run_production: $(CONFIG_PRODUCTION)
 
 .PHONY: test
 test:
-	PYTHONPATH=./ $(PYTEST) $(EXT) lightingAutomation --doctest-modules --pdb -x
+	PYTHONPATH=./ $(PYTEST) $(EXT) lightingAutomation tests --doctest-modules --pdb -x
 
 .PHONY: cloc
 cloc:
