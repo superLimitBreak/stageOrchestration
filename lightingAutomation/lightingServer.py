@@ -12,7 +12,7 @@ from ext.attribute_packer import PersistentFramePacker
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
 
-from .render_binary_sequence import render_binary_sequence
+from .render.render_binary_sequence import render_binary_sequence
 from .output.realtime.timer_loop import timer_loop
 from .output.realtime import RealtimeOutputManager
 from .model.device_collection_loader import device_collection_loader
