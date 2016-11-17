@@ -22,7 +22,6 @@ def render_loop(path_stage_description, path_sequence, framerate, close_event):
     packer = PersistentFramePacker(device_collection, path_sequence)
     assert packer.frames, 'Nothing to render, packer is empty'
 
-    max_frames = 100  #packer.frames  # TODO: Temp test
     bar = progressbar.ProgressBar(
         widgets=(
             'Rendering - Frame: ', progressbar.Counter(),
@@ -31,12 +30,16 @@ def render_loop(path_stage_description, path_sequence, framerate, close_event):
             ' | ', progressbar.Timer(),
             ' | ', progressbar.ETA(),
             ),
-        max_value=max_frames,
+        max_value=packer.frames,
     ).start()
 
     def render(frame):
+        packer.restore_frame(frame)
+
+        # TODO: output data_collection to DMX and json
+
         bar.update(frame)
-        if frame >= max_frames:
+        if frame >= packer.frames - 1:
             close_event.set()
 
     loop.render = render
