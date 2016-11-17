@@ -85,6 +85,7 @@ class LightingServer(object):
     def close(self):
         log.info('Removed temporary sequence files')
         self.device_collection.reset()
+        self.output_realtime.update()
         self.stop_sequence()
         self.tempdir.cleanup()
 
@@ -97,14 +98,17 @@ class LightingServer(object):
             rgb = parse_rgb_color(event.get('value'))
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
+            self.output_realtime.update()
         if func == 'lights.clear':
             self.device_collection.reset()
+            self.output_realtime.update()
 
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)
 
     def frame_event(self, buffer):
         self.device_collection.unpack(buffer, 0)
+        self.output_realtime.update()
 
     # Sequences -------------------------------------------------------------
 

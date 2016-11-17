@@ -8,5 +8,8 @@ class RealtimeOutputManager(object):
         self.device_collection = device_collection
         # With settings init the required renderers
 
-    def output(self):
+    def update(self):
+        """
+        Output the state of the device_collection to the registered output renderers
+        """
         log.debug('output')
