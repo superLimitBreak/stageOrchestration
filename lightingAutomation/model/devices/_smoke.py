@@ -9,3 +9,7 @@ class Smoke(AttributePackerMixin):
             AttributePackerMixin.Attribute('smoke', 'onebyte'),
             AttributePackerMixin.Attribute('fan', 'onebyte'),
         ))
+
+    def reset(self):
+        self.smoke = 0
+        self.fan = 0
