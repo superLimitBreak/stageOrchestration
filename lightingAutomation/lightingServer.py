@@ -80,8 +80,13 @@ class LightingServer(object):
 
     def network_event(self, event):
         log.info(event)
-        if event.get('func') == 'LightTiming.start':
+        func = event.get('func')
+        if func == 'LightTiming.start':
             self.start_sequence(event.get("scene"))
+        if func == 'lights.set':
+            pass  #device: device, value: value,
+        if func == 'lights.clear':
+            pass
 
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)
