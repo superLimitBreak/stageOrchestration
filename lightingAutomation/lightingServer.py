@@ -12,8 +12,8 @@ from ext.attribute_packer import PersistentFramePacker
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter
 
-from .render_sequence import render_sequence
-from .renderers.render_loop import render_loop
+from .render_binary_sequence import render_binary_sequence
+from .output.timer_loop import timer_loop
 from .model.device_collection_loader import device_collection_loader
 
 log = logging.getLogger(__name__)
@@ -49,9 +49,9 @@ class LightingServer(object):
                 rescan_interval=kwargs['scaninterval']
             )
 
-        self.render_process_queue = multiprocessing.Queue(1)
-        self.render_process = None
-        self.render_process_close_event = None
+        self.timer_process_queue = multiprocessing.Queue(1)
+        self.timer_process = None
+        self.timer_process_close_event = None
 
         self.tempdir = tempfile.TemporaryDirectory()
         self.sequences = {}
@@ -68,7 +68,7 @@ class LightingServer(object):
         multiprocessing_process_event_queue({
             self.network_event_queue: self.network_event,
             self.scan_update_event_queue: self.scan_update_event,
-            self.render_process_queue: self.render_frame_event,
+            self.timer_process_queue: self.frame_event,
         })
         # Blocks infinitely and is terminated by ctrl+c or exit event
         self.close()
@@ -81,14 +81,13 @@ class LightingServer(object):
     def network_event(self, event):
         log.info(event)
         if event.get('func') == 'LightTiming.start':
-            self.run_sequence(event.get("scene"))
+            self.start_sequence(event.get("scene"))
 
     def scan_update_event(self, sequence_files):
         self.reload_sequences(sequence_files)
 
-    def render_frame_event(self, data):
-        log.debug('render_frame_event')
-        log.debug(data)
+    def frame_event(self, buffer):
+        self.device_collection.unpack(buffer, 0)
 
     # Sequences -------------------------------------------------------------
 
@@ -132,7 +131,7 @@ class LightingServer(object):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
         sequence_filename = self._get_persistent_sequence_filename(sequence_module._sequence_name)
         packer = PersistentFramePacker(self.device_collection, sequence_filename)
-        render_sequence(
+        render_binary_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
@@ -143,28 +142,28 @@ class LightingServer(object):
     # Render Loop --------------------------------------------------------------
 
     def stop_sequence(self):
-        if self.render_process_close_event:
-            self.render_process_close_event.set()
-            self.render_process.join()
-            self.render_process_close_event = None
-            self.render_process = None
+        if self.timer_process_close_event:
+            self.timer_process_close_event.set()
+            self.timer_process.join()
+            self.timer_process_close_event = None
+            self.timer_process = None
 
-    def run_sequence(self, sequence_module_name):
+    def start_sequence(self, sequence_module_name):
         """
         Run a timing loop for a sequence
         """
         self.stop_sequence()
 
-        self.render_process_close_event = multiprocessing.Event()
-        self.render_process = multiprocessing.Process(
-            target=render_loop,
+        self.timer_process_close_event = multiprocessing.Event()
+        self.timer_process = multiprocessing.Process(
+            target=timer_loop,
             args=(
                 self._get_persistent_sequence_filename(sequence_module_name),
                 self.device_collection.pack_size,
                 self.frame_rate,
-                self.render_process_close_event,
-                self.render_process_queue
+                self.timer_process_close_event,
+                self.timer_process_queue
             ),
         )
-        self.render_process.start()
+        self.timer_process.start()
 

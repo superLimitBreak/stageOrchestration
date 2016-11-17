@@ -10,7 +10,7 @@ from ext.loop import Loop
 log = logging.getLogger(__name__)
 
 
-def render_loop(path_sequence, frame_size, frame_rate, close_event, data_queue):
+def timer_loop(path_sequence, frame_size, frame_rate, close_event, data_queue):
     assert os.path.exists(path_sequence), f'Unable to render: {path_sequence} does not exist'
     filesize = os.stat(path_sequence).st_size
     assert filesize, f'Nothing to render, {path_sequence} is empty'
