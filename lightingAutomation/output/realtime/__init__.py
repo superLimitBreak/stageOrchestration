@@ -2,7 +2,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from ._dmx import RealtimeOutputDMX
+from .dmx import RealtimeOutputDMX
 
 
 class RealtimeOutputManager(object):
