@@ -29,8 +29,10 @@ def get_args():
 
     parser.add_argument('--config', action='store', help='', default=DEFAULT_CONFIG_FILENAME)
     parser.add_argument('--displaytrigger_host', action='store', help='display-trigger server to recieve events from')
+
     parser.add_argument('--framerate', action='store', help='Frames per second', type=float)
-    parser.add_argument('--artnet_dmx_host', action='store', help='ArtNet3 ip address')
+    parser.add_argument('--dmx_host', action='store', help='ArtNet3 ip address')
+    parser.add_argument('--dmx_mapping', action='store', help='map lighting model to dmx address')
 
     parser.add_argument('--path_sequences', action='store', help='Path for lighting sequences')
     parser.add_argument('--path_stage_description', action='store', help='Path for a single stage configuration file')

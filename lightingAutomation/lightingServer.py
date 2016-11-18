@@ -24,7 +24,7 @@ FAST_SCAN_REGEX_FILTER_FOR_PY_FILES = fast_scan_regex_filter(file_regex=REGEX_PY
 
 
 def serve(**kwargs):
-    log.info('Serve {}'.format(kwargs))
+    #log.info('Serve {}'.format(kwargs))
     server = LightingServer(**kwargs)
     server.run()
 
@@ -50,7 +50,8 @@ class LightingServer(object):
 
         self.device_collection = device_collection_loader(kwargs['path_stage_description'])
         output_settings = {
-            'artnet_dmx_host': kwargs['artnet_dmx_host'],
+            'dmx_host': kwargs['dmx_host'],
+            'dmx_mapping': kwargs['dmx_mapping'],
             'json_send': None,
         }
         if hasattr(self, 'net'):
