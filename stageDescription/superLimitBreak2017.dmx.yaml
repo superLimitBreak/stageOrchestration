@@ -1,0 +1,51 @@
+light1:
+    type: FlatPar
+    index: 0
+light2:
+    type: FlatPar
+    index: 8
+light3:
+    type: FlatPar
+    index: 16
+light4:
+    type: FlatPar
+    index: 24
+light5:
+    type: FlatPar
+    index: 32
+light6:
+    type: FlatPar
+    index: 40
+light7:
+    type: FlatPar
+    index: 48
+light8:
+    type: FlatPar
+    index: 56
+
+floor1:
+    type: neoNeonFloorSmall
+    index: 64
+floor2:
+    type: neoNeonFloorSmall
+    index: 75
+floor3:
+    type: neoNeonFloorSmall
+    index: 86
+floor4:
+    type: neoNeonFloorSmall
+    index: 97
+
+floorLarge1:
+    type: OrionLinkV2
+    index: 116
+floorLarge2:
+    type: OrionLinkV2
+    index: 143
+
+smoke:
+    type: cauvetHuricane
+    index: 112
+
+# Special control
+dmx_size: 180

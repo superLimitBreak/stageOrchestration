@@ -1,32 +1,73 @@
 devices:
 
-    lead_top:
-        device: RGBLight
-    lead_floor:
+    light1: RGBLight
+    light2: RGBLight
+    light3: RGBLight
+    light4: RGBLight
+    light5: RGBLight
+    light6: RGBLight
+    light7: RGBLight
+    light8: RGBLight
+
+    floor1:
+        device: RGBStripLight
+        size: 3
+    floor2:
+        device: RGBStripLight
+        size: 3
+    floor3:
+        device: RGBStripLight
+        size: 3
+    floor4:
+        device: RGBStripLight
+        size: 3
+
+    floorLarge1:
+        device: RGBStripLight
+        size: 8
+    floorLarge2:
         device: RGBStripLight
         size: 8
 
-    rhythm_top:
-        device: RGBLight
-    rhythm_floor:
-        device: RGBStripLight
-        size: 8
-
-    drum_top_1:
-        device: RGBLight
-    drum_top_2:
-        device: RGBLight
-    drum_floor_1:
-        device: RGBStripLight
-        size: 3
-    drum_floor_2:
-        device: RGBStripLight
-        size: 3
+    effect1: EffectRGBLight
+    effect2: EffectRGBLight
 
 
 groups:
-    lead: [lead_top, lead_floor]
-    rhythm: [rhythm_top, rhythm_floor]
-    sides_top: [lead_top, rhythm_top]
-    sides_floor: [lead_floor, rhythm_floor]
-    sides: [sides_top, sides_floor]
+    # Performers
+    leadTop: [light7]
+    leadFloor: [floorLarge1]
+    lead: [leadTop, leadFloor]
+
+    rhythmTop: [light2]
+    rhythmFloor: [floorLarge2]
+    rhythm: [rhythmTop, rhythmFloor]
+
+    drumTop: [light5, light8]
+    drumFloor: [floor4, light1]
+    drum: [drumTop, drumFloor]
+
+    bassTop: [light3]
+    bassFloor: [floor2]
+    bass: [bassTop, bassFloor]
+
+    pianoTop: [light4]
+    pianoFloor: [floor1]
+    piano: [pianoTop, pianoFloor]
+
+    vocalTop: [light6]
+    vocalFloor: [floor3]
+    vocal: [vocalTop, vocalFloor]
+
+    # Stage sections
+    sidesTop: [leadTop, rhythmTop]
+    sidesFloor: [leadFloor, rhythmFloor]
+    sides: [sidesTop, sidesFloor]
+
+    middleTop: [bassTop, vocalTop]
+    middleFloor: [bassFloor, vocalFloor]
+    middle: [middleTop, middleFloor]
+
+    rearTop: [pianoTop, drumTop]
+    rearFloor: [pianoFloor, drumFloor]
+    rear: [rearTop, rearFloor]
