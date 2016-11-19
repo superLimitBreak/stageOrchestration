@@ -17,16 +17,20 @@ def FlatPar(rgb_light):
 
 def neoNeonFloorSmall(rgb_strip_light):
     assert len(rgb_strip_light.lights) == 3
-    return bytes(chain(*(
+    return bytes(chain(
         (50, 0),  # '50' is a constant for 3 light mode
-        (rgb_light.rgb for rgb_light in rgb_strip_light.lights)
-    )))
+        (
+            one_to_limit(value, limit=255)
+            for rgb_light in rgb_strip_light.lights
+            for value in rgb_light.rgb
+        )
+    ))
 
 
 def OrionLinkV2(rgb_strip_light):
     assert len(rgb_strip_light.lights) == 8
-    return bytes(chain(*(
-        (
+    return bytes(chain(
+        *(
             (
                 one_to_limit(value, limit=255)
                 for value in (
@@ -37,11 +41,16 @@ def OrionLinkV2(rgb_strip_light):
             )
             for rgb_light in rgb_strip_light.lights
         )
+    )) + bytes(
         (
             0,  # No flash
             255,  # Master dim
         )
-    )))
+    )
+
+
+def EuroLight200(rgb_effect_light):
+    return b''
 
 
 def cauvetHuricane(smoke):

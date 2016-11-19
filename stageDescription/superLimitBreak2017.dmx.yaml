@@ -47,5 +47,13 @@ smoke:
     type: cauvetHuricane
     index: 112
 
+effect1:
+    type: EuroLight200
+    index: 171
+effect2:
+    type: EuroLight200
+    index: 183
+
+
 # Special control
-dmx_size: 180
+dmx_size: 256

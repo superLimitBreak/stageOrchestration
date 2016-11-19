@@ -15,7 +15,11 @@ def timer_loop(path_sequence, frame_size, frame_rate, close_event, data_queue):
     filesize = os.stat(path_sequence).st_size
     assert filesize, f'Nothing to render, {path_sequence} is empty'
     frames = filesize / frame_size
-    sequence_filehandle = open(path_sequence, 'rb')
+    with open(path_sequence, 'rb') as sequence_filehandle:
+        _timer_loop(sequence_filehandle, frame_size, frames, frame_rate, close_event, data_queue)
+
+
+def _timer_loop(sequence_filehandle, frame_size, frames, frame_rate, close_event, data_queue):
 
     bar = progressbar.ProgressBar(
         widgets=(
@@ -48,4 +52,3 @@ def timer_loop(path_sequence, frame_size, frame_rate, close_event, data_queue):
     log.debug('Exit render_loop')
 
     bar.finish()
-    sequence_filehandle.close()

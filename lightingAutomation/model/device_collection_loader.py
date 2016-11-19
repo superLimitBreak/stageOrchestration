@@ -36,7 +36,6 @@ def device_collection_loader(path=None, data=None):
             device_type = device_spec.pop('device')
         assert device_type in DEVICE_TYPES, f'{device_type} is not a supported device. The valid options are {DEVICE_TYPES.keys()}'
         return DEVICE_TYPES[device_type](**device_spec)
-
     device_collection = DeviceCollection(make_dict({
         device_name: create_device(device_spec)
         for device_name, device_spec in data['devices'].items()
