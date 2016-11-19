@@ -1,5 +1,6 @@
 import logging
 import yaml
+from itertools import groupby
 
 from pysistence import make_dict
 
@@ -44,9 +45,18 @@ def device_collection_loader(path=None, data=None):
     # TODO: Possible bug?
     #   If yaml does not return ordered dict's this may fail.
     #   If pysistence does not support ordered dicts this may fail
-    #   We may have to chnage the data structure to accomadate repeatable item order or build dependency order ourselfs
+    #   We may have to change the data structure to accommodate repeatable item order or build dependency order ourselfs
+    #   The order appears to be preserved. So this may be fine
     for group_name, device_names in data['groups'].items():
         device_collection.add_group(group_name, device_names)
 
-    #log.info(f'Loaded device_collection: {}'.format({})) groupby RGBLight*8 RGBStripLight*4
+    # Display summary of devices loaded
+    log.info('Loaded device_collection: {}'.format(
+        tuple(
+            f'{name}: {len(tuple(group_iterator))}'
+            for name, group_iterator in groupby(
+                type(device).__name__ for device in device_collection._devices.values()
+            )
+        )
+    ))
     return device_collection
