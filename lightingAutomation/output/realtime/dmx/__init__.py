@@ -17,17 +17,18 @@ class RealtimeOutputDMX(object):
         self.artnet = ArtNet3(dmx_host)
         with open(dmx_mapping, 'rt') as filehandle:
             self.mapping = make_dict(yaml.load(filehandle))
-        self.dmx = bytearray(self.mapping.get('dmx_size', 512))
+        self.buffer = bytearray(self.mapping.get('dmx_size', 512))
 
     def update(self):
-        self.artnet.dmx(self.render_dmx())
+        self.artnet.dmx(_render_dmx(self.device_collection, self.mapping, self.buffer))
 
-    def render_dmx(self):
-        """
-        With mapping, convert self.device_collection to dmx bytes
-        """
-        for device_name, device in device_collection._devices.items():
-            dmx_device_type, dmx_index = (self.mapping[device_name][attribute] for key in ('type', 'index'))
-            dmx_bytes = getattr(dmx_devices, dmx_device_type)(device)
-            self.dmx[dmx_index:dmx_index+len(dmx_bytes)] = dmx_bytes
-        return self.dmx
+
+def _render_dmx(self, device_collection, mapping, buffer):
+    """
+    With mapping, convert device_collection to dmx bytes
+    """
+    for device_name, device in device_collection._devices.items():
+        dmx_device_type, dmx_index = (mapping[device_name][attribute] for key in ('type', 'index'))
+        dmx_bytes = getattr(dmx_devices, dmx_device_type)(device)
+        buffer[dmx_index:dmx_index+len(dmx_bytes)] = dmx_bytes
+    return buffer
