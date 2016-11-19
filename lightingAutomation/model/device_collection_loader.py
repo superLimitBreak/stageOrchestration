@@ -46,7 +46,7 @@ def device_collection_loader(path=None, data=None):
     #   If pysistence does not support ordered dicts this may fail
     #   We may have to change the data structure to accommodate repeatable item order or build dependency order ourselfs
     #   The order appears to be preserved. So this may be fine
-    for group_name, device_names in data['groups'].items():
+    for group_name, device_names in data.get('groups', {}).items():
         device_collection.add_group(group_name, device_names)
 
     # Display summary of devices loaded

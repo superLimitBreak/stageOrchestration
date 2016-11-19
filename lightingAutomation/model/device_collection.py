@@ -20,6 +20,9 @@ class DeviceCollection(CollectionPackerMixin):
             self._device_lookup[device_name] for device_name in device_names
         )))
 
+    def get_device(self, name):
+        return self._devices.get(name)
+
     def get_devices(self, name):
         return self._device_lookup.get(name, ())
 

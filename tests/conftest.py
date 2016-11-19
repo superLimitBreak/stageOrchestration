@@ -10,6 +10,6 @@ def device_collection():
             'rgb_light': 'RGBLight',
             'rgb_strip_light_3': {'device': 'RGBStripLight', 'size': 3},
             'rgb_strip_light_8': {'device': 'RGBStripLight', 'size': 8},
-            'rgb_effect_list': 'RGBEffectLight',
+            'rgb_effect_light': 'EffectRGBLight',
         },
     })
