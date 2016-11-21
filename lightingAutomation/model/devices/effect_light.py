@@ -6,6 +6,7 @@ from .rgb_light import RGBLight
 
 GLOBOS = Enum('Globo', ('none', 'cross', 'dots', 'crescent_moon', 'target', 'triangle', 'square', 'stars'))
 
+
 class EffectRGBLight(RGBLight):
 
     def __init__(self, *args, x=0, y=0, globo=GLOBOS.none, globo_rotation=0, **kwargs):
@@ -30,5 +31,6 @@ class EffectRGBLight(RGBLight):
 
     def todict(self):
         d = super().todict()
-        d.update({attr: getattr(self, attr) for attr in ('x', 'y', 'globo', 'globo_rotation')})
+        d.update({attr: getattr(self, attr) for attr in ('x', 'y', 'globo_rotation')})
+        d.update({'globo': None if self.globo == GLOBOS.none else self.globo.name})
         return d
