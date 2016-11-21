@@ -1,11 +1,20 @@
+from copy import copy
+
 from ext.attribute_packer import CollectionPackerMixin
 from .rgb_light import RGBLight
 
 
 class RGBStripLight(CollectionPackerMixin):
-    def __init__(self, size, red=0, green=0, blue=0):
-        self.lights = tuple(RGBLight(red=red, green=green, blue=blue) for i in range(size))
+    def __init__(self, size=0, red=0, green=0, blue=0, lights=()):
+        assert bool(size) ^ bool(lights), 'Either provide a size or a template of lights to copy'
+        if lights:
+            self.lights = tuple(copy(light) for light in lights)
+        else:
+            self.lights = tuple(RGBLight(red=red, green=green, blue=blue) for i in range(size))
         CollectionPackerMixin.__init__(self, self.lights)
+
+    def __copy__(self):
+        return RGBStripLight(lights=self.lights)
 
     def _average_group_attr(self, attr):
         return sum(getattr(light, attr) for light in self.lights) / len(self.lights)

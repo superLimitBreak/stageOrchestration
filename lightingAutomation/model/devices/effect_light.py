@@ -8,6 +8,7 @@ GLOBOS = Enum('Globo', ('none', 'cross', 'dots', 'crescent_moon', 'target', 'tri
 
 
 class EffectRGBLight(RGBLight):
+    _ATTRS = dict(**RGBLight._ATTRS, **{'x': 0, 'y': 0, 'globo': GLOBOS.none, 'globo_rotation': 0})
 
     def __init__(self, *args, x=0, y=0, globo=GLOBOS.none, globo_rotation=0, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,15 +23,10 @@ class EffectRGBLight(RGBLight):
             AttributePackerMixin.Attribute('globo_rotation', 'plusminusonebyte'),
         ))
 
-    def reset(self):
-        super().reset()
-        self.x = 0
-        self.y = 0
-        self.globo = GLOBOS.none
-        self.globo_rotation = 0
+    def __copy__(self):
+        return EffectRGBLight(**self.todict())
 
-    def todict(self):
-        d = super().todict()
-        d.update({attr: getattr(self, attr) for attr in ('x', 'y', 'globo_rotation')})
-        d.update({'globo': None if self.globo == GLOBOS.none else self.globo.name})
-        return d
+    def _and_(light1, light2):
+        for light in (light1, light2):
+            assert isinstance(light, EffectRGBLight)
+        super()._and_(light1, light2)
