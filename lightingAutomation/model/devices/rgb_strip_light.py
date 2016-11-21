@@ -44,3 +44,6 @@ class RGBStripLight(CollectionPackerMixin):
     def reset(self):
         for light in self.lights:
             light.reset()
+
+    def todict(self):
+        return tuple(light.todict() for light in self.lights)

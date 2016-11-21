@@ -12,4 +12,4 @@ class RealtimeOutputJSON(object):
 
 
 def _render_json(device_collection):
-    return {}
+    return device_collection.todict()

@@ -2,6 +2,7 @@ from ext.attribute_packer import AttributePackerMixin
 
 
 class RGBLight(AttributePackerMixin):
+
     def __init__(self, red=0, green=0, blue=0):
         self.red = red
         self.green = green
@@ -21,3 +22,6 @@ class RGBLight(AttributePackerMixin):
 
     def reset(self):
         self.rgb = (0, 0, 0)
+
+    def todict(self):
+        return {attr: getattr(self, attr) for attr in ('red', 'green', 'blue')}

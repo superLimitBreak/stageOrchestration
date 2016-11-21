@@ -29,3 +29,6 @@ class DeviceCollection(CollectionPackerMixin):
     def reset(self):
         for device in self._devices.values():
             device.reset()
+
+    def todict(self):
+        return {device_name: device.todict() for device_name, device in self._devices.items()}
