@@ -47,11 +47,11 @@ class DeviceCollection(CollectionPackerMixin):
         return device_collection
 
     def _and_(device_collection_1, device_collection_2):
-        for device_collection in (deivce_collection_1, device_colleciton_2):
-            assert isinstance(deivce_collection, DeviceCollection)
-        assert device_colleciton_1._devices.keys() == device_colleciton_2._devices.keys(), 'Can only merge collections that have the same devices'
+        for device_collection in (device_collection_1, device_collection_2):
+            assert isinstance(device_collection, DeviceCollection)
+        assert device_collection_1._devices.keys() == device_collection_2._devices.keys(), 'Can only merge collections that have the same devices'
         for device_name, device in device_collection_2._devices.items():
-            device_colleciton_1._devices[deivce_name] &= device
+            device_collection_1._devices[device_name]._and_(device)
     def __and__(device_collection_1, device_collection_2):
         dc = copy(device_collection_1)
         dc._and_(device_collection_2)

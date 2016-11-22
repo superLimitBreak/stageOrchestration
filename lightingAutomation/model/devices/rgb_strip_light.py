@@ -24,7 +24,7 @@ class RGBStripLight(CollectionPackerMixin):
 
     @property
     def red(self):
-        return self._average_attr('red')
+        return self._average_group_attr('red')
     @red.setter
     def red(self, value):
         self._set_group_attr('red', value)
@@ -38,7 +38,7 @@ class RGBStripLight(CollectionPackerMixin):
 
     @property
     def blue(self):
-        return self._average_attr('blue')
+        return self._average_group_attr('blue')
     @blue.setter
     def blue(self, value):
         self._set_group_attr('blue', value)
@@ -61,8 +61,8 @@ class RGBStripLight(CollectionPackerMixin):
         for lights in (lights1, lights2):
             assert isinstance(lights, RGBStripLight)
         assert len(lights1.lights) == len(lights2.lights), 'Strip lights can only be merged if they are the same size'
-        for index, light in enumerate(lights1.lights):
-            light &= lights2[index]
+        for index, light1 in enumerate(lights1.lights):
+            light1._and_(lights2.lights[index])
     def __and__(lights1, lights2):
         t = copy(lights1)
         t._and_(lights2)

@@ -1,5 +1,6 @@
 import pytest
 import math
+from copy import copy
 from collections import OrderedDict
 
 from ext.attribute_packer import MemoryFramePacker, PersistentFramePacker
@@ -85,3 +86,37 @@ def test_device_collection_loader():
     assert get_device_types(device_collection.get_devices('light1')) == (RGBLight, )
     assert get_device_types(device_collection.get_devices('numbers')) == (RGBLight, RGBLight)
     assert get_device_types(device_collection.get_devices('all')) == (RGBLight, RGBLight, RGBLight)
+
+
+def test_device_collection_copy(device_collection):
+    device_collection.get_device('rgb_light').red = 0.1
+    device_collection.get_device('rgb_strip_light_3').red = 0.2
+    device_collection.get_device('rgb_effect_light').x = 0.3
+
+    device_collection_2 = copy(device_collection)
+
+    device_collection.get_device('rgb_light').red = 0.4
+    device_collection.get_device('rgb_strip_light_3').red = 0.5
+    device_collection.get_device('rgb_effect_light').x = 0.6
+
+    assert device_collection_2.get_device('rgb_light').red == 0.1
+    assert device_collection_2.get_device('rgb_strip_light_3').lights[2].red == 0.2
+    assert device_collection_2.get_device('rgb_effect_light').x == 0.3
+
+
+def test_device_collection_overlay(device_collection):
+    device_collection_2 = copy(device_collection)
+
+    device_collection.get_device('rgb_light').red = 0.1
+    device_collection.get_device('rgb_strip_light_3').red = 0.5
+    device_collection.get_device('rgb_effect_light').x = 0.3
+
+    device_collection_2.get_device('rgb_light').red = 0.4
+    device_collection_2.get_device('rgb_strip_light_3').red = 0.2
+    device_collection_2.get_device('rgb_effect_light').x = 0.6
+
+    device_collection_mix = device_collection & device_collection_2
+
+    assert device_collection_mix.get_device('rgb_light').red == 0.4
+    assert device_collection_mix.get_device('rgb_strip_light_3').red == 0.5
+    isclose(device_collection_mix.get_device('rgb_effect_light').x, 0.45)

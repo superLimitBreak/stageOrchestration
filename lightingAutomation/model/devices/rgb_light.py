@@ -1,8 +1,16 @@
+from collections import namedtuple
+
 from ext.attribute_packer import AttributePackerMixin
 
 
+Attribute = namedtuple('Attribute', ('default', 'and_func'))
+
 class RGBLight(AttributePackerMixin):
-    _ATTRS = {'red': 0, 'green': 0, 'blue': 0}
+    _ATTRS = {
+        'red': Attribute(default=0, and_func=max),
+        'green': Attribute(default=0, and_func=max),
+        'blue': Attribute(default=0, and_func=max),
+    }
 
     def __init__(self, red=0, green=0, blue=0):
         self.red = red
@@ -25,8 +33,8 @@ class RGBLight(AttributePackerMixin):
         self.red, self.green, self.blue = rgb
 
     def reset(self):
-        for attr_name, attr_value in self._ATTRS.items():
-            setattr(self, attr_name, attr_value)
+        for attr_name, attr_spec in self._ATTRS.items():
+            setattr(self, attr_name, attr_spec.default)
 
     def todict(self):
         return {attr: getattr(self, attr) for attr in self._ATTRS}
@@ -34,12 +42,12 @@ class RGBLight(AttributePackerMixin):
     def _and_(light1, light2):
         for light in (light1, light2):
             assert isinstance(light, RGBLight)
-        for attr in self._ATTRS:
-            setattr(light1, attr, max(getattr(light1, attr), getattr(light2, attr)))
+        for attr_name, attr_spec in light1._ATTRS.items():
+            setattr(light1, attr_name, attr_spec.and_func(getattr(light1, attr_name), getattr(light2, attr_name)))
     def __and__(light1, light2):
-        t = copy(light1)
-        t._and_(light2)
-        return t
+        light = copy(light1)
+        light._and_(light2)
+        return light
     def __iand__(self, other):
         self._and_(other)
         return self

@@ -1,14 +1,21 @@
+from statistics import mean
 from enum import Enum
 
 from ext.attribute_packer import AttributePackerMixin
 
-from .rgb_light import RGBLight
+from .rgb_light import RGBLight, Attribute
 
 GLOBOS = Enum('Globo', ('none', 'cross', 'dots', 'crescent_moon', 'target', 'triangle', 'square', 'stars'))
 
+_mean = lambda a, b: mean((a, b))
 
 class EffectRGBLight(RGBLight):
-    _ATTRS = dict(**RGBLight._ATTRS, **{'x': 0, 'y': 0, 'globo': GLOBOS.none, 'globo_rotation': 0})
+    _ATTRS = dict(**RGBLight._ATTRS, **{
+        'x': Attribute(default=0, and_func=_mean),
+        'y': Attribute(default=0, and_func=_mean),
+        'globo': Attribute(default=GLOBOS.none, and_func=lambda a, b: a),
+        'globo_rotation': Attribute(default=0, and_func=_mean),
+    })
 
     def __init__(self, *args, x=0, y=0, globo=GLOBOS.none, globo_rotation=0, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,4 +36,4 @@ class EffectRGBLight(RGBLight):
     def _and_(light1, light2):
         for light in (light1, light2):
             assert isinstance(light, EffectRGBLight)
-        super()._and_(light1, light2)
+        RGBLight._and_(light1, light2)
