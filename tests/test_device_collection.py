@@ -115,8 +115,8 @@ def test_device_collection_overlay(device_collection):
     device_collection_2.get_device('rgb_strip_light_3').red = 0.2
     device_collection_2.get_device('rgb_effect_light').x = 0.6
 
-    device_collection_mix = device_collection & device_collection_2
+    device_collection &= device_collection_2
 
-    assert device_collection_mix.get_device('rgb_light').red == 0.4
-    assert device_collection_mix.get_device('rgb_strip_light_3').red == 0.5
-    isclose(device_collection_mix.get_device('rgb_effect_light').x, 0.45)
+    assert device_collection.get_device('rgb_light').red == 0.4
+    assert device_collection.get_device('rgb_strip_light_3').red == 0.5
+    isclose(device_collection.get_device('rgb_effect_light').x, 0.45)
