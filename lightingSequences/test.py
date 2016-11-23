@@ -1,1 +1,3 @@
-VALUE = 'hello20'
+from ext.timeline import Timeline
+
+TIMELINE = Timeline()

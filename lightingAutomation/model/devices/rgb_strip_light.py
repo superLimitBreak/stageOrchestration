@@ -50,6 +50,8 @@ class RGBStripLight(CollectionPackerMixin):
     def rgb(self, rgb):
         self.red, self.green, self.blue = rgb
 
+    # BaseDevice Ducktyping -------------
+
     def reset(self):
         for light in self.lights:
             light.reset()
@@ -63,10 +65,12 @@ class RGBStripLight(CollectionPackerMixin):
         assert len(lights1.lights) == len(lights2.lights), 'Strip lights can only be merged if they are the same size'
         for index, light1 in enumerate(lights1.lights):
             light1._and_(lights2.lights[index])
+
     def __and__(lights1, lights2):
         t = copy(lights1)
         t._and_(lights2)
         return t
+
     def __iand__(self, other):
         self._and_(other)
         return self

@@ -3,32 +3,34 @@ from enum import Enum
 
 from ext.attribute_packer import AttributePackerMixin
 
-from .rgb_light import RGBLight, Attribute
+from . import RGBLight
+from ._base import BaseDevice
 
 GLOBOS = Enum('Globo', ('none', 'cross', 'dots', 'crescent_moon', 'target', 'triangle', 'square', 'stars'))
 
 _mean = lambda a, b: mean((a, b))
 
-class EffectRGBLight(RGBLight):
-    _ATTRS = dict(**RGBLight._ATTRS, **{
-        'x': Attribute(default=0, and_func=_mean),
-        'y': Attribute(default=0, and_func=_mean),
-        'globo': Attribute(default=GLOBOS.none, and_func=lambda a, b: a),
-        'globo_rotation': Attribute(default=0, and_func=_mean),
-    })
 
-    def __init__(self, *args, x=0, y=0, globo=GLOBOS.none, globo_rotation=0, **kwargs):
-        super().__init__(*args, **kwargs)
+AttributePackerMixin.AttributeEncoders['globo'] = AttributePackerMixin.AttributeEncoder(
+    lambda value: value.value,
+    lambda value: GLOBOS(value),
+    'B',
+)
+
+
+class EffectRGBLight(RGBLight):
+
+    def __init__(self, *args, x=0.5, y=0.5, globo=GLOBOS.none, globo_rotation=0, device_attributes=(), **kwargs):
         self.x = x
         self.y = y
         self.globo = globo
         self.globo_rotation = globo_rotation
-        AttributePackerMixin.__init__(self, (
-            AttributePackerMixin.Attribute('x', 'onebyte'),
-            AttributePackerMixin.Attribute('y', 'onebyte'),
-            AttributePackerMixin.Attribute('globo', 'byte'),
-            AttributePackerMixin.Attribute('globo_rotation', 'plusminusonebyte'),
-        ))
+        super().__init__(*args, device_attributes=(
+            BaseDevice.DeviceAttribute(name='x', default=0.5, and_func=_mean, packer_type='onebyte'),
+            BaseDevice.DeviceAttribute(name='y', default=0.5, and_func=_mean, packer_type='onebyte'),
+            BaseDevice.DeviceAttribute(name='globo', default=0, and_func=lambda a, b: a, packer_type='globo'),
+            BaseDevice.DeviceAttribute(name='globo_rotation', default=0, and_func=_mean, packer_type='plusminusonebyte'),
+        ) + device_attributes, **kwargs)
 
     def __copy__(self):
         return EffectRGBLight(**self.todict())
