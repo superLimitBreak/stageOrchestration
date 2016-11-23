@@ -156,6 +156,7 @@ class LightingServer(object):
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
+            frame_rate=self.frame_rate,
         )
         packer.close()
         assert os.path.exists(sequence_filename), f'Should have generated sequence file {sequence_filename}'

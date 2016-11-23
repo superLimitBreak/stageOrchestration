@@ -1,3 +1,5 @@
 from ext.timeline import Timeline
 
-TIMELINE = Timeline()
+
+def get_timeline(device_collection):
+    return Timeline()
