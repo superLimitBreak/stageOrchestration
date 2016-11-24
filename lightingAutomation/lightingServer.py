@@ -55,7 +55,7 @@ class LightingServer(object):
             'json_send': None,
         }
         if hasattr(self, 'net'):
-            output_settings['json_send']: lambda data: self.net.send_message({'deviceid': 'lightVisulisation', 'func': 'lightState', 'data': data})
+            output_settings['json_send'] = lambda data: print(data['light1'])  # lambda data: self.net.send_message({'deviceid': 'lightVisulisation', 'func': 'lightState', 'data': data})
         self.output_realtime = RealtimeOutputManager(self.device_collection, output_settings)
 
         self.timer_process_queue = multiprocessing.Queue(1)

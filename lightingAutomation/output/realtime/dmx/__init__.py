@@ -23,12 +23,12 @@ class RealtimeOutputDMX(object):
         self.artnet.dmx(_render_dmx(self.device_collection, self.mapping, self.buffer))
 
 
-def _render_dmx(self, device_collection, mapping, buffer):
+def _render_dmx(device_collection, mapping, buffer):
     """
     With mapping, convert device_collection to dmx bytes
     """
     for device_name, device in device_collection._devices.items():
-        dmx_device_type, dmx_index = (mapping[device_name][attribute] for key in ('type', 'index'))
+        dmx_device_type, dmx_index = (mapping[device_name][attribute] for attribute in ('type', 'index'))
         dmx_bytes = getattr(dmx_devices, dmx_device_type)(device)
         buffer[dmx_index:dmx_index+len(dmx_bytes)] = dmx_bytes
     return buffer

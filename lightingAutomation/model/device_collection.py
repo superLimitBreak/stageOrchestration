@@ -20,6 +20,14 @@ class DeviceCollection(CollectionPackerMixin):
         CollectionPackerMixin.__init__(self, tuple(self._devices.values()))  # TODO: Unless we can guarantee the order of values, this approach is flawed
         self._group_lookup = {device_name: (device_name, ) for device_name in self._devices.keys()}
 
+    @property
+    def groups(self):
+        return self._group_lookup.keys()
+
+    @property
+    def devices(self):
+        return self._devices.keys()
+
     def add_group(self, group_name, device_names):
         self._group_lookup[group_name] = tuple(chain(*(
             self._group_lookup[device_name] for device_name in device_names
@@ -28,11 +36,10 @@ class DeviceCollection(CollectionPackerMixin):
     def get_device(self, name):
         return self._devices.get(name)
 
-    def get_devices(self, name):
-        return tuple(
-            self.get_device(device_name)
-            for device_name in self._group_lookup.get(name, ())
-        )
+    def get_devices(self, name=None):
+        if name:
+            return tuple(self.get_device(device_name) for device_name in self._group_lookup.get(name, ()))
+        return self._devices.values()
 
     def reset(self):
         for device in self._devices.values():
