@@ -1,5 +1,7 @@
-from ext.timeline import Timeline
-
-
-def get_timeline(device_collection):
-    return Timeline()
+META = {
+    'bpm': 120,
+    'timesigniture': '4:4'
+}
+def get_timeline(timeline, device_collection, t):
+    import pdb ; pdb.set_trace()
+    pass
