@@ -55,7 +55,8 @@ class LightingServer(object):
             'json_send': None,
         }
         if hasattr(self, 'net'):
-            output_settings['json_send'] = lambda data: print(data['light1'])  # lambda data: self.net.send_message({'deviceid': 'lightVisulisation', 'func': 'lightState', 'data': data})
+            output_settings['json_send'] = lambda data: self.net.send_message({'deviceid': 'lightVisulisation', 'func': 'lightState', 'data': data})
+            #print(data['light1']) #
         self.output_realtime = RealtimeOutputManager(self.device_collection, output_settings)
 
         self.timer_process_queue = multiprocessing.Queue(1)
@@ -175,6 +176,7 @@ class LightingServer(object):
         Run a timing loop for a sequence
         """
         self.stop_sequence()
+        log.info(f'Start: {sequence_module_name}')
 
         self.timer_process_close_event = multiprocessing.Event()
         self.timer_process = multiprocessing.Process(

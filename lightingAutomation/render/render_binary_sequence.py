@@ -31,6 +31,6 @@ def render_binary_sequence(packer, sequence_module, device_collection, frame_rat
     log.debug(f'Rendering {sequence_module._sequence_name}')
     renderer = timeline.get_renderer()
     frames = int(timeline.duration * frame_rate)
-    for timecode in ((frame/frames)*timeline.duration for frame in range(frames)):
+    for timecode in ((frame/frames)*timeline.duration for frame in range(frames+1)):
         renderer.render(timecode)
         packer.save_frame()

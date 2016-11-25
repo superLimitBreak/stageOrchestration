@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from ext.attribute_packer import AttributePackerMixin
-
+from ext.misc import json_object_handler
 
 class BaseDevice(AttributePackerMixin):
     DeviceAttribute = namedtuple('Attribute', ('name', 'default', 'and_func', 'packer_type'))
@@ -19,7 +19,7 @@ class BaseDevice(AttributePackerMixin):
 
     def todict(self):
         return {
-            device_attribute.name: getattr(self, device_attribute.name)
+            device_attribute.name: json_object_handler(getattr(self, device_attribute.name))
             for device_attribute in self.device_attributes
         }
 
