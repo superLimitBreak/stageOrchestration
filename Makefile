@@ -9,7 +9,6 @@ EXT_LOCAL_PATH=../../libs/python3/lib
 
 CONFIG_DEVELOPMENT=config.development.yaml
 CONFIG_PRODUCTION=config.production.yaml
-CONFIG_DIST=config.dist.yaml
 
 
 help:
@@ -94,4 +93,4 @@ clean:
 	find . -iname .cache -delete
 	rm -rf $(ENV)
 	rm -rf $(EXT)
-	rm -rf $(CONFIG)
+	#rm -rf $(CONFIG)
