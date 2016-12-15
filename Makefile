@@ -9,7 +9,7 @@ EXT_LOCAL_PATH=../../libs/python3/lib
 
 CONFIG_DEVELOPMENT=config.development.yaml
 CONFIG_PRODUCTION=config.production.yaml
-
+CONDIG_DIST=config.dist.yaml
 
 help:
 	#
@@ -17,7 +17,7 @@ help:
 	#  - install                :
 	#    - upgrade_pip          : Update python dependencys
 	#  - run                    : Run in development mode
-	#    - run_production       : Braudcast to Artnet3:$(ARTNET_ADDRESS)
+	#    - run_production       : Braudcast to Artnet3
 	#  - test                   :
 	#
 
@@ -31,8 +31,11 @@ install: dependencys upgrade_pip test
 $(ENV):
 	virtualenv -p python3 $(ENV)
 
-$(CONFIG):
-	cp $(CONFIG_SOURCE) $(CONFIG)
+#$(CONFIG_DEVELOPMENT):
+#	cp $(CONFIG_DIST) $@
+#$(CONFIG_PRODUCTION):
+#	cp $(CONFIG_DIST) $@
+
 
 # Python Dependencys -----------------------------------------------------------
 
