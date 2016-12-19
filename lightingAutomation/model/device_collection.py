@@ -36,9 +36,13 @@ class DeviceCollection(CollectionPackerMixin):
     def get_device(self, name):
         return self._devices.get(name)
 
-    def get_devices(self, name=None):
-        if name:
-            return tuple(self.get_device(device_name) for device_name in self._group_lookup.get(name, ()))
+    def get_devices(self, *names):
+        if names:
+            return tuple(
+                self.get_device(device_name)
+                for name in names
+                for device_name in self._group_lookup.get(name, ())
+            )
         return self._devices.values()
 
     def reset(self):

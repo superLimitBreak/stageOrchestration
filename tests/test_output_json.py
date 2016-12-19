@@ -1,4 +1,4 @@
-from ext.misc import freeze
+from ext.misc import freeze, json_object_handler
 
 from unittest.mock import Mock
 
@@ -16,7 +16,7 @@ def test_output_json(device_collection):
         'rgb_light': {'red': 0.5, 'green': 0, 'blue': 0},
         'rgb_strip_light_3': ({'red': 0.6, 'green': 0, 'blue': 0},) * 3,
         'rgb_strip_light_8': ({'red': 0, 'green': 0, 'blue': 0},) * 8,
-        'rgb_effect_light': {'red': 0, 'green': 0, 'blue': 0, 'x': 0.7, 'y': 0.5, 'globo': GLOBOS.dots, 'globo_rotation': 0},
+        'rgb_effect_light': {'red': 0, 'green': 0, 'blue': 0, 'x': 0.7, 'y': 0.5, 'globo': json_object_handler(GLOBOS.dots), 'globo_rotation': 0},
     }
 
 
