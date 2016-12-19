@@ -38,11 +38,17 @@ class DeviceCollection(CollectionPackerMixin):
 
     def get_devices(self, *names):
         if names:
-            return tuple(
+            devices_generator = (
                 self.get_device(device_name)
                 for name in names
                 for device_name in self._group_lookup.get(name, ())
             )
+            devices_set = set()
+            def dedupe(device):
+                if device not in devices_set:
+                    devices_set.add(device)
+                    return True
+            return tuple(filter(dedupe, devices_generator))
         return self._devices.values()
 
     def reset(self):
