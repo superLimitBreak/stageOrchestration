@@ -120,3 +120,13 @@ def test_device_collection_overlay(device_collection):
     assert device_collection.get_device('rgb_light').red == 0.4
     assert device_collection.get_device('rgb_strip_light_3').red == 0.5
     isclose(device_collection.get_device('rgb_effect_light').x, 0.45)
+
+
+@pytest.mark.skip  # TODO: Fix this bug!
+def test_device_collection_get_devices_should_protect_against_duplicates(device_collection):
+    """
+    Order of devices should be preserved, but duplicates should be removed
+    """
+    all_devices_manually = device_collection.get_devices('rgb_light', 'rgb_strip_light_3', 'rgb_strip_light_8', 'rgb_effect_light')
+    all_devices_with_duplicates_from_alias = device_collection.get_devices('rgb_light', 'rgb_strip_light_3', 'rgb_strip_light_8', 'rgb_effect_light', 'all_lights')
+    assert all_devices_manually == all_devices_with_duplicates_from_alias
