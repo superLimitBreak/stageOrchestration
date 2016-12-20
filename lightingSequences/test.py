@@ -6,5 +6,5 @@ META = {
 }
 def create_timeline(dc, t):
     tl = Timeline()
-    tl.to(dc.get_devices('light1', 'floorLarge1'), t('16.0.0'), {'red': 1})
+    tl.to(dc.get_devices(), t('16.0.0'), {'red': 1})
     return tl
