@@ -31,7 +31,7 @@ class RGBStripLight(CollectionPackerMixin):
 
     @property
     def green(self):
-        return self._average_attr('green')
+        return self._average_group_attr('green')
     @green.setter
     def green(self, value):
         self._set_group_attr('green', value)
