@@ -78,3 +78,9 @@ Below are some of the variables we may wish to consider when designing a lightin
     * What if we wanted to describe a sweep of beams across the stage that waved from left to right.
       Maybe finishing pointing at one performer? Maybe sweaping from left to right then when a chorus starts the beams dispurse in random directions.
 
+
+Ambilight
+---------
+
+http://zulko.github.io/blog/2013/09/27/read-and-write-video-frames-in-python-using-ffmpeg/
+
