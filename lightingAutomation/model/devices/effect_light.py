@@ -26,10 +26,10 @@ class EffectRGBLight(RGBLight):
         self.globo = globo
         self.globo_rotation = globo_rotation
         super().__init__(*args, device_attributes=(
-            BaseDevice.DeviceAttribute(name='x', default=0.5, and_func=_mean, packer_type='onebyte'),
-            BaseDevice.DeviceAttribute(name='y', default=0.5, and_func=_mean, packer_type='onebyte'),
-            BaseDevice.DeviceAttribute(name='globo', default=0, and_func=lambda a, b: a, packer_type='globo'),
-            BaseDevice.DeviceAttribute(name='globo_rotation', default=0, and_func=_mean, packer_type='plusminusonebyte'),
+            BaseDevice.DeviceAttribute(name='x', default=x, and_func=_mean, packer_type='onebyte'),
+            BaseDevice.DeviceAttribute(name='y', default=y, and_func=_mean, packer_type='onebyte'),
+            BaseDevice.DeviceAttribute(name='globo', default=globo, and_func=lambda a, b: a, packer_type='globo'),
+            BaseDevice.DeviceAttribute(name='globo_rotation', default=globo_rotation, and_func=_mean, packer_type='plusminusonebyte'),
         ) + device_attributes, **kwargs)
 
     def __copy__(self):

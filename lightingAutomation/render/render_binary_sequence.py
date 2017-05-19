@@ -19,6 +19,7 @@ def render_binary_sequence(packer, sequence_module, device_collection, frame_rat
     Render a lighting sequence to a binary intermediary
     packer is managing/monitoring device_collection -> packer.save saves the frames state
     """
+    device_collection.reset()
 
     meta = copy(default_meta)
     meta.update(getattr(sequence_module, META_ATTRIBUTE, {}))
