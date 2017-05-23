@@ -8,6 +8,7 @@ from .json import RealtimeOutputJSON
 
 class RealtimeOutputManager(object):
     def __init__(self, device_collection, settings):
+        self.device_collection = device_collection
         self._output = {}
 
         # With settings init the required renderers
@@ -15,6 +16,13 @@ class RealtimeOutputManager(object):
             self._output['dmx'] = RealtimeOutputDMX(device_collection, settings['dmx_host'], settings['dmx_mapping'])
         if settings.get('json_send'):
             self._output['json'] = RealtimeOutputJSON(device_collection, settings['json_send'])
+
+    def close(self):
+        """
+        Clear all of the outputs and send a final blank state
+        """
+        self.device_collection.reset()
+        self.update()
 
     def update(self):
         """
