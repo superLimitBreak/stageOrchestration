@@ -1,39 +1,49 @@
+import logging
+from multiprocessing import Process
+
 from ext.http_dispatch import http_dispatch
 
-import logging
+from lightingAutomation.render.sequence_manager import SequenceManager
+
 log = logging.getLogger(__name__)
 
 
 class StaticOutputPNG(object):
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, options):
+        self.process = Process(target=serve_png, args=(options,))
+        self.process.start()
 
     def close(self):
-        pass
+        self.process.join()
 
-    def serve(self):
-        http_dispatch(self.func_dispatch)
 
-    def func_dispatch(self, request_dict, response_dict):
-        log.info(request_dict)
+def serve_png(options):
+    sequence_manager = SequenceManager(**options)
 
-        filename = '/Users/allan.callaghan/temp/test.png'
-
+    def func_dispatch(request_dict, response_dict):
         response_dict.update({
             'Server': 'lightingAutomation/0.0.0 (Python3)',
             'Content-Type': 'image/png',
-            #'Content-Length': os.stat(filename).st_size,
         })
+        path = request_dict['path'].strip('/')
 
-        if request_dict['method'] == 'GET':
-            with open(filename, 'rb') as filehandle:
-                response_dict['_body'] = filehandle.read()
+        try:
+            packer = sequence_manager.get_packer(path)
+        except AssertionError:
+            response_dict.update({'_status': '404 Not Found'})
+            return response_dict
+
+        #if request_dict['method'] == 'GET':
+        #    with open(filename, 'rb') as filehandle:
+        #        response_dict['_body'] = filehandle.read()
 
         return response_dict
 
+    http_dispatch(func_dispatch)
+
+
 if __name__ == "__main__":
-    ss = StaticOutputPNG()
-    http_dispatch(ss.func_dispatch)
+    serve_png({'required': 'test_options_are_missing'})
 
 """
     GET /sample.html HTTP/1.1

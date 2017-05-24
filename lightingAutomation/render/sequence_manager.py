@@ -31,12 +31,24 @@ class SequenceManager(object):
         self.device_collection = device_collection_loader(path_stage_description)
         assert self.device_collection.devices
 
-        self.sequences = {}
+        self.sequence_modules = {}
 
         self.reload_sequences()
 
-    def get_persistent_sequence_filename(self, package_name):
-        return os.path.join(self.tempdir, package_name)
+    def get_persistent_sequence_filename(self, sequence_name):
+        return os.path.join(self.tempdir, sequence_name)
+
+    def get_packer(self, sequence, assert_exists=True):
+        """
+        Can be passed a module, sequence_name or filename
+        """
+        if hasattr(sequence, '_sequence_name'):
+            sequence = sequence._sequence_name
+        if not os.path.exists(sequence):
+            sequence = self.get_persistent_sequence_filename(sequence)
+        if assert_exists:
+            assert os.path.exists(sequence)
+        return PersistentFramePacker(self.device_collection, sequence)
 
     def reload_sequences(self, sequence_files=None):
         """
@@ -65,23 +77,22 @@ class SequenceManager(object):
 
     def _load_sequence_module(self, f_relative):
         package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('/', '.')
-        if package_name in self.sequences:
-            importlib.reload(self.sequences[package_name])
+        if package_name in self.sequence_modules:
+            importlib.reload(self.sequence_modules[package_name])
         else:
-            self.sequences[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
-        sequence_module = self.sequences[package_name]
+            self.sequence_modules[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
+        sequence_module = self.sequence_modules[package_name]
         setattr(sequence_module, '_sequence_name', sequence_module.__name__.replace(f'{sequence_module.__package__}.', ''))
         return sequence_module
 
     def _render_sequence_module(self, sequence_module):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
-        sequence_filename = self.get_persistent_sequence_filename(sequence_module._sequence_name)
-        packer = PersistentFramePacker(self.device_collection, sequence_filename)
+        packer = self.get_packer(sequence_module, assert_exists=False)
         render_binary_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
-            frame_rate=self.framerate,
+            frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()
-        assert os.path.exists(sequence_filename), f'Should have generated sequence file {sequence_filename}'
+        assert os.path.exists(packer.filename), f'Should have generated sequence file {packer.filename}'

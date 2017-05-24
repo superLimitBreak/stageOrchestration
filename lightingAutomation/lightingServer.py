@@ -43,19 +43,12 @@ class LightingServer(object):
 
         self.device_collection = device_collection_loader(kwargs['path_stage_description'])
         self.sequence_manager = SequenceManager(**self.options)
+        self.output_static = StaticOutputManager(self.options)
 
-        output_settings = {
-            'dmx_host': kwargs['dmx_host'],
-            'dmx_mapping': kwargs['dmx_mapping'],
-            'http_png_port': kwargs['http_png_port'],
-            'json_send': None,
-        }
         if hasattr(self, 'net'):
-            output_settings['json_send'] = lambda data: self.net.send_message({'deviceid': 'light_visulisation', 'func': 'lightState', 'data': data})
+            self.options['json_send'] = lambda data: self.net.send_message({'deviceid': 'light_visulisation', 'func': 'lightState', 'data': data})
             #print(data['light1']) #
-
-        self.output_realtime = RealtimeOutputManager(self.device_collection, output_settings)
-        self.output_static = StaticOutputManager(self.sequence_manager, output_settings)
+        self.output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
         self.timer_process_queue = multiprocessing.Queue(1)
         self.timer_process = None
@@ -111,6 +104,8 @@ class LightingServer(object):
     def start_sequence(self, sequence_module_name):
         """
         Run a timing loop for a sequence
+         1.) Dumbly read the binary file in lumps od .pack_size
+         2.) Fire 'frame_event's of binary data back to this object
         """
         self.stop_sequence()
         log.info(f'Start: {sequence_module_name}')
@@ -127,4 +122,3 @@ class LightingServer(object):
             ),
         )
         self.timer_process.start()
-
