@@ -24,9 +24,9 @@ def serve(**kwargs):
 class LightingServer(object):
 
     def __init__(self, **kwargs):
-        self.frame_rate = kwargs['framerate']
-
+        self.options = kwargs
         self.tempdir = tempfile.TemporaryDirectory()
+        self.options['tempdir'] = self.tempdir.name
 
         self.network_event_queue = multiprocessing.Queue()
         if kwargs.get('displaytrigger_host'):
@@ -36,21 +36,13 @@ class LightingServer(object):
         self.scan_update_event_queue = multiprocessing.Queue()
         if 'scaninterval' in kwargs:
             self.scan_update_event_queue = file_scan_diff_thread(
-                kwargs['path_sequences'],
+                self.options['path_sequences'],
                 search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES,
-                rescan_interval=kwargs['scaninterval']
+                rescan_interval=self.options['scaninterval']
             )
 
-        def _generate_device_collection_for_current_stage_description():
-            return device_collection_loader(kwargs['path_stage_description'])
-
-        self.device_collection = _generate_device_collection_for_current_stage_description()
-        self.sequence_manager = SequenceManager(
-            path_sequences=kwargs['path_sequences'],
-            device_collection=_generate_device_collection_for_current_stage_description(),
-            tempdir=self.tempdir.name,
-            frame_rate=self.frame_rate,
-        )
+        self.device_collection = device_collection_loader(kwargs['path_stage_description'])
+        self.sequence_manager = SequenceManager(**self.options)
 
         output_settings = {
             'dmx_host': kwargs['dmx_host'],
@@ -129,7 +121,7 @@ class LightingServer(object):
             args=(
                 self.sequence_manager.get_persistent_sequence_filename(sequence_module_name),
                 self.device_collection.pack_size,
-                self.frame_rate,
+                self.options['framerate'],
                 self.timer_process_close_event,
                 self.timer_process_queue
             ),

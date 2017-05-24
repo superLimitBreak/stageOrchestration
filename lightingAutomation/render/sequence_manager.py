@@ -8,6 +8,7 @@ import progressbar
 from ext.misc import fast_scan, fast_scan_regex_filter
 from ext.attribute_packer import PersistentFramePacker
 
+from ..model.device_collection_loader import device_collection_loader
 from .render_binary_sequence import render_binary_sequence
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')
@@ -18,17 +19,17 @@ log = logging.getLogger(__name__)
 
 class SequenceManager(object):
 
-    def __init__(self, path_sequences, device_collection, tempdir, frame_rate):
+    def __init__(self, path_sequences=None, path_stage_description=None, tempdir=None, framerate=None, **kwargs):
         assert path_sequences
-        assert device_collection
-        assert device_collection.devices
+        assert path_stage_description
         assert os.path.exists(tempdir)
-        assert frame_rate
+        assert framerate
 
         self.path_sequences = path_sequences
-        self.device_collection = device_collection
         self.tempdir = tempdir
-        self.frame_rate = frame_rate
+        self.framerate = framerate
+        self.device_collection = device_collection_loader(path_stage_description)
+        assert self.device_collection.devices
 
         self.sequences = {}
 
@@ -80,7 +81,7 @@ class SequenceManager(object):
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
-            frame_rate=self.frame_rate,
+            frame_rate=self.framerate,
         )
         packer.close()
         assert os.path.exists(sequence_filename), f'Should have generated sequence file {sequence_filename}'
