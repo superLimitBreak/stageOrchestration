@@ -4,3 +4,4 @@ pytest
 decorator
 pysistence
 progressbar2
+pillow

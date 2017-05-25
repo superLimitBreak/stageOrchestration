@@ -35,17 +35,18 @@ class SequenceManager(object):
 
         self.reload_sequences()
 
-    def get_persistent_sequence_filename(self, sequence_name):
-        return os.path.join(self.tempdir, sequence_name)
-
-    def get_packer(self, sequence, assert_exists=True):
+    def get_filename(self, sequence):
         """
         Can be passed a module, sequence_name or filename
         """
         if hasattr(sequence, '_sequence_name'):
             sequence = sequence._sequence_name
         if not os.path.exists(sequence):
-            sequence = self.get_persistent_sequence_filename(sequence)
+            sequence = os.path.join(self.tempdir, sequence)
+        return sequence
+
+    def get_packer(self, sequence, assert_exists=True):
+        sequence = self.get_filename(sequence)
         if assert_exists:
             assert os.path.exists(sequence)
         return PersistentFramePacker(self.device_collection, sequence)

@@ -114,7 +114,7 @@ class LightingServer(object):
         self.timer_process = multiprocessing.Process(
             target=timer_loop,
             args=(
-                self.sequence_manager.get_persistent_sequence_filename(sequence_module_name),
+                self.sequence_manager.get_filename(sequence_module_name),
                 self.device_collection.pack_size,
                 self.options['framerate'],
                 self.timer_process_close_event,
