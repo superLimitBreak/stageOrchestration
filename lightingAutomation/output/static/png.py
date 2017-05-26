@@ -5,14 +5,12 @@ from io import BytesIO
 
 import PIL.Image
 
-from ext.misc import hashfile, random_string
+from ext.misc import hashfile, random_string, one_to_limit
 from ext.http_dispatch import http_dispatch
 
 from lightingAutomation.render.sequence_manager import SequenceManager
 
 log = logging.getLogger(__name__)
-
-SALT = random_string()
 
 
 class StaticOutputPNG(object):
@@ -26,6 +24,8 @@ class StaticOutputPNG(object):
 
 def serve_png(options):
     sequence_manager = SequenceManager(**options)
+    SALT = random_string() if options.get('postmortem') else ''  # Cachebust in development mode
+    CACHE_CONTROL_SECONDS = 60 * 60
 
     def func_dispatch(request_dict, response_dict):
         response_dict.update({
@@ -39,34 +39,22 @@ def serve_png(options):
             return response_dict
 
         # Etag
-        sequence_hash = hashfile(sequence_filename)
-        if request_dict.get('If-None-Match').strip() == (sequence_hash + SALT).strip():
+        sequence_hash = hashfile(sequence_filename) + SALT
+        if request_dict.get('If-None-Match') == sequence_hash:
             response_dict.update({'_status': '304 Not Modified'})
             return response_dict
         else:
-            response_dict.update({
-                'Etag': sequence_hash + SALT,
-                'Cache-Control': f'max-age={60*60}',
-            })
+            response_dict.update({'Etag': sequence_hash, 'Cache-Control': f'max-age={CACHE_CONTROL_SECONDS}'})
 
+        # Render body
         if request_dict['method'] == 'GET':
-
-            def render_png(sequence_filename):
-                packer = sequence_manager.get_packer(sequence_filename)
-                device_collection = sequence_manager.device_collection
-
-                image = PIL.Image.new('RGB', (100, 100))
-                image.putpixel((50, 50), (255, 0, 0))
-
-                with BytesIO() as buffer:
-                    image.save(buffer, 'PNG')
-                    buffer.seek(0)
-                    return buffer.read()
-
-            # Render PNG to memory and set body of response
             response_dict.update({
                 'Content-Type': 'image/png',
-                '_body': render_png(sequence_filename),
+                '_body': render_png(
+                    sequence_manager.get_packer(sequence_filename),
+                    sequence_manager.device_collection,
+                    options.get('framerate'),
+                ),
             })
 
         return response_dict
@@ -74,21 +62,20 @@ def serve_png(options):
     http_dispatch(func_dispatch)
 
 
+def render_png(packer, device_collection, framerate=10, pixels_per_second=10):
+    image = PIL.Image.new('RGB', (packer.frames, len(device_collection.devices)))
+    for frame_number in range(packer.frames):
+        packer.restore_frame(frame_number)
+        for device_number, device in enumerate(device_collection.get_devices()):
+            image.putpixel((frame_number, device_number), tuple(map(one_to_limit, device.rgb)))
+
+    with BytesIO() as buffer:
+        image.resize(
+            # Resize image to have consistent pixels per second regardless of frame_rate of sequence
+            (int(packer.frames * (pixels_per_second / framerate)), image.height)
+        ).save(buffer, 'PNG')
+        return buffer.getvalue()
+
+
 if __name__ == "__main__":
     serve_png({'required': 'test_options_are_missing'})
-
-"""
-    GET /sample.html HTTP/1.1
-    Host: example.com
-    If-Modified-Since: Wed, 01 Sep 2004 13:24:52 GMT
-    If-None-Match: “4135cda4”
-
-    HTTP/1.x 304 Not Modified
-    Via: The-proxy-server
-    Expires: Tue, 27 Dec 2005 11:25:19 GMT
-    Date: Tue, 27 Dec 2005 05:25:19 GMT
-    Server: Apache/1.3.33 (Unix) PHP/4.3.10
-    Keep-Alive: timeout=2, max=99
-    Etag: “4135cda4”
-    Cache-Control: max-age=21600
-"""
