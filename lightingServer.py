@@ -40,6 +40,7 @@ def get_args():
 
     parser.add_argument('--http_png_port', action='store', help='Port to serve png visulisations for development')
 
+    parser.add_argument('--vscode_debugger', action='store', help='attach to vscode')
     parser.add_argument('--postmortem', action='store', help='Enter debugger on exception')
     parser.add_argument('--log_level', type=int, help='log level')
 
@@ -65,6 +66,11 @@ def main(**kwargs):
 if __name__ == "__main__":
     kwargs = get_args()
     logging.basicConfig(level=kwargs['log_level'])
+
+    if kwargs.get('vscode_debugger'):
+        import ptvsd
+        ptvsd.enable_attach("my_secret", address=('0.0.0.0', 3000))
+        #ptvsd.wait_for_attach()
 
     def launch():
         main(**kwargs)
