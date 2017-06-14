@@ -5,4 +5,7 @@ __pycache__
 *_env/
 
 libs
+ext
 lighting/renderers/PentatonicHero.py
+_temp
+config.*.yaml
