@@ -22,6 +22,7 @@ def serve(**kwargs):
 
 
 class LightingServer(object):
+    DEVICEID_VISULISATION = 'light_visulisation'
 
     def __init__(self, **kwargs):
         self.options = kwargs
@@ -46,7 +47,11 @@ class LightingServer(object):
         self.output_static = StaticOutputManager(self.options)
 
         if hasattr(self, 'net'):
-            self.options['json_send'] = lambda data: self.net.send_message({'deviceid': 'light_visulisation', 'func': 'lightState', 'data': data})
+            self.options['json_send'] = lambda data: self.net.send_message({
+                'deviceid': self.DEVICEID_VISULISATION,
+                'func': 'lightState',
+                'data': data,
+            })
             #print(data['light1']) #
         self.output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
@@ -59,7 +64,7 @@ class LightingServer(object):
     def run(self):
         multiprocessing_process_event_queue({
             self.network_event_queue: self.network_event,
-            self.scan_update_event_queue: self.sequence_manager.reload_sequences,
+            self.scan_update_event_queue: self.scan_update_event,
             self.timer_process_queue: self.frame_event,
         })
         # Blocks infinitely and is terminated by ctrl+c or exit event
@@ -71,7 +76,6 @@ class LightingServer(object):
         self.output_static.close()
         log.info('Removed temporary sequence files')
         self.tempdir.cleanup()
-
 
     def network_event(self, event):
         log.debug(event)
@@ -87,6 +91,14 @@ class LightingServer(object):
             self.stop_sequence()
             self.device_collection.reset()
             self.output_realtime.update()
+
+    def scan_update_event(self, sequence_files):
+        self.sequence_manager.reload_sequences(sequence_files)
+        self.net.send_message({
+            'deviceid': self.DEVICEID_VISULISATION,
+            'func': 'scan_update_event',
+            'sequence_files': sequence_files,
+        })
 
     def frame_event(self, buffer):
         self.device_collection.unpack(buffer, 0)
