@@ -97,7 +97,7 @@ class LightingServer(object):
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
             'func': 'scan_update_event',
-            'sequence_files': sequence_files,
+            'sequence_files': tuple(relative.replace('.py', '') for relative, absolute in sequence_files),
         })
 
     def frame_event(self, buffer):
