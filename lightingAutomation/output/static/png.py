@@ -40,11 +40,11 @@ def serve_png(options):
 
         # Etag
         sequence_hash = hashfile(sequence_filename) + SALT
-        if request_dict.get('If-None-Match') == sequence_hash:
+        if sequence_hash in request_dict.get('If-None-Match', ''):
             response_dict.update({'_status': '304 Not Modified'})
             return response_dict
         else:
-            response_dict.update({'Etag': sequence_hash, 'Cache-Control': f'max-age={CACHE_CONTROL_SECONDS}'})
+            response_dict.update({'Etag': f'\W {sequence_hash}', 'Cache-Control': f'max-age={CACHE_CONTROL_SECONDS}'})
 
         # Render body
         if request_dict['method'] == 'GET':
