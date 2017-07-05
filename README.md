@@ -4,7 +4,7 @@ lightingAutomation
 superLimitBreak is a band that plays to a click track.
 We can trigger stage lights and projections in time to the live music.
 
-lightingAutomation can be used standalone but was designed to be paired with
+`stageOrchestration` can be used standalone but was designed to be paired with
 `displayTrigger` which listens to stage events and control digital projectors.
 
 

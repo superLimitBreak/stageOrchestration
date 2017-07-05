@@ -13,7 +13,7 @@ CONDIG_DIST=config.dist.yaml
 
 help:
 	#
-	# lightingAutomation - Triggerable timed stage lighting + projector orchistration
+	# stageOrchestration - Triggerable timed stage lighting + projector orchistration
 	#  - install                :
 	#    - upgrade_pip          : Update python dependencys
 	#  - run                    : Run in development mode
@@ -74,17 +74,17 @@ upgrade_pip:
 .PHONY: run run_production
 
 run: $(CONFIG_DEVELOPMENT)
-	$(PYTHON) lightingServer.py --config $(CONFIG_DEVELOPMENT)
+	$(PYTHON) server.py --config $(CONFIG_DEVELOPMENT)
 
 run_production: $(CONFIG_PRODUCTION)
-	$(PYTHON) lightingServer.py --config $(CONFIG_PRODUCTION)
+	$(PYTHON) server.py --config $(CONFIG_PRODUCTION)
 
 
 # Tests ------------------------------------------------------------------------
 
 .PHONY: test
 test:
-	PYTHONPATH=./ $(PYTEST) $(EXT) lightingAutomation tests --doctest-modules --pdb -x
+	PYTHONPATH=./ $(PYTEST) $(EXT) stageOrchestration tests --doctest-modules --pdb -x
 
 .PHONY: cloc
 cloc:

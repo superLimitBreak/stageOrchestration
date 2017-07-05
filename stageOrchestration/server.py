@@ -6,22 +6,22 @@ from time import sleep
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
 
-from .output.realtime.timer_loop import timer_loop
-from .output.realtime import RealtimeOutputManager
-from .output.static import StaticOutputManager
-from .render.sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
-from .model.device_collection_loader import device_collection_loader
+from .lighting.output.realtime.timer_loop import timer_loop
+from .lighting.output.realtime import RealtimeOutputManager
+from .lighting.output.static import StaticOutputManager
+from .lighting.render.sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
+from .lighting.model.device_collection_loader import device_collection_loader
 
 log = logging.getLogger(__name__)
 
 
 def serve(**kwargs):
     #log.info('Serve {}'.format(kwargs))
-    server = LightingServer(**kwargs)
+    server = StageOrchestrationServer(**kwargs)
     server.run()
 
 
-class LightingServer(object):
+class StageOrchestrationServer(object):
     DEVICEID_VISULISATION = 'light_visulisation'
 
     def __init__(self, **kwargs):

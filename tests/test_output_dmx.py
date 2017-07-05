@@ -1,7 +1,7 @@
 import pytest
 
-from lightingAutomation.model.devices import RGBLight, RGBStripLight, EffectRGBLight, Smoke
-import lightingAutomation.output.realtime.dmx.dmx_devices as dmx_devices
+from stageOrchestration.lighting.model.devices import RGBLight, RGBStripLight, EffectRGBLight, Smoke
+import stageOrchestration.lighting.output.realtime.dmx.dmx_devices as dmx_devices
 
 
 @pytest.mark.parametrize(('dmx_device_name', 'device', 'expected_bytes'), (

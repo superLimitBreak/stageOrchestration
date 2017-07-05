@@ -1,6 +1,6 @@
 import pytest
 
-from lightingAutomation.model.device_collection_loader import device_collection_loader
+from stageOrchestration.lighting.model.device_collection_loader import device_collection_loader
 
 
 @pytest.fixture(scope="function")

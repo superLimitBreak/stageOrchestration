@@ -59,8 +59,8 @@ def get_args():
 # Main -------------------------------------------------------------------------
 
 def main(**kwargs):
-    from lightingAutomation import lightingServer
-    lightingServer.serve(**kwargs)
+    from stageOrchestration import server
+    server.serve(**kwargs)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ import PIL.Image
 from ext.misc import hashfile, random_string, one_to_limit
 from ext.http_dispatch import http_dispatch
 
-from lightingAutomation.render.sequence_manager import SequenceManager
+from stageOrchestration.lighting.render.sequence_manager import SequenceManager
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ def serve_png(options):
 
     def func_dispatch(request_dict, response_dict):
         response_dict.update({
-            'Server': 'lightingAutomation/0.0.0 (Python3)',
+            'Server': 'stageOrchestration/0.0.0 (Python3)',
         })
 
         # Exists

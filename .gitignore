@@ -8,7 +8,7 @@ ext/
 config.development.yaml
 
 # Old path - can be removed once move to v2 is complete
-lighting/
-libs/
+./lighting/
+./libs/
 _temp/
 

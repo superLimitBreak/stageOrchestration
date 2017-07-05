@@ -2,8 +2,8 @@ from ext.misc import freeze, json_object_handler
 
 from unittest.mock import Mock
 
-from lightingAutomation.model.devices.effect_light import GLOBOS
-from lightingAutomation.output.realtime.json import _render_json, RealtimeOutputJSON
+from stageOrchestration.lighting.model.devices.effect_light import GLOBOS
+from stageOrchestration.lighting.output.realtime.json import _render_json, RealtimeOutputJSON
 
 
 def test_output_json(device_collection):

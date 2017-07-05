@@ -8,7 +8,7 @@ import progressbar
 from ext.misc import fast_scan, fast_scan_regex_filter
 from ext.attribute_packer import PersistentFramePacker
 
-from ..model.device_collection_loader import device_collection_loader
+from stageOrchestration.lighting.model.device_collection_loader import device_collection_loader
 from .render_binary_sequence import render_binary_sequence
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')

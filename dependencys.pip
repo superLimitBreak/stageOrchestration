@@ -4,6 +4,7 @@ decorator
 pysistence
 progressbar2
 pillow
+hachoir3
 
 pytest
 ptvsd
