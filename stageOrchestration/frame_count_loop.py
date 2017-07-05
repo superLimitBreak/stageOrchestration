@@ -10,16 +10,7 @@ from ext.loop import Loop
 log = logging.getLogger(__name__)
 
 
-def timer_loop(path_sequence, frame_size, frame_rate, close_event, data_queue):
-    assert os.path.exists(path_sequence), f'Unable to render: {path_sequence} does not exist'
-    filesize = os.stat(path_sequence).st_size
-    assert filesize, f'Nothing to render, {path_sequence} is empty'
-    frames = filesize / frame_size
-    with open(path_sequence, 'rb') as sequence_filehandle:
-        _timer_loop(sequence_filehandle, frame_size, frames, frame_rate, close_event, data_queue)
-
-
-def _timer_loop(sequence_filehandle, frame_size, frames, frame_rate, close_event, data_queue):
+def frame_count_loop(queue, close_event, frames, frame_rate):
 
     bar = progressbar.ProgressBar(
         widgets=(
@@ -33,9 +24,8 @@ def _timer_loop(sequence_filehandle, frame_size, frames, frame_rate, close_event
     ).start()
 
     def render(frame):
-        sequence_filehandle.seek(frame * frame_size)
         try:
-            data_queue.put_nowait(sequence_filehandle.read(frame_size))
+            queue.put_nowait(frame)
         except QueueFullException:
             pass
 
@@ -47,8 +37,8 @@ def _timer_loop(sequence_filehandle, frame_size, frames, frame_rate, close_event
     loop.render = render
     loop.is_running = lambda: not close_event.is_set()
 
-    log.debug('Enter render_loop')
+    log.debug('Enter frame_count_loop')
     loop.run()
-    log.debug('Exit render_loop')
+    log.debug('Exit frame_count_loop')
 
     bar.finish()

@@ -46,6 +46,7 @@ $(EXT):
 	cd $(EXT) && \
 	if [ -d $(EXT_LOCAL_PATH)/ ] ; then \
 		ln -s $(EXT_LOCAL_PATH)/misc.py misc.py ;\
+		ln -s $(EXT_LOCAL_PATH)/process.py process.py ;\
 		ln -s $(EXT_LOCAL_PATH)/loop.py loop.py ;\
 		ln -s $(EXT_LOCAL_PATH)/attribute_packer.py attribute_packer.py ;\
 		ln -s $(EXT_LOCAL_PATH)/net/udp.py udp.py ;\
@@ -56,6 +57,7 @@ $(EXT):
 	else \
 		wget -cq $(LIB_URL)/misc.py ;\
 		wget -cq $(LIB_URL)/loop.py ;\
+		wget -cq $(LIB_URL)/process.py ;\
 		wget -cq $(LIB_URL)/attribute_packer.py ;\
 		wget -cq $(LIB_URL)/net/udp.py ;\
 		wget -cq $(LIB_URL)/net/http_dispatch.py ;\

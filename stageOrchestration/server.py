@@ -5,9 +5,13 @@ from time import sleep
 
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
+from ext.process import SingleOutputStopableProcess
 
-from .lighting.output.realtime.timer_loop import timer_loop
+
+
+from .frame_count_loop import frame_count_loop
 from .lighting.output.realtime import RealtimeOutputManager
+from .lighting.output.realtime.frame_reader import FrameReader
 from .lighting.output.static import StaticOutputManager
 from .lighting.render.sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 from .lighting.model.device_collection_loader import device_collection_loader
@@ -55,9 +59,8 @@ class StageOrchestrationServer(object):
             #print(data['light1']) #
         self.output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
-        self.timer_process_queue = multiprocessing.Queue(1)
-        self.timer_process = None
-        self.timer_process_close_event = None
+        self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
+        self.frame_reader = None
 
     # Event Handling -------------------------------------------------------
 
@@ -65,13 +68,13 @@ class StageOrchestrationServer(object):
         multiprocessing_process_event_queue({
             self.network_event_queue: self.network_event,
             self.scan_update_event_queue: self.scan_update_event,
-            self.timer_process_queue: self.frame_event,
+            self.frame_count_process.queue: self.frame_event,
         })
         # Blocks infinitely and is terminated by ctrl+c or exit event
         self.close()
 
     def close(self):
-        self.stop_sequence()
+        self.frame_count_process.stop()
         self.output_realtime.close()
         self.output_static.close()
         log.info('Removed temporary sequence files')
@@ -88,7 +91,7 @@ class StageOrchestrationServer(object):
                 device.rgb = rgb
             self.output_realtime.update()
         if func == 'lights.clear':
-            self.stop_sequence()
+            self.frame_count_process.stop()
             self.device_collection.reset()
             self.output_realtime.update()
 
@@ -100,37 +103,19 @@ class StageOrchestrationServer(object):
             'sequence_files': tuple(relative.replace('.py', '') for relative, absolute in sequence_files),
         })
 
-    def frame_event(self, buffer):
-        self.device_collection.unpack(buffer, 0)
+    def frame_event(self, frame):
+        self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
         self.output_realtime.update()
 
     # Render Loop --------------------------------------------------------------
 
-    def stop_sequence(self):
-        if self.timer_process_close_event:
-            self.timer_process_close_event.set()
-            self.timer_process.join()
-            self.timer_process_close_event = None
-            self.timer_process = None
-
     def start_sequence(self, sequence_module_name):
-        """
-        Run a timing loop for a sequence
-         1.) Dumbly read the binary file in lumps od .pack_size
-         2.) Fire 'frame_event's of binary data back to this object
-        """
-        self.stop_sequence()
         log.info(f'Start: {sequence_module_name}')
-
-        self.timer_process_close_event = multiprocessing.Event()
-        self.timer_process = multiprocessing.Process(
-            target=timer_loop,
-            args=(
-                self.sequence_manager.get_filename(sequence_module_name),
-                self.device_collection.pack_size,
-                self.options['framerate'],
-                self.timer_process_close_event,
-                self.timer_process_queue
-            ),
+        if self.frame_reader:
+            self.frame_reader.close()
+            self.frame_reader = None
+        self.frame_reader = FrameReader(
+            self.sequence_manager.get_filename(sequence_module_name),
+            self.device_collection.pack_size,
         )
-        self.timer_process.start()
+        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])
