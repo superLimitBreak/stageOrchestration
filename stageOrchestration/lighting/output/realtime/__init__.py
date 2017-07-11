@@ -8,6 +8,11 @@ from .json import RealtimeOutputJSON
 
 class RealtimeOutputManager(object):
     def __init__(self, device_collection, options):
+        """
+        All outputs have a reference to the active device_collection.
+        The device_collection is updated independently elsewhere.
+        This class sends the current state of the device_collection out to it's listeners.
+        """
         self.device_collection = device_collection
         self._output = {}
 

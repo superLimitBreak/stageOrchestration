@@ -14,6 +14,7 @@ DEFAULT_META = {
     'timesigniture': '4:4',
 }
 
+
 def render_binary_sequence(packer, sequence_module, device_collection, frame_rate=30, default_meta=DEFAULT_META):
     """
     Render a lighting sequence to a binary intermediary

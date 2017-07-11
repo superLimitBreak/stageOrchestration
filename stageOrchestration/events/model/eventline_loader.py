@@ -1,9 +1,13 @@
 from stageOrchestration.events.model.eventline import EventLine
-META = {
-    'name': 'Test of tests',
-}
-def create_timeline(t):
+
+
+def eventline_loader(filepath):
+    """
+    """
     el = EventLine()
+
+def create_timeline(t):
+
     el.add_media(
         {
             "deviceid": "front",

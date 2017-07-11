@@ -15,6 +15,8 @@ from .lighting.output.realtime.frame_reader import FrameReader
 from .lighting.output.static import StaticOutputManager
 from .lighting.render.sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 from .lighting.model.device_collection_loader import device_collection_loader
+from .events.model.eventline_loader import eventline_loader
+
 
 log = logging.getLogger(__name__)
 
@@ -57,7 +59,7 @@ class StageOrchestrationServer(object):
                 'data': data,
             })
             #print(data['light1']) #
-        self.output_realtime = RealtimeOutputManager(self.device_collection, self.options)
+        self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
         self.frame_reader = None
@@ -75,7 +77,7 @@ class StageOrchestrationServer(object):
 
     def close(self):
         self.frame_count_process.stop()
-        self.output_realtime.close()
+        self.lighting_output_realtime.close()
         self.output_static.close()
         log.info('Removed temporary sequence files')
         self.tempdir.cleanup()
@@ -89,11 +91,11 @@ class StageOrchestrationServer(object):
             rgb = parse_rgb_color(event.get('value'))
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
-            self.output_realtime.update()
+            self.lighting_output_realtime.update()
         if func == 'lights.clear':
             self.frame_count_process.stop()
             self.device_collection.reset()
-            self.output_realtime.update()
+            self.lighting_output_realtime.update()
 
     def scan_update_event(self, sequence_files):
         self.sequence_manager.reload_sequences(sequence_files)
@@ -105,7 +107,8 @@ class StageOrchestrationServer(object):
 
     def frame_event(self, frame):
         self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
-        self.output_realtime.update()
+        self.lighting_output_realtime.update()
+        self.net.send_message(*self.eventline.render(frame / self.options['framerate']))
 
     # Render Loop --------------------------------------------------------------
 
@@ -119,5 +122,7 @@ class StageOrchestrationServer(object):
             self.sequence_manager.get_filename(sequence_module_name),
             self.device_collection.pack_size,
         )
+        # eventline holds a list of upcoming triggers in a timeline
+        self.eventline = eventline_loader(os.path.join(kwargs['path_stage_description'], f'{sequence_module_name}.yaml'))
         # frame_count_process is bound to self.frame_event each frame tick
         self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])

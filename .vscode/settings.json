@@ -2,6 +2,14 @@
 {
     "python.pythonPath": "${workspaceRoot}/_env/bin/python3",
     "python.venvPath": "${workspaceRoot}/_env/",
-    "python.unitTest.pyTestEnabled": true,
-    "python.unitTest.pyTestArgs": ["ext", "lightingAutomation", "tests", "--doctest-modules"]
+    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.pyTestArgs": [
+        "ext",
+        "lightingAutomation",
+        "tests",
+        "--doctest-modules"
+    ],
+    "python.unitTest.promptToConfigure": false,
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false
 }

@@ -46,3 +46,6 @@ class EventLine():
         renderer = self.tl.get_renderer()
         renderer.render(timecode)
         return tuple(i.element for i in renderer._active)
+
+    def render(self, timestamp):
+        return tuple()
