@@ -46,6 +46,7 @@ class SequenceManager(object):
         return sequence
 
     def get_packer(self, sequence, assert_exists=True):
+        # TODO: make this a context manager?
         sequence = self.get_filename(sequence)
         if assert_exists:
             assert os.path.exists(sequence)

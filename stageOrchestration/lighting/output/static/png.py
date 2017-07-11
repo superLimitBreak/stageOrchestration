@@ -62,7 +62,9 @@ def serve_png(options):
     http_dispatch(func_dispatch)
 
 
-def render_png(packer, device_collection, framerate=10, pixels_per_second=10):
+def render_png(packer, device_collection, framerate=None, pixels_per_second=8):
+    framerate = float(framerate)
+    assert framerate > 0
     image = PIL.Image.new('RGB', (packer.frames, len(device_collection.devices)))
     for frame_number in range(packer.frames):
         packer.restore_frame(frame_number)

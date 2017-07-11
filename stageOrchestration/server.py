@@ -114,8 +114,10 @@ class StageOrchestrationServer(object):
         if self.frame_reader:
             self.frame_reader.close()
             self.frame_reader = None
+        # frame_reader points at sequence binary file
         self.frame_reader = FrameReader(
             self.sequence_manager.get_filename(sequence_module_name),
             self.device_collection.pack_size,
         )
+        # frame_count_process is bound to self.frame_event each frame tick
         self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])
