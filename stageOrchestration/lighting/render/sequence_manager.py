@@ -1,12 +1,18 @@
+import sys
 import logging
 import re
 import os.path
 import importlib
+from pathlib import PurePath
+from functools import reduce
+from functools import partial
 
 import progressbar
+import yaml
 
 from ext.misc import fast_scan, fast_scan_regex_filter
 from ext.attribute_packer import PersistentFramePacker
+from ext.music import get_time, parse_timesigniture
 
 from stageOrchestration.lighting.model.device_collection_loader import device_collection_loader
 from .render_binary_sequence import render_binary_sequence
@@ -20,12 +26,13 @@ log = logging.getLogger(__name__)
 class SequenceManager(object):
 
     def __init__(self, path_sequences=None, path_stage_description=None, tempdir=None, framerate=None, **kwargs):
-        assert path_sequences
-        assert path_stage_description
+        assert os.path.isdir(path_sequences)
+        assert os.path.isfile(path_stage_description)
         assert os.path.exists(tempdir)
         assert framerate
 
-        self.path_sequences = path_sequences
+        self.path_sequences = PurePath(path_sequences)
+        sys.path.append(str(self.path_sequences.parent))  # Can't load modules from path. Must add a system path. Thanks Python.
         self.tempdir = tempdir
         self.framerate = framerate
         self.device_collection = device_collection_loader(path_stage_description)
@@ -61,7 +68,7 @@ class SequenceManager(object):
         def _all_sequence_files():
             return tuple(
                 (f.relative, f.abspath)
-                for f in fast_scan(self.path_sequences, search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES)
+                for f in fast_scan(str(self.path_sequences), search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES)
             )
 
         bar_sequence_name_label = progressbar.FormatCustomText('%(sequence_name)-20s', {'sequence_name': ''})
@@ -82,7 +89,7 @@ class SequenceManager(object):
         if package_name in self.sequence_modules:
             importlib.reload(self.sequence_modules[package_name])
         else:
-            self.sequence_modules[package_name] = importlib.import_module(f'{self.path_sequences}.{package_name}')
+            self.sequence_modules[package_name] = importlib.import_module(f'{self.path_sequences.stem}.{package_name}')
         sequence_module = self.sequence_modules[package_name]
         setattr(sequence_module, '_sequence_name', sequence_module.__name__.replace(f'{sequence_module.__package__}.', ''))
         return sequence_module
@@ -90,10 +97,22 @@ class SequenceManager(object):
     def _render_sequence_module(self, sequence_module):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
         packer = self.get_packer(sequence_module, assert_exists=False)
+
+        def meta_yaml_reducer(accu, filename):
+            filename = os.path.join(self.path_sequences, filename)
+            if os.path.exists(filename):
+                with open(filename, 'rt') as filehandle:
+                    accu.update(yaml.load(filehandle))
+            return accu
+        meta = reduce(meta_yaml_reducer, ('_default.yaml', f'{sequence_module._sequence_name}.yaml'), {})
+
+        get_time_func = partial(get_time, timesigniture=parse_timesigniture(meta['timesignature']), bpm=meta['bpm'])
+
         render_binary_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
+            get_time_func=get_time_func,
             frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()

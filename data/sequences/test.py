@@ -1,9 +1,5 @@
 from ext.timeline import Timeline
-META = {
-    'name': 'Test of tests',
-    'bpm': 120,
-    'timesigniture': '4:4',
-}
+
 def create_timeline(dc, t):
     tl = Timeline()
     #tl.set_(dc.get_device('floorLarge1'), values={'red': 0, 'green': 0, 'blue': 0})
