@@ -40,8 +40,6 @@ class SequenceManager(object):
 
         self.sequence_modules = {}
 
-        self.reload_sequences()
-
     def get_filename(self, sequence):
         """
         Can be passed a module, sequence_name or filename
@@ -99,20 +97,19 @@ class SequenceManager(object):
         packer = self.get_packer(sequence_module, assert_exists=False)
 
         def meta_yaml_reducer(accu, filename):
-            filename = os.path.join(self.path_sequences, filename)
+            filename = os.path.join(self.path_sequences, f'{filename}.yaml')
             if os.path.exists(filename):
                 with open(filename, 'rt') as filehandle:
                     accu.update(yaml.load(filehandle))
             return accu
-        meta = reduce(meta_yaml_reducer, ('_default.yaml', f'{sequence_module._sequence_name}.yaml'), {})
-
-        get_time_func = partial(get_time, timesigniture=parse_timesigniture(meta['timesignature']), bpm=meta['bpm'])
+        meta = reduce(meta_yaml_reducer, ('_default', sequence_module._sequence_name), {})
+        meta['get_time_func'] = partial(get_time, timesigniture=parse_timesigniture(meta['timesignature']), bpm=meta['bpm'])
 
         render_binary_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
-            get_time_func=get_time_func,
+            get_time_func=meta['get_time_func'],
             frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()

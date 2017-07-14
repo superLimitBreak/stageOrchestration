@@ -50,6 +50,7 @@ class StageOrchestrationServer(object):
 
         self.device_collection = device_collection_loader(kwargs['path_stage_description'])
         self.sequence_manager = SequenceManager(**self.options)
+        self.sequence_manager.reload_sequences()
         self.output_static = StaticOutputManager(self.options)
 
         if hasattr(self, 'net'):
