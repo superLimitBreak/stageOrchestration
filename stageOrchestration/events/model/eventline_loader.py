@@ -5,6 +5,7 @@ def eventline_loader(filepath):
     """
     """
     el = EventLine()
+    return el
 
 def create_timeline(t):
 

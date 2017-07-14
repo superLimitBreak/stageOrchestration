@@ -4,17 +4,14 @@ import re
 import os.path
 import importlib
 from pathlib import PurePath
-from functools import reduce
-from functools import partial
+
 
 import progressbar
-import yaml
 
 from ext.misc import fast_scan, fast_scan_regex_filter
 from ext.attribute_packer import PersistentFramePacker
-from ext.music import get_time, parse_timesigniture
 
-from stageOrchestration.lighting.model.device_collection_loader import device_collection_loader
+from stageOrchestration.meta_manager import MetaManager
 from .render_binary_sequence import render_binary_sequence
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')
@@ -25,9 +22,8 @@ log = logging.getLogger(__name__)
 
 class SequenceManager(object):
 
-    def __init__(self, path_sequences=None, path_stage_description=None, tempdir=None, framerate=None, **kwargs):
+    def __init__(self, path_sequences=None, tempdir=None, framerate=None, load_device_collection=None, **kwargs):
         assert os.path.isdir(path_sequences)
-        assert os.path.isfile(path_stage_description)
         assert os.path.exists(tempdir)
         assert framerate
 
@@ -35,8 +31,10 @@ class SequenceManager(object):
         sys.path.append(str(self.path_sequences.parent))  # Can't load modules from path. Must add a system path. Thanks Python.
         self.tempdir = tempdir
         self.framerate = framerate
-        self.device_collection = device_collection_loader(path_stage_description)
+
+        self.device_collection = load_device_collection()
         assert self.device_collection.devices
+        self.meta_manager = MetaManager(path_sequences)
 
         self.sequence_modules = {}
 
@@ -96,20 +94,11 @@ class SequenceManager(object):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
         packer = self.get_packer(sequence_module, assert_exists=False)
 
-        def meta_yaml_reducer(accu, filename):
-            filename = os.path.join(self.path_sequences, f'{filename}.yaml')
-            if os.path.exists(filename):
-                with open(filename, 'rt') as filehandle:
-                    accu.update(yaml.load(filehandle))
-            return accu
-        meta = reduce(meta_yaml_reducer, ('_default', sequence_module._sequence_name), {})
-        meta['get_time_func'] = partial(get_time, timesigniture=parse_timesigniture(meta['timesignature']), bpm=meta['bpm'])
-
         render_binary_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
-            get_time_func=meta['get_time_func'],
+            get_time_func=self.meta_manager.get_meta(sequence_module._sequence_name)['get_time_func'],
             frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()

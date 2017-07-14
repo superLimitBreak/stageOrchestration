@@ -48,7 +48,11 @@ class StageOrchestrationServer(object):
                 rescan_interval=self.options['scaninterval']
             )
 
-        self.device_collection = device_collection_loader(kwargs['path_stage_description'])
+        def load_device_collection():
+            return device_collection_loader(kwargs['path_stage_description'])
+        self.options['load_device_collection'] = load_device_collection
+
+        self.device_collection = load_device_collection()
         self.sequence_manager = SequenceManager(**self.options)
         self.sequence_manager.reload_sequences()
         self.output_static = StaticOutputManager(self.options)
@@ -124,6 +128,6 @@ class StageOrchestrationServer(object):
             self.device_collection.pack_size,
         )
         # eventline holds a list of upcoming triggers in a timeline
-        self.eventline = eventline_loader(os.path.join(kwargs['path_sequences'], f'{sequence_module_name}.yaml'))
+        self.eventline = eventline_loader('poo')  #os.path.join(kwargs['path_sequences'], f'{sequence_module_name}.yaml')
         # frame_count_process is bound to self.frame_event each frame tick
         self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])
