@@ -8,7 +8,7 @@ import PIL.Image
 from ext.misc import hashfile, random_string, one_to_limit
 from ext.http_dispatch import http_dispatch
 
-from stageOrchestration.lighting.render.sequence_manager import SequenceManager
+from stageOrchestration.sequence_manager import SequenceManager
 
 log = logging.getLogger(__name__)
 

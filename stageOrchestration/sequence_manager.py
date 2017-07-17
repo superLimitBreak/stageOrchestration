@@ -12,7 +12,7 @@ from ext.misc import fast_scan, fast_scan_regex_filter
 from ext.attribute_packer import PersistentFramePacker
 
 from stageOrchestration.meta_manager import MetaManager
-from .render_binary_sequence import render_binary_sequence
+from stageOrchestration.lighting.output.static.render_binary_sequence import render_binary_sequence
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')
 FAST_SCAN_REGEX_FILTER_FOR_PY_FILES = fast_scan_regex_filter(file_regex=REGEX_PY_EXTENSION, ignore_regex=r'^_')

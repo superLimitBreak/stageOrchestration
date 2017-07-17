@@ -7,15 +7,14 @@ from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
 from ext.process import SingleOutputStopableProcess
 
-
-
 from .frame_count_loop import frame_count_loop
 from .lighting.output.realtime import RealtimeOutputManager
 from .lighting.output.realtime.frame_reader import FrameReader
 from .lighting.output.static import StaticOutputManager
-from .lighting.render.sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 from .lighting.model.device_collection_loader import device_collection_loader
 from .events.model.eventline_loader import eventline_loader
+
+from .sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 
 
 log = logging.getLogger(__name__)
