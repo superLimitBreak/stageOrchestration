@@ -3,6 +3,7 @@ import logging
 import re
 import os.path
 import importlib
+import json
 from pathlib import PurePath
 
 
@@ -12,7 +13,7 @@ from ext.misc import fast_scan, fast_scan_regex_filter
 from ext.attribute_packer import PersistentFramePacker
 
 from stageOrchestration.meta_manager import MetaManager
-from stageOrchestration.lighting.output.static.render_binary_sequence import render_binary_sequence
+from stageOrchestration.render_sequence import render_sequence
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')
 FAST_SCAN_REGEX_FILTER_FOR_PY_FILES = fast_scan_regex_filter(file_regex=REGEX_PY_EXTENSION, ignore_regex=r'^_')
@@ -38,19 +39,26 @@ class SequenceManager(object):
 
         self.sequence_modules = {}
 
-    def get_filename(self, sequence):
+    def get_rendered_trigger_filename(self, sequence):
+        """
+        TODO: I've made the SequenceManager derive the .trigger.yaml filename
+        This is because the .py sequence could/should in future contain the triggers.
+        """
+        return self.get_rendered_filename(sequence, suffix='.triggers.yaml')
+
+    def get_rendered_filename(self, sequence, suffix=''):
         """
         Can be passed a module, sequence_name or filename
         """
         if hasattr(sequence, '_sequence_name'):
             sequence = sequence._sequence_name
         if not os.path.exists(sequence):
-            sequence = os.path.join(self.tempdir, sequence)
+            sequence = os.path.join(self.tempdir, f'{sequence}{suffix}')
         return sequence
 
     def get_packer(self, sequence, assert_exists=True):
         # TODO: make this a context manager?
-        sequence = self.get_filename(sequence)
+        sequence = self.get_rendered_filename(sequence)
         if assert_exists:
             assert os.path.exists(sequence)
         return PersistentFramePacker(self.device_collection, sequence)
@@ -91,10 +99,15 @@ class SequenceManager(object):
         return sequence_module
 
     def _render_sequence_module(self, sequence_module):
+        """
+        A sequence is rendered to 2 files
+          1.) a binary representation of the lights, split into frames of lighting rig state
+          2.) a json dict of events (with the rendered timings and durations)
+        """
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
-        packer = self.get_packer(sequence_module, assert_exists=False)
 
-        render_binary_sequence(
+        packer = self.get_packer(sequence_module, assert_exists=False)
+        timeline, eventline = render_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
@@ -103,3 +116,6 @@ class SequenceManager(object):
         )
         packer.close()
         assert os.path.exists(packer.filename), f'Should have generated sequence file {packer.filename}'
+
+        with open(self.get_rendered_trigger_filename(sequence_module), 'wt') as filehandle:
+            json.dump(eventline.data, filehandle)

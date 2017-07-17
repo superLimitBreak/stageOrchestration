@@ -10,9 +10,8 @@ from ext.process import SingleOutputStopableProcess
 from .frame_count_loop import frame_count_loop
 from .lighting.output.realtime import RealtimeOutputManager
 from .lighting.output.realtime.frame_reader import FrameReader
-from .lighting.output.static import StaticOutputManager
+from .lighting.output.static.png import StaticOutputPNG
 from .lighting.model.device_collection_loader import device_collection_loader
-from .events.model.eventline_loader import eventline_loader
 
 from .sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 
@@ -54,7 +53,7 @@ class StageOrchestrationServer(object):
         self.device_collection = load_device_collection()
         self.sequence_manager = SequenceManager(**self.options)
         self.sequence_manager.reload_sequences()
-        self.output_static = StaticOutputManager(self.options)
+        self.static_png = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
 
         if hasattr(self, 'net'):
             self.options['json_send'] = lambda data: self.net.send_message({
@@ -82,7 +81,8 @@ class StageOrchestrationServer(object):
     def close(self):
         self.frame_count_process.stop()
         self.lighting_output_realtime.close()
-        self.output_static.close()
+        if self.static_png:
+            self.static_png.close()
         log.info('Removed temporary sequence files')
         self.tempdir.cleanup()
 
@@ -123,10 +123,12 @@ class StageOrchestrationServer(object):
             self.frame_reader = None
         # frame_reader points at sequence binary file
         self.frame_reader = FrameReader(
-            self.sequence_manager.get_filename(sequence_module_name),
+            self.sequence_manager.get_rendered_filename(sequence_module_name),
             self.device_collection.pack_size,
         )
         # eventline holds a list of upcoming triggers in a timeline
-        self.eventline = eventline_loader('poo')  #os.path.join(kwargs['path_sequences'], f'{sequence_module_name}.yaml')
+        with open(self.sequence_manager.get_rendered_trigger_filename(sequence_module_name), 'wt') as filehandle:
+            self.eventline = EventLine(data=json.load(filehandle))
+
         # frame_count_process is bound to self.frame_event each frame tick
         self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])
