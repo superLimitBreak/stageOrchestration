@@ -21,7 +21,7 @@ def render_sequence(packer, sequence_module, device_collection, get_time_func, f
 
     timeline = timeline or Timeline()
     triggerline = triggerline or TriggerLine()
-    getattr(sequence_module, RENDER_FUNCTION)(device_collection, get_time_func, timeline, triggerline)
+    timeline = getattr(sequence_module, RENDER_FUNCTION)(device_collection, get_time_func, timeline, triggerline)
     assert timeline.duration, f'{sequence_module.__name__} timeline does not contain any items to animate'
 
     log.debug(f'Rendering {sequence_module._sequence_name}')

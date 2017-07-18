@@ -30,3 +30,5 @@ def create_timeline(dc, t, tl, el):
         "timestamp": t('4.0.0'),
         "duration": t('1.0.0'),  # TEMP - To be removed with auto duration
     })
+
+    return tl

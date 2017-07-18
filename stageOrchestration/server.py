@@ -2,6 +2,7 @@ import logging
 import multiprocessing
 import tempfile
 from time import sleep
+import json
 
 from ext.client_reconnect import SubscriptionClient
 from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
@@ -12,6 +13,7 @@ from .lighting.output.realtime import RealtimeOutputManager
 from .lighting.output.realtime.frame_reader import FrameReader
 from .lighting.output.static.png import StaticOutputPNG
 from .lighting.model.device_collection_loader import device_collection_loader
+from .events.model.triggerline import TriggerLine
 
 from .sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 
@@ -113,7 +115,8 @@ class StageOrchestrationServer(object):
     def frame_event(self, frame):
         self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
         self.lighting_output_realtime.update()
-        self.net.send_message(*self.triggerline.render(frame / self.options['framerate']))
+        if self.triggerline:
+            self.net.send_message(*self.triggerline.render(frame / self.options['framerate']))
 
     # Render Loop --------------------------------------------------------------
 
@@ -128,7 +131,7 @@ class StageOrchestrationServer(object):
             self.device_collection.pack_size,
         )
         # triggerline holds a list of upcoming triggers in a timeline
-        with open(self.sequence_manager.get_rendered_trigger_filename(sequence_module_name), 'wt') as filehandle:
+        with open(self.sequence_manager.get_rendered_trigger_filename(sequence_module_name), 'rt') as filehandle:
             self.triggerline = TriggerLine(json.load(filehandle))
 
         # frame_count_process is bound to self.frame_event each frame tick
