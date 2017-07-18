@@ -107,15 +107,15 @@ class SequenceManager(object):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
 
         packer = self.get_packer(sequence_module, assert_exists=False)
-        timeline, eventline = render_sequence(
+        timeline, triggerline = render_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
-            get_time_func=self.meta_manager.get_meta(sequence_module._sequence_name)['get_time_func'],
+            get_time_func=self.meta_manager.get_meta(sequence_module)['get_time_func'],
             frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()
         assert os.path.exists(packer.filename), f'Should have generated sequence file {packer.filename}'
 
         with open(self.get_rendered_trigger_filename(sequence_module), 'wt') as filehandle:
-            json.dump(eventline.data, filehandle)
+            json.dump(triggerline.data, filehandle)

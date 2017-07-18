@@ -66,6 +66,7 @@ class StageOrchestrationServer(object):
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
         self.frame_reader = None
+        self.triggerline = None
 
     # Event Handling -------------------------------------------------------
 
@@ -112,7 +113,7 @@ class StageOrchestrationServer(object):
     def frame_event(self, frame):
         self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
         self.lighting_output_realtime.update()
-        self.net.send_message(*self.eventline.render(frame / self.options['framerate']))
+        self.net.send_message(*self.triggerline.render(frame / self.options['framerate']))
 
     # Render Loop --------------------------------------------------------------
 
@@ -126,9 +127,9 @@ class StageOrchestrationServer(object):
             self.sequence_manager.get_rendered_filename(sequence_module_name),
             self.device_collection.pack_size,
         )
-        # eventline holds a list of upcoming triggers in a timeline
+        # triggerline holds a list of upcoming triggers in a timeline
         with open(self.sequence_manager.get_rendered_trigger_filename(sequence_module_name), 'wt') as filehandle:
-            self.eventline = EventLine(data=json.load(filehandle))
+            self.triggerline = TriggerLine(json.load(filehandle))
 
         # frame_count_process is bound to self.frame_event each frame tick
         self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])

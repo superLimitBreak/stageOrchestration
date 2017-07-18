@@ -1,5 +1,10 @@
 from ext.timeline import Timeline
 
+META = {
+    'name': 'Test of tests',
+    'bpm': 120,
+    'timesignature': '4:4',
+}
 
 def create_timeline(dc, t, tl, el):
     #tl.set_(dc.get_device('floorLarge1'), values={'red': 0, 'green': 0, 'blue': 0})
@@ -10,3 +15,18 @@ def create_timeline(dc, t, tl, el):
         tl_intermediate.set_(rgb_strip_lights, values={'red': 0, 'green': 0})
         tl &= tl_intermediate
     tl = tl * 4
+
+    el.add_trigger({
+        "deviceid": "front",
+        "func": "video.start",
+        "src": "/assets/gurren_lagann.mp4",
+        "timestamp": t('0.0.0'),
+        "duration": t('1.0.0'),  # TEMP - To be removed with auto duration
+    })
+    el.add_trigger({
+        "deviceid": "rear",
+        "func": "video.start",
+        "src": "/assets/saikano.mp4",
+        "timestamp": t('4.0.0'),
+        "duration": t('1.0.0'),  # TEMP - To be removed with auto duration
+    })
