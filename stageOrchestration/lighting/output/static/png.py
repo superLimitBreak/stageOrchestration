@@ -33,7 +33,7 @@ def serve_png(options):
         })
 
         # Exists
-        sequence_filename = sequence_manager.get_filename(request_dict['path'].strip('/'))
+        sequence_filename = sequence_manager.get_rendered_filename(request_dict['path'].strip('/'))
         if not os.path.exists(sequence_filename):
             response_dict.update({'_status': '404 Not Found'})
             return response_dict
