@@ -27,7 +27,7 @@ def create_timeline(dc, t, tl, el):
         "deviceid": "rear",
         "func": "video.start",
         "src": "/assets/saikano.mp4",
-        "timestamp": t('4.0.0'),
+        "timestamp": t('8.0.0'),
         "duration": t('1.0.0'),  # TEMP - To be removed with auto duration
     })
 

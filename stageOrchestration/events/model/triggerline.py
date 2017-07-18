@@ -54,11 +54,31 @@ class TriggerLine():
         """
         return self.triggers
 
-    def get_triggers_at(self, timecode):
-        renderer = self.tl.get_renderer()
-        renderer.render(timecode)
-        return tuple(i.element for i in renderer._active)
+    #def get_triggers_at(self, timecode):
+    #    renderer = self.tl.get_renderer()
+    #    renderer.render(timecode)
+    #    return tuple(i.element for i in renderer._active)
 
-    def render(self, timestamp):
-        # TODO: make return immutable
-        return self.triggers
+    def get_render(self):
+        return _TriggerRenderWrapper(self.tl.get_renderer())
+
+
+class _TriggerRenderWrapper():
+    def __init__(self, renderer):
+        self.renderer = renderer
+        self.rendered_ids = set()
+
+    def reset(self):
+        self.renderer.reset()
+        rendered_triggers.clear()
+
+    def get_triggers_at(self, timecode):
+        """
+        Will only trigger items once
+        """
+        self.renderer.render(timecode)
+        current_active_item_ids = set(map(id, self.renderer._active))
+        new_active_item_ids = current_active_item_ids - self.rendered_ids
+        new_active_items = tuple(i.element for i in self.renderer._active if id(i) in new_active_item_ids)
+        self.rendered_ids &= current_active_item_ids
+        return new_active_items
