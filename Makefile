@@ -18,7 +18,7 @@ help:
 	#    - upgrade_pip          : Update python dependencys
 	#  - run                    : Run in development mode
 	#    - run_production       : Braudcast to Artnet3
-	#  - test                   :
+	#  - test                   : Run unit tests
 	#
 
 

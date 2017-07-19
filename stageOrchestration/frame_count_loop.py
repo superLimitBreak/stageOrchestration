@@ -10,11 +10,11 @@ from ext.loop import Loop
 log = logging.getLogger(__name__)
 
 
-def frame_count_loop(queue, close_event, frames, frame_rate):
+def frame_count_loop(queue, close_event, frames, frame_rate, title=''):
 
     bar = progressbar.ProgressBar(
         widgets=(
-            'Rendering - Frame: ', progressbar.Counter(),
+            f'{title[:8]} - Frame: ', progressbar.Counter(),
             ' ', progressbar.Bar(marker='=', left='[', right=']'),
             ' ', progressbar.Percentage(),
             ' | ', progressbar.Timer(),

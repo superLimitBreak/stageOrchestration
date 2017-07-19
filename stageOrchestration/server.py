@@ -135,4 +135,4 @@ class StageOrchestrationServer(object):
             self.triggerline_renderer = TriggerLine(json.load(filehandle)).get_render()
 
         # frame_count_process is bound to self.frame_event each frame tick
-        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'])
+        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name)
