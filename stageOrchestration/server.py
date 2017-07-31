@@ -58,12 +58,14 @@ class StageOrchestrationServer(object):
         self.static_png = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
 
         if hasattr(self, 'net'):
-            self.options['json_send'] = lambda data: self.net.send_message({
+            self.options['json_send'] = lambda frame_number, data: self.net.send_message({
                 'deviceid': self.DEVICEID_VISULISATION,
                 'func': 'lightState',
-                'data': data,
+                'data': {
+                    'frame': frame_number,
+                    'state': data,
+                },
             })
-            #print(data['light1']) #
         self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
@@ -114,7 +116,7 @@ class StageOrchestrationServer(object):
 
     def frame_event(self, frame):
         self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
-        self.lighting_output_realtime.update()
+        self.lighting_output_realtime.update(frame)
         if self.triggerline_renderer:
             self.net.send_message(*self.triggerline_renderer.get_triggers_at(frame / self.options['framerate']))
 

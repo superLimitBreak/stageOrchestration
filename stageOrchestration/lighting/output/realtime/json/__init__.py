@@ -8,8 +8,8 @@ class RealtimeOutputJSON(object):
         self.device_collection = device_collection
         self.json_send_function = json_send_function
 
-    def update(self):
-        self.json_send_function(_render_json(self.device_collection))
+    def update(self, frame):
+        self.json_send_function(frame, _render_json(self.device_collection))
 
 
 def _render_json(device_collection):

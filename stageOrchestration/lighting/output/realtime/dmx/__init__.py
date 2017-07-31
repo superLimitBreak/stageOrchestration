@@ -19,7 +19,7 @@ class RealtimeOutputDMX(object):
             self.mapping = make_dict(yaml.load(filehandle))
         self.buffer = bytearray(self.mapping.get('dmx_size', 512))
 
-    def update(self):
+    def update(self, frame):
         self.artnet.dmx(_render_dmx(self.device_collection, self.mapping, self.buffer))
 
 

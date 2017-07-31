@@ -29,9 +29,9 @@ class RealtimeOutputManager(object):
         self.device_collection.reset()
         self.update()
 
-    def update(self):
+    def update(self, frame=0):
         """
         Output the state of the device_collection to the registered output renderers
         """
         for output in self._output.values():
-            output.update()
+            output.update(frame)
