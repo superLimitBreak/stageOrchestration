@@ -58,11 +58,11 @@ class StageOrchestrationServer(object):
         self.static_png = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
 
         if hasattr(self, 'net'):
-            self.options['json_send'] = lambda frame_number, data: self.net.send_message({
+            self.options['json_send'] = lambda frame, data: self.net.send_message({
                 'deviceid': self.DEVICEID_VISULISATION,
                 'func': 'lightState',
                 'data': {
-                    'frame': frame_number,
+                    'timecode': frame / self.options['framerate'],
                     'state': data,
                 },
             })
