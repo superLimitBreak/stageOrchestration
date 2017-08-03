@@ -10,7 +10,7 @@ from ext.loop import Loop
 log = logging.getLogger(__name__)
 
 
-def frame_count_loop(queue, close_event, frames, frame_rate, title=''):
+def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift=0):
 
     bar = progressbar.ProgressBar(
         widgets=(
@@ -33,7 +33,7 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title=''):
         if frame >= frames - 1:
             close_event.set()
 
-    loop = Loop(frame_rate)
+    loop = Loop(frame_rate, timeshift=timeshift)
     loop.render = render
     loop.is_running = lambda: not close_event.is_set()
 

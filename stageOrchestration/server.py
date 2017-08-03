@@ -68,6 +68,7 @@ class StageOrchestrationServer(object):
             })
         self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
+        self.current_sequence_module_name = None
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
         self.frame_reader = None
         self.triggerline_renderer = None
@@ -95,18 +96,19 @@ class StageOrchestrationServer(object):
         log.debug(event)
         func = event.get('func')
         if func == 'LightTiming.start':
-            self.start_sequence(event.get("scene"))
+            self.start_sequence(event.get('scene'))
         if func == 'lights.set':
             rgb = parse_rgb_color(event.get('value'))
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
             self.lighting_output_realtime.update()
         if func == 'lights.clear':
-            self.frame_count_process.stop()
-            self.device_collection.reset()
+            self.stop_sequence()
             self.lighting_output_realtime.update()
+            self.current_sequence_module_name = None
         if func == 'lights.seek':
-            log.info(f'''seek {event.get('timecode')}''')
+            self.stop_sequence()
+            self.start_sequence(timeshift=event.get('timecode'))
 
     def scan_update_event(self, sequence_files):
         self.sequence_manager.reload_sequences(sequence_files)
@@ -124,7 +126,11 @@ class StageOrchestrationServer(object):
 
     # Render Loop --------------------------------------------------------------
 
-    def start_sequence(self, sequence_module_name):
+    def start_sequence(self, sequence_module_name=None, timeshift=0):
+        if sequence_module_name:
+            self.current_sequence_module_name = sequence_module_name
+        else:
+            sequence_module_name = self.current_sequence_module_name
         log.info(f'Start: {sequence_module_name}')
         if self.frame_reader:
             self.frame_reader.close()
@@ -139,4 +145,9 @@ class StageOrchestrationServer(object):
             self.triggerline_renderer = TriggerLine(json.load(filehandle)).get_render()
 
         # frame_count_process is bound to self.frame_event each frame tick
-        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name)
+        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name, timeshift=timeshift)
+
+    def stop_sequence(self):
+        self.frame_count_process.stop()
+        self.device_collection.reset()
+        self.triggerline_renderer.reset()

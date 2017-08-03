@@ -66,11 +66,11 @@ class TriggerLine():
 class _TriggerRenderWrapper():
     def __init__(self, renderer):
         self.renderer = renderer
-        self.rendered_ids = set()
+        self.reset()
 
     def reset(self):
         self.renderer.reset()
-        rendered_triggers.clear()
+        self.rendered_ids = set()
 
     def get_triggers_at(self, timecode):
         """
