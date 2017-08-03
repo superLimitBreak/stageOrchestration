@@ -105,6 +105,8 @@ class StageOrchestrationServer(object):
             self.frame_count_process.stop()
             self.device_collection.reset()
             self.lighting_output_realtime.update()
+        if func == 'lights.seek':
+            log.info(f'''seek {event.get('timecode')}''')
 
     def scan_update_event(self, sequence_files):
         self.sequence_manager.reload_sequences(sequence_files)
