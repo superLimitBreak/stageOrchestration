@@ -20,6 +20,7 @@ class FrameReader():
         self.sequence_filehandle = open(path_sequence, 'rb')
 
     def read_frame(self, frame):
+        assert frame >= 0 and frame < self.frames, f'frame {frame} out of range 0 to {self.frames}'
         self.sequence_filehandle.seek(frame * self.frame_size)
         return self.sequence_filehandle.read(self.frame_size)
 

@@ -24,14 +24,15 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift
     ).start()
 
     def render(frame):
+        if frame >= frames:
+            close_event.set()
+            return
         try:
             queue.put_nowait(frame)
         except QueueFullException:
+            log.warning(f'QueueFullException frame:{frame}')
             pass
-
         bar.update(frame)
-        if frame >= frames - 1:
-            close_event.set()
 
     loop = Loop(frame_rate, timeshift=timeshift)
     loop.render = render
@@ -39,6 +40,8 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift
 
     log.debug('Enter frame_count_loop')
     loop.run()
+    queue.close()
     log.debug('Exit frame_count_loop')
 
     bar.finish()
+
