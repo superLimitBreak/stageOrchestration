@@ -2,6 +2,8 @@ import os
 import logging
 from multiprocessing import Process
 from io import BytesIO
+from collections import ChainMap
+from itertools import chain
 
 import PIL.Image
 
@@ -12,8 +14,12 @@ from stageOrchestration.sequence_manager import SequenceManager
 
 log = logging.getLogger(__name__)
 
-DEFAULT_PIXELS_PER_SECOND = 8
-DEFAULT_FRAMERATE = 30
+DEFAULT_render_png_kwargs = {
+    'framerate': 30,
+    'pixels_per_second': 8,
+    'frame_start': 0,
+    'frame_end': None,
+}
 
 
 class StaticOutputPNG(object):
@@ -42,11 +48,21 @@ def serve_png(options):
             response_dict.update({'_status': '404 Not Found'})
             return response_dict
 
-        def hash_query_fields(*fields):
-            return '|'.join(request_dict['query'].get(field, '') for field in fields)
+        render_png_kwargs = {
+            k: v
+            for k, v in ChainMap(
+                request_dict['query'],
+                options,
+                DEFAULT_render_png_kwargs,
+            ).items()
+            if k in DEFAULT_render_png_kwargs.keys()
+        }
 
         # Etag
-        sequence_hash = hashfile(sequence_filename) + hash_query_fields('framerate', 'pixels_per_second') + SALT
+        sequence_hash = '|'.join(
+            chain((hashfile(sequence_filename), SALT, request_dict['query'].get('cachebust', '')),
+            map(str, render_png_kwargs.values()))
+        )
         if sequence_hash in request_dict.get('If-None-Match', ''):
             response_dict.update({'_status': '304 Not Modified'})
             return response_dict
@@ -60,8 +76,7 @@ def serve_png(options):
                 '_body': render_png(
                     sequence_manager.get_packer(sequence_filename),
                     sequence_manager.device_collection,
-                    framerate=request_dict['query'].get('framerate', options.get('framerate', DEFAULT_FRAMERATE)),
-                    pixels_per_second=request_dict['query'].get('pixels_per_second', options.get('http_png_pixels_per_second', DEFAULT_PIXELS_PER_SECOND))
+                    **render_png_kwargs,
                 ),
             })
 
@@ -70,22 +85,27 @@ def serve_png(options):
     http_dispatch(func_dispatch)
 
 
-def render_png(packer, device_collection, framerate=None, pixels_per_second=DEFAULT_PIXELS_PER_SECOND):
-    log.info(f'framerate: {framerate} pixels_per_second:{pixels_per_second}')
+def render_png(packer, device_collection, framerate=None, pixels_per_second=DEFAULT_render_png_kwargs['pixels_per_second'], frame_start=0, frame_end=None):
+    log.debug(f'render_png - framerate:{framerate} pixels_per_second:{pixels_per_second} frame_start:{frame_start} frame_end:{frame_end}')
     framerate = float(framerate)
     pixels_per_second = float(pixels_per_second)
     assert framerate > 0
     assert pixels_per_second
-    image = PIL.Image.new('RGB', (packer.frames, len(device_collection.devices)))
-    for frame_number in range(packer.frames):
+    frame_start = int(frame_start)
+    frame_end = int(frame_end or packer.frames)
+    assert frame_start >= 0
+    assert frame_end > frame_start
+
+    image = PIL.Image.new('RGB', (frame_end - frame_start, len(device_collection.devices)))
+    for frame_number in range(frame_start, frame_end):
         packer.restore_frame(frame_number)
         for device_number, device in enumerate(device_collection.get_devices()):
-            image.putpixel((frame_number, device_number), tuple(map(one_to_limit, device.rgb)))
+            image.putpixel((frame_number - frame_start, device_number), tuple(map(one_to_limit, device.rgb)))
 
     with BytesIO() as buffer:
         image.resize(
             # Resize image to have consistent pixels per second regardless of frame_rate of sequence
-            (int(packer.frames * (pixels_per_second / framerate)), image.height)
+            (int((frame_end - frame_start) * (pixels_per_second / framerate)), image.height)
         ).save(buffer, 'PNG')
         return buffer.getvalue()
 
