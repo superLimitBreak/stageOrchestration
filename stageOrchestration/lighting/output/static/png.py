@@ -31,10 +31,9 @@ class StaticOutputPNG(object):
         self.process.join()
 
 
-def serve_png(options):
+def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
     sequence_manager = SequenceManager(**options)
     SALT = random_string() if options.get('postmortem') else ''  # Cachebust in development mode
-    CACHE_CONTROL_SECONDS = 60 * 60
 
     def func_dispatch(request_dict, response_dict):
         request_dict['query'] = {k: ', '.join(v) for k, v in request_dict['query'].items()}  # Flatten querystring
@@ -48,6 +47,7 @@ def serve_png(options):
             response_dict.update({'_status': '404 Not Found'})
             return response_dict
 
+        # Query String Parmas
         render_png_kwargs = {
             k: v
             for k, v in ChainMap(
@@ -95,6 +95,7 @@ def render_png(packer, device_collection, framerate=None, pixels_per_second=DEFA
     frame_end = int(frame_end or packer.frames)
     assert frame_start >= 0
     assert frame_end > frame_start
+    assert frame_end <= packer.frames
 
     image = PIL.Image.new('RGB', (frame_end - frame_start, len(device_collection.devices)))
     for frame_number in range(frame_start, frame_end):
