@@ -63,12 +63,13 @@ class StageOrchestrationServer(object):
                 'func': 'lightState',
                 'state': data,
                 'timecode': frame / self.options['framerate'],
-                'scene': self.current_sequence_module_name,
+                'scene': self.current_sequence['module_name'],
+                'cacheBust': self.current_sequence['module_hash'],
             })
         self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
-        self.current_sequence_module_name = None
+        self.current_sequence = {'module_name': '', 'module_hash': ''}
         self.frame_reader = None
         self.triggerline_renderer = None
 
@@ -103,7 +104,8 @@ class StageOrchestrationServer(object):
         if func == 'lights.clear':
             self.stop_sequence()
             self.lighting_output_realtime.update()
-            self.current_sequence_module_name = None
+            self.current_sequence['module_name'] = ''
+            self.current_sequence['module_hash'] = ''
         if func == 'lights.seek':
             self.start_sequence(timeshift=event.get('timecode'))
 
@@ -127,9 +129,9 @@ class StageOrchestrationServer(object):
     def start_sequence(self, sequence_module_name=None, timeshift=0):
         self.stop_sequence()
         if sequence_module_name:
-            self.current_sequence_module_name = sequence_module_name
+            self.current_sequence['module_name'] = sequence_module_name
         else:
-            sequence_module_name = self.current_sequence_module_name
+            sequence_module_name = self.current_sequence['module_name']
         log.info(f'start_sequence: {sequence_module_name} at {timeshift}')
         # frame_reader points at sequence binary file
         self.frame_reader = FrameReader(

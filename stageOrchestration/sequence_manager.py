@@ -9,7 +9,7 @@ from pathlib import PurePath
 
 import progressbar
 
-from ext.misc import fast_scan, fast_scan_regex_filter
+from ext.misc import fast_scan, fast_scan_regex_filter, hashfile
 from ext.attribute_packer import PersistentFramePacker
 
 from stageOrchestration.meta_manager import MetaManager
@@ -55,6 +55,9 @@ class SequenceManager(object):
         if not os.path.exists(sequence):
             sequence = os.path.join(self.tempdir, f'{sequence}{suffix}')
         return sequence
+
+    def get_rendered_hash(sequence):
+        return hashfile(self.get_rendered_filename(sequence)) + hashfile(self.get_rendered_trigger_filename(sequence))
 
     def get_packer(self, sequence, assert_exists=True):
         # TODO: make this a context manager?
