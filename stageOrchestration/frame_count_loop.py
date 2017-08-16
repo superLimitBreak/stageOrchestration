@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift=0):
+    timeshift = (round(timeshift * frame_rate) + 1) // frame_rate  # Match timeshift to nearest 'next' frame
 
     bar = progressbar.ProgressBar(
         widgets=(

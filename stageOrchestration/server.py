@@ -61,10 +61,9 @@ class StageOrchestrationServer(object):
             self.options['json_send'] = lambda frame, data: self.net.send_message({
                 'deviceid': self.DEVICEID_VISULISATION,
                 'func': 'lightState',
-                'data': {
-                    'timecode': frame / self.options['framerate'],
-                    'state': data,
-                },
+                'state': data,
+                'timecode': frame / self.options['framerate'],
+                'scene': self.current_sequence_module_name,
             })
         self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
