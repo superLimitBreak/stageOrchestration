@@ -63,8 +63,7 @@ class StageOrchestrationServer(object):
                 'func': 'lightState',
                 'state': data,
                 'timecode': frame / self.options['framerate'],
-                'scene': self.current_sequence['module_name'],
-                'cacheBust': self.current_sequence['module_hash'],
+                **self.current_sequence,
             })
         self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
 
@@ -112,10 +111,12 @@ class StageOrchestrationServer(object):
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
         self.sequence_manager.reload_sequences(sequence_files)
+        self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(self.current_sequence['module_name'])
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
             'func': 'scan_update_event',
             'sequence_files': tuple(relative.replace('.py', '') for relative, absolute in sequence_files),
+            **self.current_sequence,
         })
 
     def frame_event(self, frame):
@@ -128,10 +129,10 @@ class StageOrchestrationServer(object):
 
     def start_sequence(self, sequence_module_name=None, timeshift=0):
         self.stop_sequence()
-        if sequence_module_name:
-            self.current_sequence['module_name'] = sequence_module_name
-        else:
+        if not sequence_module_name:
             sequence_module_name = self.current_sequence['module_name']
+        self.current_sequence['module_name'] = sequence_module_name
+        self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(sequence_module_name)
         log.info(f'start_sequence: {sequence_module_name} at {timeshift}')
         # frame_reader points at sequence binary file
         self.frame_reader = FrameReader(

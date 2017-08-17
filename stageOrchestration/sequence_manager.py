@@ -56,7 +56,7 @@ class SequenceManager(object):
             sequence = os.path.join(self.tempdir, f'{sequence}{suffix}')
         return sequence
 
-    def get_rendered_hash(sequence):
+    def get_rendered_hash(self, sequence):
         return hashfile(self.get_rendered_filename(sequence)) + hashfile(self.get_rendered_trigger_filename(sequence))
 
     def get_packer(self, sequence, assert_exists=True):

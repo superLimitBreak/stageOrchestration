@@ -60,7 +60,7 @@ def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
 
         # Etag
         sequence_hash = '|'.join(
-            chain((hashfile(sequence_filename), SALT, request_dict['query'].get('cachebust', '')),
+            chain((SALT, request_dict['query'].get('cachebust') or hashfile(sequence_filename)),
             map(str, render_png_kwargs.values()))
         )
         if sequence_hash in request_dict.get('If-None-Match', ''):
