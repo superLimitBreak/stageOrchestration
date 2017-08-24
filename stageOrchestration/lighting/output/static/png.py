@@ -7,7 +7,7 @@ from itertools import chain
 
 import PIL.Image
 
-from ext.misc import hashfile, random_string, one_to_limit
+from ext.misc import random_string, one_to_limit
 from ext.http_dispatch import http_dispatch
 
 from stageOrchestration.sequence_manager import SequenceManager
@@ -60,7 +60,7 @@ def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
 
         # Etag
         sequence_hash = '|'.join(
-            chain((SALT, request_dict['query'].get('cachebust') or hashfile(sequence_filename)),
+            chain((SALT, request_dict['query'].get('cachebust') or sequence_manager.get_rendered_hash(sequence_filename)),
             map(str, render_png_kwargs.values()))
         )
         if sequence_hash in request_dict.get('If-None-Match', ''):
@@ -82,7 +82,7 @@ def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
 
         return response_dict
 
-    http_dispatch(func_dispatch)
+    http_dispatch(func_dispatch, port=options.get('http_png_port'))
 
 
 def render_png(packer, device_collection, framerate=None, pixels_per_second=DEFAULT_render_png_kwargs['pixels_per_second'], frame_start=0, frame_end=None):

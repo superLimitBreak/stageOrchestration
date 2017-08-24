@@ -6,3 +6,5 @@ postmortem: False
 log_level: 20
 path_sequences: data/sequences
 path_stage_description: data/stageDescription/simple.yaml
+
+output_mode: json_single_triggers

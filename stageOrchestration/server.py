@@ -9,7 +9,7 @@ from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue,
 from ext.process import SingleOutputStopableProcess
 
 from .frame_count_loop import frame_count_loop
-from .lighting.output.realtime import RealtimeOutputManager
+from .lighting.output.realtime.dmx import RealtimeOutputDMX
 from .lighting.output.realtime.frame_reader import FrameReader
 from .lighting.output.static.png import StaticOutputPNG
 from .lighting.model.device_collection_loader import device_collection_loader
@@ -55,17 +55,11 @@ class StageOrchestrationServer(object):
         self.device_collection = load_device_collection()
         self.sequence_manager = SequenceManager(**self.options)
         self.sequence_manager.reload_sequences()
-        self.static_png = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
-
-        if hasattr(self, 'net'):
-            self.options['json_send'] = lambda frame, data: self.net.send_message({
-                'deviceid': self.DEVICEID_VISULISATION,
-                'func': 'lightState',
-                'state': data,
-                'timecode': frame / self.options['framerate'],
-                **self.current_sequence,
-            })
-        self.lighting_output_realtime = RealtimeOutputManager(self.device_collection, self.options)
+        self.static_png_server = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
+        self.dmx = RealtimeOutputDMX(
+            host=self.options['dmx_host'],
+            mapping_config=self.options['dmx_mapping'],
+        )
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
         self.current_sequence = {'module_name': '', 'module_hash': ''}
@@ -85,9 +79,9 @@ class StageOrchestrationServer(object):
 
     def close(self):
         self.stop_sequence()
-        self.lighting_output_realtime.close()
-        if self.static_png:
-            self.static_png.close()
+        self.frame_event()
+        if self.static_png_server:
+            self.static_png_server.close()
         self.tempdir.cleanup()
 
     def network_event(self, event):
@@ -99,12 +93,12 @@ class StageOrchestrationServer(object):
             rgb = parse_rgb_color(event.get('value'))
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
-            self.lighting_output_realtime.update()
+            self.frame_event()
         if func == 'lights.clear':
             self.stop_sequence()
-            self.lighting_output_realtime.update()
             self.current_sequence['module_name'] = ''
             self.current_sequence['module_hash'] = ''
+            self.frame_event()
         if func == 'lights.seek':
             self.start_sequence(timeshift=event.get('timecode'))
 
@@ -119,11 +113,29 @@ class StageOrchestrationServer(object):
             **self.current_sequence,
         })
 
-    def frame_event(self, frame):
-        self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
-        self.lighting_output_realtime.update(frame)
-        if self.triggerline_renderer:
-            self.net.send_message(*self.triggerline_renderer.get_triggers_at(frame / self.options['framerate']))
+    def frame_event(self, frame=None):
+        triggers_at = ()
+        light_state = ()
+
+        if frame:
+            self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
+            triggers_at = {
+                'json_state_continuous': self.triggerline.get_triggers_at,
+                'json_single_triggers': self.triggerline_renderer.get_triggers_at,
+            }.get(self.options['output_mode'])(frame / self.options['framerate'])
+
+        light_state = {
+            'json_state_continuous': ({
+                'deviceid': self.DEVICEID_VISULISATION,
+                'func': 'lightState',
+                'state': self.device_collection.todict(),
+                'timecode': frame / self.options['framerate'] if frame else 0,
+                **self.current_sequence,
+            }),
+        }.get(self.options['output_mode'], light_state)
+
+        self.net.send_message(*light_state, *triggers_at)
+        self.dmx.send(self.device_collection)
 
     # Render Loop --------------------------------------------------------------
 
@@ -141,7 +153,8 @@ class StageOrchestrationServer(object):
         )
         # triggerline holds a list of upcoming triggers in a timeline
         with open(self.sequence_manager.get_rendered_trigger_filename(sequence_module_name), 'rt') as filehandle:
-            self.triggerline_renderer = TriggerLine(json.load(filehandle)).get_render()
+            self.triggerline = TriggerLine(json.load(filehandle))
+            self.triggerline_renderer = self.triggerline.get_render()
 
         # frame_count_process is bound to self.frame_event each frame tick
         self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name, timeshift=timeshift)

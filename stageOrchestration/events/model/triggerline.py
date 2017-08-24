@@ -54,10 +54,10 @@ class TriggerLine():
         """
         return self.triggers
 
-    #def get_triggers_at(self, timecode):
-    #    renderer = self.tl.get_renderer()
-    #    renderer.render(timecode)
-    #    return tuple(i.element for i in renderer._active)
+    def get_triggers_at(self, timecode):
+        renderer = self.tl.get_renderer()
+        renderer.render(timecode)
+        return tuple(i.element for i in renderer._active)
 
     def get_render(self):
         return _TriggerRenderWrapper(self.tl.get_renderer())

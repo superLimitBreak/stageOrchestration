@@ -52,6 +52,7 @@ def get_args():
     with open(kwargs['config'], 'rt') as config_filehandle:
         config = yaml.load(config_filehandle)
         kwargs = {k: v if v is not None else config.get(k) for k, v in kwargs.items()}
+        kwargs.update({k: v for k, v in config.items() if k not in kwargs})
 
     return kwargs
 
