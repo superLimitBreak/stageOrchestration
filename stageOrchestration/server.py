@@ -131,7 +131,7 @@ class StageOrchestrationServer(object):
                 'state': self.device_collection.todict(),
                 'timecode': frame / self.options['framerate'] if frame else 0,
                 **self.current_sequence,
-            }),
+            }, ),
         }.get(self.options['output_mode'], light_state)
 
         self.net.send_message(*light_state, *triggers_at)
