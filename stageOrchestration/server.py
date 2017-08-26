@@ -39,6 +39,11 @@ class StageOrchestrationServer(object):
         if kwargs.get('displaytrigger_host'):
             self.net = SubscriptionClient(host=kwargs['displaytrigger_host'], subscriptions=('lights', 'all'))
             self.net.receive_message = lambda msg: self.network_event_queue.put(msg)
+        else:
+            class NullSubscriptionClient:
+                def send_message(self, *args, **kwargs):
+                    pass
+            self.net = NullSubscriptionClient()
 
         self.scan_update_event_queue = multiprocessing.Queue()
         if 'scaninterval' in kwargs:
