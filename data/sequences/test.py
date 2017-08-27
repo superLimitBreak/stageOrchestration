@@ -21,14 +21,14 @@ def create_timeline(dc, t, tl, el):
         "func": "video.start",
         "src": "/assets/gurren_lagann.mp4",
         "timestamp": t('0.0.0'),
-        "duration": t('1.0.0'),  # TEMP - To be removed with auto duration
+        "duration": 15,  # TEMP - To be removed with auto duration
     })
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
         "src": "/assets/saikano.mp4",
         "timestamp": t('8.0.0'),
-        "duration": t('1.0.0'),  # TEMP - To be removed with auto duration
+        "duration": 63,  # TEMP - To be removed with auto duration
     })
 
     return tl
