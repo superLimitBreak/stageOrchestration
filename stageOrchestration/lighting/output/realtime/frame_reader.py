@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 class FrameReader():
 
     def __init__(self, path_sequence, frame_size):
-        assert os.path.exists(path_sequence), f'Unable to render: {path_sequence} does not exist'
+        assert os.path.isfile(path_sequence), f'Unable to render: {path_sequence} does not exist'
         filesize = os.stat(path_sequence).st_size
         assert filesize, f'Nothing to render, {path_sequence} is empty'
         self.frame_size = frame_size
