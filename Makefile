@@ -1,7 +1,9 @@
 ENV=_env
-PYTHON=$(ENV)/bin/python3
-PIP=$(ENV)/bin/pip3
-PYTEST=$(ENV)/bin/py.test
+PYTHON_VERSION:=3.6
+DEPENDENCIES_PYTHON:=dependencys.pip
+PYTHON:=$(ENV)/bin/python$(PYTHON_VERSION)
+PIP:=$(ENV)/bin/pip$(PYTHON_VERSION)
+PYTEST:=$(ENV)/bin/py.test
 
 EXT=ext
 EXT_SOURCE_URL=https://raw.githubusercontent.com/calaldees/libs/master/python3/lib
@@ -29,7 +31,7 @@ dependencys: $(ENV) $(EXT)
 install: dependencys upgrade_pip test
 
 $(ENV):
-	virtualenv -p python3 $(ENV)
+	virtualenv --no-site-packages -p python$(PYTHON_VERSION) $(ENV)
 
 #$(CONFIG_DEVELOPMENT):
 #	cp $(CONFIG_DIST) $@
@@ -68,7 +70,7 @@ $(EXT):
 
 .PHONY: upgrade_pip
 upgrade_pip:
-	$(PIP) install --upgrade pip ; $(PIP) install --upgrade -r dependencys.pip
+	$(PIP) install --upgrade pip ; $(PIP) install --upgrade -r $(DEPENDENCIES_PYTHON)
 
 
 # Run --------------------------------------------------------------------------
