@@ -11,7 +11,7 @@ EXT_LOCAL_PATH=../../libs/python3/lib
 
 CONFIG_DEVELOPMENT=config.development.yaml
 CONFIG_PRODUCTION=config.production.yaml
-CONDIG_DIST=config.dist.yaml
+CONFIG_DIST=config.dist.yaml
 
 help:
 	#
@@ -33,8 +33,8 @@ install: dependencys upgrade_pip test
 $(ENV):
 	virtualenv --no-site-packages -p python$(PYTHON_VERSION) $(ENV)
 
-#$(CONFIG_DEVELOPMENT):
-#	cp $(CONFIG_DIST) $@
+$(CONFIG_DEVELOPMENT):
+	cp $(CONFIG_DIST) $@
 #$(CONFIG_PRODUCTION):
 #	cp $(CONFIG_DIST) $@
 
