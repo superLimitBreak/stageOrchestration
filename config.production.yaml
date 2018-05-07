@@ -1,5 +1,6 @@
 displaytrigger_host: localhost
-artnet_dmx_host: 192.168.0.111
+dmx_host: 192.168.0.111
+http_png_port: 23487
 framerate: 30.0
 scaninterval: 0
 postmortem: False

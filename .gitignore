@@ -1,7 +1,8 @@
 __pycache__
 .pytest_cache
-*.pyc
+*.py[odc]
 .cache
+.vscode
 
 _env/
 ext/

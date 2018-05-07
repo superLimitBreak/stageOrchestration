@@ -63,7 +63,7 @@ class StageOrchestrationServer(object):
         self.static_png_server = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
         self.dmx = RealtimeOutputDMX(
             host=self.options['dmx_host'],
-            mapping_config=self.options['dmx_mapping'],
+            mapping_config_filename=self.options['dmx_mapping'],
         )
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
