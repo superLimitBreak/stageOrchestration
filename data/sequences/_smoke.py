@@ -1,4 +1,6 @@
-from ext.timeline import Timeline
+from calaldees.animation.timeline import Timeline
+
+
 def get_timeline(device_collection):
 
     return Timeline()

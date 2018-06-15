@@ -1,4 +1,4 @@
-from ext.attribute_packer import AttributePackerMixin
+from calaldees.attribute_packer import AttributePackerMixin
 
 
 class Smoke(AttributePackerMixin):

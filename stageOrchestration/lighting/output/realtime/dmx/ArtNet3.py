@@ -1,5 +1,5 @@
 ## -*- coding: utf-8 -*-
-from ext.udp import UDPMixin, Datagram
+from calaldees.net.udp import UDPMixin, Datagram
 
 
 class ArtNe3tDatagram(Datagram):

@@ -3,7 +3,7 @@ import copy
 import os.path
 from functools import reduce
 from functools import partial
-from ext.music import get_time, parse_timesigniture
+from calaldees.midi.music import get_time, parse_timesigniture
 
 import yaml
 

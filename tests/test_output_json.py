@@ -1,4 +1,4 @@
-from ext.misc import freeze, json_object_handler
+from calaldees.misc import freeze, json_object_handler
 
 from unittest.mock import Mock
 

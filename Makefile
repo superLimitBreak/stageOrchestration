@@ -5,10 +5,6 @@ PYTHON:=$(ENV)/bin/python$(PYTHON_VERSION)
 PIP:=$(ENV)/bin/pip$(PYTHON_VERSION)
 PYTEST:=$(ENV)/bin/py.test
 
-EXT=ext
-EXT_SOURCE_URL=https://raw.githubusercontent.com/calaldees/libs/master/python3/lib
-EXT_LOCAL_PATH=../../libs/python3/lib
-
 CONFIG_DEVELOPMENT=config.development.yaml
 CONFIG_PRODUCTION=config.production.yaml
 CONFIG_DIST=config.dist.yaml
@@ -27,7 +23,7 @@ help:
 # Install ----------------------------------------------------------------------
 
 .PHONY: install dependencys
-dependencys: $(ENV) $(EXT)
+dependencys: $(ENV)
 install: dependencys upgrade_pip test
 
 $(ENV):
@@ -41,32 +37,6 @@ $(CONFIG_DEVELOPMENT):
 
 
 # Python Dependencys -----------------------------------------------------------
-
-$(EXT):
-	mkdir $(EXT)
-	touch $(EXT)/__init__.py
-	cd $(EXT) && \
-	if [ -d $(EXT_LOCAL_PATH)/ ] ; then \
-		ln -s $(EXT_LOCAL_PATH)/misc.py misc.py ;\
-		ln -s $(EXT_LOCAL_PATH)/process.py process.py ;\
-		ln -s $(EXT_LOCAL_PATH)/loop.py loop.py ;\
-		ln -s $(EXT_LOCAL_PATH)/attribute_packer.py attribute_packer.py ;\
-		ln -s $(EXT_LOCAL_PATH)/net/udp.py udp.py ;\
-		ln -s $(EXT_LOCAL_PATH)/net/http_dispatch.py http_dispatch.py ;\
-		ln -s $(EXT_LOCAL_PATH)/net/client_reconnect.py client_reconnect.py ;\
-		ln -s $(EXT_LOCAL_PATH)/midi/music.py music.py ;\
-		ln -s $(EXT_LOCAL_PATH)/animation/timeline.py timeline.py ;\
-	else \
-		wget -cq $(LIB_URL)/misc.py ;\
-		wget -cq $(LIB_URL)/loop.py ;\
-		wget -cq $(LIB_URL)/process.py ;\
-		wget -cq $(LIB_URL)/attribute_packer.py ;\
-		wget -cq $(LIB_URL)/net/udp.py ;\
-		wget -cq $(LIB_URL)/net/http_dispatch.py ;\
-		wget -cq $(LIB_URL)/net/client_reconnect.py ;\
-		wget -cq $(LIB_URL)/midi/music.py ;\
-		wget -cq $(LIB_URL)/animation/timeline.py ;\
-	fi
 
 .PHONY: upgrade_pip
 upgrade_pip:

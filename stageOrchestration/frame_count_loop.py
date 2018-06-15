@@ -4,7 +4,7 @@ from queue import Full as QueueFullException
 
 import progressbar
 
-from ext.loop import Loop
+from calaldees.loop import Loop
 
 
 log = logging.getLogger(__name__)

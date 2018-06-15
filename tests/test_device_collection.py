@@ -3,7 +3,7 @@ import math
 from copy import copy
 from collections import OrderedDict
 
-from ext.attribute_packer import MemoryFramePacker, PersistentFramePacker
+from calaldees.attribute_packer import MemoryFramePacker, PersistentFramePacker
 
 from stageOrchestration.lighting.model.device_collection import DeviceCollection
 from stageOrchestration.lighting.model.device_collection_loader import device_collection_loader

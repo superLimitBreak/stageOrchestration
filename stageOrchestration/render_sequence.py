@@ -1,7 +1,7 @@
 import logging
 from collections import namedtuple
 
-from ext.timeline import Timeline
+from calaldees.animation.timeline import Timeline
 from stageOrchestration.events.model.triggerline import TriggerLine
 
 

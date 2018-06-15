@@ -8,3 +8,5 @@ hachoir3
 
 pytest
 ptvsd
+
+git+https://github.com/calaldees/libs.git@master#egg=calaldees

@@ -1,6 +1,6 @@
 import copy
 from numbers import Number
-from ext.timeline import Timeline
+from calaldees.animation.timeline import Timeline
 
 
 class TriggerLine():

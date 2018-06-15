@@ -1,6 +1,6 @@
 from copy import copy
 
-from ext.attribute_packer import CollectionPackerMixin
+from calaldees.attribute_packer import CollectionPackerMixin
 from .rgb_light import RGBLight
 
 

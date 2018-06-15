@@ -4,7 +4,7 @@ from itertools import chain
 
 from pysistence import make_dict
 
-from ext.attribute_packer import CollectionPackerMixin, BasePackerMixin, MemoryFramePacker
+from calaldees.attribute_packer import CollectionPackerMixin, BasePackerMixin, MemoryFramePacker
 
 
 DEVICE_REQUIRED_ATTRS = ('__iand__', '__and__', '__copy__')

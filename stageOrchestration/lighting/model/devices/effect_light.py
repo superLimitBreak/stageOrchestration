@@ -1,7 +1,7 @@
 from statistics import mean
 from enum import Enum
 
-from ext.attribute_packer import AttributePackerMixin
+from calaldees.attribute_packer import AttributePackerMixin
 
 from . import RGBLight
 from ._base import BaseDevice

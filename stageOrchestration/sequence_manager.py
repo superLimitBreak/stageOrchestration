@@ -9,8 +9,8 @@ from pathlib import PurePath
 
 import progressbar
 
-from ext.misc import fast_scan, fast_scan_regex_filter, hashfile
-from ext.attribute_packer import PersistentFramePacker
+from calaldees.misc import fast_scan, fast_scan_regex_filter, hashfile
+from calaldees.attribute_packer import PersistentFramePacker
 
 from stageOrchestration.meta_manager import MetaManager
 from stageOrchestration.render_sequence import render_sequence

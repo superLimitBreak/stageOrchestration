@@ -4,9 +4,9 @@ import tempfile
 import time
 import json
 
-from ext.client_reconnect import SubscriptionClient
-from ext.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
-from ext.process import SingleOutputStopableProcess
+from calaldees.net.client_reconnect import SubscriptionClient
+from calaldees.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
+from calaldees.process import SingleOutputStopableProcess
 
 from .frame_count_loop import frame_count_loop
 from .lighting.output.realtime.dmx import RealtimeOutputDMX

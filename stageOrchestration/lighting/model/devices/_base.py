@@ -1,7 +1,7 @@
 from collections import namedtuple
 
-from ext.attribute_packer import AttributePackerMixin
-from ext.misc import json_object_handler
+from calaldees.attribute_packer import AttributePackerMixin
+from calaldees.misc import json_object_handler
 
 class BaseDevice(AttributePackerMixin):
     DeviceAttribute = namedtuple('Attribute', ('name', 'default', 'and_func', 'packer_type'))
