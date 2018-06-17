@@ -5,7 +5,6 @@ __pycache__
 .vscode
 
 _env/
-ext/
 
 config.development.yaml
 
@@ -13,4 +12,4 @@ config.development.yaml
 ./lighting/
 ./libs/
 _temp/
-
+ext/

@@ -1,6 +1,6 @@
 ENV=_env
 PYTHON_VERSION:=3.6
-DEPENDENCIES_PYTHON:=dependencys.pip
+DEPENDENCIES_PYTHON:=stageOrchestration.pip
 PYTHON:=$(ENV)/bin/python$(PYTHON_VERSION)
 PIP:=$(ENV)/bin/pip$(PYTHON_VERSION)
 PYTEST:=$(ENV)/bin/py.test
