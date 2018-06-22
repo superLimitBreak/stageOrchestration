@@ -1,0 +1,19 @@
+version: '3.6'
+
+# NOTE
+# This is to be combined with other `displayTrigger` containers
+# It is used by `systemSetup`
+
+services:
+  stage_orchestration:
+    build:
+      context: ./
+      dockerfile: stageOrchestration.dockerfile
+    volumes:
+      - .:/stageOrchestration:ro
+    ports:
+      - 23487:23487
+    links:
+      - multisocket_subscription_server
+    working_dir: /stageOrchestration
+    command: python3 server.py --config config.development.yaml --displaytrigger_host multisocket_subscription_server
