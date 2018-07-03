@@ -6,7 +6,7 @@ __pycache__
 
 _env/
 
-config.development.yaml
+#config.development.yaml
 
 # Old path - can be removed once move to v2 is complete
 ./lighting/

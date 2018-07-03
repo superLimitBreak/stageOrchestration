@@ -1,11 +1,15 @@
 displaytrigger_host: localhost
-dmx_host: 192.168.0.111
-http_png_port: 23487
+
 framerate: 30.0
 scaninterval: 0
-postmortem: False
-log_level: 20
+
 path_sequences: data/sequences
-path_stage_description: data/stageDescription/simple.yaml
+path_stage_description: data/stageDescription/superLimitBreak2017.yaml
+
+dmx_host: 192.168.0.111
+dmx_mapping: data/stageDescription/superLimitBreak2017.dmx.yaml
 
 output_mode: json_single_triggers
+
+postmortem: False
+log_level: 20

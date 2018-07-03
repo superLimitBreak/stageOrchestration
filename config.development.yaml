@@ -1,0 +1,16 @@
+displaytrigger_host: localhost
+
+framerate: 1.0
+scaninterval: 5
+
+path_sequences: data/sequences
+path_stage_description: data/stageDescription/superLimitBreak2017.yaml
+
+dmx_host: localhost
+dmx_mapping: data/stageDescription/superLimitBreak2017.dmx.yaml
+
+output_mode: json_state_continuous
+http_png_port: 23487
+
+postmortem: True
+log_level: 10

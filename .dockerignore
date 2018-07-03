@@ -1,0 +1,5 @@
+_env
+.pytest_cache
+.vscode
+webtools/node_modules
+**/*.md
