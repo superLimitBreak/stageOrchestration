@@ -17,6 +17,15 @@ def create_timeline(dc, t, tl, el):
     tl = tl * 5
 
     el.add_trigger({
+        "deviceid": "audio",
+        "func": "audio.start",
+        #"src": "/tracks/my-body-is-dry/audio.ogg",
+        "src": "logo/superLimitBreak_live.mp4",
+        #"duration": get_media_duration("logo/superLimitBreak_live.mp4"),
+        "timestamp": t('0.0.0'),
+    })
+
+    el.add_trigger({
         "deviceid": "front",
         "func": "video.start",
         #"src": "/assets/gurren_lagann.mp4",

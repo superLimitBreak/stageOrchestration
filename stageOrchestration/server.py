@@ -57,6 +57,16 @@ class StageOrchestrationServer(object):
             return device_collection_loader(kwargs['path_stage_description'])
         self.options['load_device_collection'] = load_device_collection
 
+        # get_media_duration_func
+        if self.options.get('path_media'):
+            from .events.media_utils import MediaInfo
+            media_info = MediaInfo(self.options.get('path_media'))
+            self.options['get_media_duration_func'] = lambda filename: media_info.metadata(filename).get('duration')
+        else:
+            def _get_media_duration_func(filename):
+                raise Exception('path_media not provided in config')
+            self.options['get_media_duration_func'] = _get_media_duration_func
+
         self.device_collection = load_device_collection()
         self.sequence_manager = SequenceManager(**self.options)
         self.sequence_manager.reload_sequences()

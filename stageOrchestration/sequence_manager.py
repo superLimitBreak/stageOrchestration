@@ -27,11 +27,13 @@ class SequenceManager(object):
         assert os.path.isdir(path_sequences)
         assert os.path.exists(tempdir)
         assert framerate
+        assert kwargs['get_media_duration_func'].__call__
 
         self.path_sequences = PurePath(path_sequences)
         sys.path.append(str(self.path_sequences.parent))  # Can't load modules from path. Must add a system path. Thanks Python.
         self.tempdir = tempdir
         self.framerate = framerate
+        self.get_media_duration_func = kwargs['get_media_duration_func']
 
         self.device_collection = load_device_collection()
         assert self.device_collection.devices
@@ -116,6 +118,7 @@ class SequenceManager(object):
             sequence_module=sequence_module,
             device_collection=self.device_collection,
             get_time_func=self.meta_manager.get_meta(sequence_module)['get_time_func'],
+            get_media_duration_func=self.get_media_duration_func,
             frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()

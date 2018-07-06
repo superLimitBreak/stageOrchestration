@@ -5,6 +5,7 @@ scaninterval: 5
 
 path_sequences: data/sequences
 path_stage_description: data/stageDescription/superLimitBreak2017.yaml
+path_media: /mnt/c/Users/calal/syncthing/superLimitBreak/assets/visuals/
 
 dmx_host: localhost
 dmx_mapping: data/stageDescription/superLimitBreak2017.dmx.yaml

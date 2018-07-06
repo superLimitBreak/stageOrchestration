@@ -5,7 +5,8 @@ from calaldees.animation.timeline import Timeline
 
 class TriggerLine():
 
-    def __init__(self, triggers=()):
+    def __init__(self, triggers=(), get_media_duration_func=None):
+        self.get_media_duration_func = get_media_duration_func
         self.tl = Timeline()
         self.triggers = []
         self.add_trigger(*triggers)
@@ -15,8 +16,12 @@ class TriggerLine():
             #assert issubclass(trigger, dict)
             for required_field in ('deviceid', 'func', 'timestamp'):
                 assert required_field in trigger, f'{required_field} is required for a valid media event'
+            # Auto derive duration of media
+            if trigger.get('src') and not trigger.get('duration'):
+                trigger['duration'] = self.get_media_duration_func(trigger.get('src')).total_seconds()
+            # Assert duration is present
             if not isinstance(trigger.get('duration'), Number):
-                raise NotImplementedError('Extract metadata duration from a remote http src requires implementing. Maybe support range requests from a HTTP wrapper and commit this to hachoir?')
+                raise AttributeError(f'trigger has no numerical duration {trigger}')
                 trigger['duration'] = 0
             self._add_trigger(trigger)
 

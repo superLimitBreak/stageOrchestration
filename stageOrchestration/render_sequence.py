@@ -12,7 +12,7 @@ RENDER_FUNCTION = 'create_timeline'
 RenderedSequence = namedtuple('RenderedSequence', ('timeline', 'triggerline'))
 
 
-def render_sequence(packer, sequence_module, device_collection, get_time_func, frame_rate=30, timeline=None, triggerline=None):
+def render_sequence(packer, sequence_module, device_collection, get_time_func, get_media_duration_func, frame_rate=30, timeline=None, triggerline=None):
     """
     Render a lighting sequence to a binary intermediary
     packer is managing/monitoring device_collection -> packer.save saves the frames state
@@ -20,7 +20,7 @@ def render_sequence(packer, sequence_module, device_collection, get_time_func, f
     device_collection.reset()
 
     timeline = timeline or Timeline()
-    triggerline = triggerline or TriggerLine()
+    triggerline = triggerline or TriggerLine(get_media_duration_func=get_media_duration_func)
     timeline = getattr(sequence_module, RENDER_FUNCTION)(device_collection, get_time_func, timeline, triggerline)
     assert timeline.duration, f'{sequence_module.__name__} timeline does not contain any items to animate'
 
