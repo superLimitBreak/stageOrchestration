@@ -93,7 +93,7 @@ class StageOrchestrationServer(object):
         self.close()
 
     def close(self):
-        self.stop_sequence()
+        self.clear_sequence()
         self.frame_event()
         if self.static_png_server:
             self.static_png_server.close()
@@ -102,20 +102,24 @@ class StageOrchestrationServer(object):
     def network_event(self, event):
         log.debug(f'network_event {event}')
         func = event.get('func')
-        if func == 'LightTiming.start':
-            self.start_sequence(event.get('scene'))
+        if func == 'lights.load_sequence':
+            self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
+        if func == 'lights.start_sequence':
+            self.start_sequence(sequence_module_name=event.get('sequence_module_name'), timecode=event.get('timecode'))
+        if func == 'lights.single_frame_at_timecode':
+            self.frame_event(frame=int(event.get('timecode') * self.options['framerate']))  # TODO: this 'int' rounding may not be sufficent, we may need 'next_frame' see `frame_count_loop` for example
+        if func == 'lights.pause':
+            self.pause_sequence()
+        if func == 'lights.clear':
+            self.clear_sequence()
+            self.current_sequence['module_name'] = ''
+            self.current_sequence['module_hash'] = ''
+            self.frame_event()
         if func == 'lights.set':
             rgb = parse_rgb_color(event.get('value'))
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
             self.frame_event()
-        if func == 'lights.clear':
-            self.stop_sequence()
-            self.current_sequence['module_name'] = ''
-            self.current_sequence['module_hash'] = ''
-            self.frame_event()
-        if func == 'lights.seek':
-            self.start_sequence(timeshift=event.get('timecode'))
 
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
@@ -154,13 +158,14 @@ class StageOrchestrationServer(object):
 
     # Render Loop --------------------------------------------------------------
 
-    def start_sequence(self, sequence_module_name=None, timeshift=0):
-        self.stop_sequence()
-        if not sequence_module_name:
-            sequence_module_name = self.current_sequence['module_name']
+    def load_sequence(self, sequence_module_name=None):
+        sequence_module_name = sequence_module_name or self.current_sequence['module_name']
+
+        self.clear_sequence()
+
         self.current_sequence['module_name'] = sequence_module_name
         self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(sequence_module_name)
-        log.info(f'start_sequence: {sequence_module_name} at {timeshift}')
+        log.info(f'load_sequence: {sequence_module_name}')
         # frame_reader points at sequence binary file
         self.frame_reader = FrameReader(
             self.sequence_manager.get_rendered_filename(sequence_module_name),
@@ -171,12 +176,22 @@ class StageOrchestrationServer(object):
             self.triggerline = TriggerLine(json.load(filehandle))
             self.triggerline_renderer = self.triggerline.get_render()
 
-        # frame_count_process is bound to self.frame_event each frame tick
-        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name, timeshift=timeshift)
+    def start_sequence(self, sequence_module_name=None, timecode=None):
+        sequence_module_name = sequence_module_name or self.current_sequence['module_name']
+        timecode = timecode or 0
 
-    def stop_sequence(self):
+        self.load_sequence(sequence_module_name=sequence_module_name)
+
+        log.info(f'start_sequence: {sequence_module_name} at {timecode}')
+        # frame_count_process is bound to self.frame_event each frame tick
+        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name, timeshift=timecode)
+
+    def pause_sequence(self):
         self.frame_count_process.stop()
         self.device_collection.reset()
+
+    def clear_sequence(self):
+        self.pause_sequence()
         self.triggerline_renderer = None  # self.triggerline_renderer.reset()
         if self.frame_reader:
             self.frame_reader.close()

@@ -10,8 +10,12 @@ from calaldees.loop import Loop
 log = logging.getLogger(__name__)
 
 
-def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift=0):
-    timeshift = (round(timeshift * frame_rate) + 1) // frame_rate  # Match timeshift to nearest 'next' frame
+def nearest_frame_to_timecode(timecode, frame_rate):
+    return (round(timecode * frame_rate) + 1) // frame_rate  # Match timecode to nearest 'next' frame
+
+
+def frame_count_loop(queue, close_event, frames, frame_rate, title='', timecode=0):
+    timecode = nearest_frame_to_timecode(timecode, frame_rate)
 
     bar = progressbar.ProgressBar(
         widgets=(
@@ -35,7 +39,7 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift
             pass
         bar.update(frame)
 
-    loop = Loop(frame_rate, timeshift=timeshift)
+    loop = Loop(frame_rate, timeshift=timecode)
     loop.render = render
     loop.is_running = lambda: not close_event.is_set()
 
@@ -45,4 +49,3 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title='', timeshift
     log.debug('Exit frame_count_loop')
 
     bar.finish()
-
