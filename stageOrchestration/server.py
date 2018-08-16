@@ -3,6 +3,7 @@ import multiprocessing
 import tempfile
 import time
 import json
+import traceback
 
 from calaldees.net.client_reconnect import SubscriptionClient
 from calaldees.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
@@ -102,6 +103,7 @@ class StageOrchestrationServer(object):
     def network_event(self, event):
         log.debug(f'network_event {event}')
         func = event.get('func')
+        #try:
         if func == 'lights.load_sequence':
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
         if func == 'lights.start_sequence':
@@ -120,6 +122,8 @@ class StageOrchestrationServer(object):
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
             self.frame_event()
+        #except Exception as ex:
+        #    traceback.print_exc()
 
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
@@ -184,7 +188,7 @@ class StageOrchestrationServer(object):
 
         log.info(f'start_sequence: {sequence_module_name} at {timecode}')
         # frame_count_process is bound to self.frame_event each frame tick
-        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name, timeshift=timecode)
+        self.frame_count_process.start(self.frame_reader.frames, self.options['framerate'], title=sequence_module_name, timecode=timecode)
 
     def pause_sequence(self):
         self.frame_count_process.stop()
