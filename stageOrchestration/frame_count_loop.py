@@ -5,17 +5,15 @@ from queue import Full as QueueFullException
 import progressbar
 
 from calaldees.loop import Loop
+from calaldees.timecode import nearest_timecode_to_next_frame
 
 
 log = logging.getLogger(__name__)
 
 
-def nearest_frame_to_timecode(timecode, frame_rate):
-    return (round(timecode * frame_rate) + 1) // frame_rate  # Match timecode to nearest 'next' frame
-
 
 def frame_count_loop(queue, close_event, frames, frame_rate, title='', timecode=0):
-    timecode = nearest_frame_to_timecode(timecode, frame_rate)
+    timecode = nearest_timecode_to_next_frame(timecode, frame_rate)
 
     bar = progressbar.ProgressBar(
         widgets=(

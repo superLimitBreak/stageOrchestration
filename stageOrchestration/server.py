@@ -8,6 +8,7 @@ import traceback
 from calaldees.net.client_reconnect import SubscriptionClient
 from calaldees.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
 from calaldees.process import SingleOutputStopableProcess
+from calaldees.timecode import next_frame_from_timecode
 
 from .frame_count_loop import frame_count_loop
 from .lighting.output.realtime.dmx import RealtimeOutputDMX
@@ -109,7 +110,7 @@ class StageOrchestrationServer(object):
         if func == 'lights.start_sequence':
             self.start_sequence(sequence_module_name=event.get('sequence_module_name'), timecode=event.get('timecode'))
         if func == 'lights.single_frame_at_timecode':
-            self.frame_event(frame=int(event.get('timecode') * self.options['framerate']))  # TODO: this 'int' rounding may not be sufficent, we may need 'next_frame' see `frame_count_loop` for example
+            self.frame_event(frame=next_frame_from_timecode(event.get('timecode'), self.options['framerate']))
         if func == 'lights.pause':
             self.pause_sequence()
         if func == 'lights.clear':
@@ -159,6 +160,10 @@ class StageOrchestrationServer(object):
 
         self.net.send_message(*light_state, *triggers_at)
         self.dmx.send(self.device_collection)
+
+    def sequence_end_event():
+        pass  # TODO: we need some mechanisum of knowing when a render is finsihed
+
 
     # Render Loop --------------------------------------------------------------
 

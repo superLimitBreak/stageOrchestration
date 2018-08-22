@@ -34,6 +34,10 @@ $(CONFIG_DEVELOPMENT):
 #$(CONFIG_PRODUCTION):
 #	cp $(CONFIG_DIST) $@
 
+.PHONY: link_local_libs
+link_local_libs: $(ENV)
+	# Local link of 'calaldees' python libs
+	$(PIP) install -e ../libs/
 
 
 # Python Dependencys -----------------------------------------------------------
