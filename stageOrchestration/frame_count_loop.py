@@ -1,5 +1,6 @@
 import os.path
 import logging
+from multiprocessing import Event as MultiprocessingEvent
 from queue import Full as QueueFullException
 
 import progressbar
@@ -10,6 +11,7 @@ from calaldees.timecode import nearest_timecode_to_next_frame
 
 log = logging.getLogger(__name__)
 
+FRAME_NUMBER_COMPLETE = -1
 
 
 def frame_count_loop(queue, close_event, frames, frame_rate, title='', timecode=0):
@@ -26,8 +28,11 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title='', timecode=
         max_value=frames,
     ).start()
 
+    natural_finish_event = MultiprocessingEvent()
+
     def render(frame):
         if frame >= frames:
+            natural_finish_event.set()
             close_event.set()
             return
         try:
@@ -43,6 +48,8 @@ def frame_count_loop(queue, close_event, frames, frame_rate, title='', timecode=
 
     log.debug('Enter frame_count_loop')
     loop.run()
+    if natural_finish_event.is_set():
+        queue.put_nowait(FRAME_NUMBER_COMPLETE)
     queue.close()
     log.debug('Exit frame_count_loop')
 

@@ -10,7 +10,7 @@ from calaldees.misc import file_scan_diff_thread, multiprocessing_process_event_
 from calaldees.process import SingleOutputStopableProcess
 from calaldees.timecode import next_frame_from_timecode
 
-from .frame_count_loop import frame_count_loop
+from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
 from .lighting.output.realtime.dmx import RealtimeOutputDMX
 from .lighting.output.realtime.frame_reader import FrameReader
 from .lighting.output.static.png import StaticOutputPNG
@@ -141,28 +141,34 @@ class StageOrchestrationServer(object):
         triggers_at = ()
         light_state = ()
 
-        if frame:
+        if frame and frame > 0:
             self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
             triggers_at = {
                 'json_state_continuous': self.triggerline.get_triggers_at,
                 'json_single_triggers': self.triggerline_renderer.get_triggers_at,
             }.get(self.options['output_mode'])(frame / self.options['framerate'])
 
-        light_state = {
-            'json_state_continuous': ({
+        # What a mess - we only render this dict if we have the right output mode
+        json_state_continuous = {}
+        if self.options['output_mode'] == 'json_state_continuous':
+            json_state_continuous = {
                 'deviceid': self.DEVICEID_VISULISATION,
                 'func': 'lightState',
+                'timecode': frame / self.options['framerate'] if frame and frame > 0 else 0,
                 'state': self.device_collection.todict(),
-                'timecode': frame / self.options['framerate'] if frame else 0,
                 **self.current_sequence,
-            }, ),
+            }
+        if frame and frame == FRAME_NUMBER_COMPLETE:
+            log.debug('final frame - natural end')
+            self.device_collection.reset()
+            json_state_continuous['playing'] = False
+
+        light_state = {
+            'json_state_continuous': (json_state_continuous, ),
         }.get(self.options['output_mode'], light_state)
 
         self.net.send_message(*light_state, *triggers_at)
         self.dmx.send(self.device_collection)
-
-    def sequence_end_event():
-        pass  # TODO: we need some mechanisum of knowing when a render is finsihed
 
 
     # Render Loop --------------------------------------------------------------
