@@ -111,7 +111,7 @@ class StageOrchestrationServer(object):
         log.debug(f'network_event {event}')
         func = event.get('func')
         #try:
-        if func == 'lights.load_sequence':
+        if func == 'lights.load_sequence' or (not self.current_sequence['module_name'] and event.get('sequence_module_name')):
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
         if func == 'lights.seek':
             if not self.playing:
