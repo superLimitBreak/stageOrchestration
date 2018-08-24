@@ -147,37 +147,36 @@ class StageOrchestrationServer(object):
         })
 
     def frame_event(self, frame=None):
+        timecode = frame / self.options['framerate'] if frame and frame > 0 else 0
+
         if frame and frame == FRAME_NUMBER_COMPLETE:
             log.debug('final frame - natural end')
             self.device_collection.reset()
 
-        triggers_at = ()
-        light_state = ()
+        net_messages = []
 
         if frame and frame > 0:
             self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
-            triggers_at = {
+            get_triggers_at = {
                 'json_state_continuous': self.triggerline.get_triggers_at,
                 'json_single_triggers': self.triggerline_renderer.get_triggers_at,
-            }.get(self.options['output_mode'])(frame / self.options['framerate'])
+            }.get(self.options['output_mode'])
+            net_messages.extend(get_triggers_at(timecode))
 
-        # What a mess - we only render this dict if we have the right output mode
-        json_state_continuous = {}
         if self.options['output_mode'] == 'json_state_continuous':
-            json_state_continuous = {
+            net_messages.append({
                 'deviceid': self.DEVICEID_VISULISATION,
                 'func': 'lightState',
-                'playing': self.playing,
-                'timecode': frame / self.options['framerate'] if frame and frame > 0 else 0,
+                'timecode': timecode,
                 'state': self.device_collection.todict(),
                 **self.current_sequence,
-            }
+            })
 
-        light_state = {
-            'json_state_continuous': (json_state_continuous, ),
-        }.get(self.options['output_mode'], light_state)
+        def overlay_playing_state_key(net_message):
+            net_message['playing'] = self.playing
+            return net_message
 
-        self.net.send_message(*light_state, *triggers_at)
+        self.net.send_message(*map(overlay_playing_state_key, net_messages))
         self.dmx.send(self.device_collection)
 
 
