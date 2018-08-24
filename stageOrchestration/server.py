@@ -83,7 +83,13 @@ class StageOrchestrationServer(object):
         self.frame_reader = None
         self.triggerline_renderer = None
 
-    # Event Handling -------------------------------------------------------
+    # Properties ---------------------------------------------------------------
+
+    @property
+    def playing(self):
+        return self.frame_count_process.is_running()
+
+    # Event Handling -----------------------------------------------------------
 
     def run(self):
         multiprocessing_process_event_queue({
@@ -107,10 +113,13 @@ class StageOrchestrationServer(object):
         #try:
         if func == 'lights.load_sequence':
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
+        if func == 'lights.seek':
+            if not self.playing:
+                self.frame_event(frame=next_frame_from_timecode(event.get('timecode'), self.options['framerate']))
+            else:
+                func = 'lights.start_sequence'
         if func == 'lights.start_sequence':
             self.start_sequence(sequence_module_name=event.get('sequence_module_name'), timecode=event.get('timecode'))
-        if func == 'lights.single_frame_at_timecode':
-            self.frame_event(frame=next_frame_from_timecode(event.get('timecode'), self.options['framerate']))
         if func == 'lights.pause':
             self.pause_sequence()
         if func == 'lights.clear':
@@ -138,6 +147,10 @@ class StageOrchestrationServer(object):
         })
 
     def frame_event(self, frame=None):
+        if frame and frame == FRAME_NUMBER_COMPLETE:
+            log.debug('final frame - natural end')
+            self.device_collection.reset()
+
         triggers_at = ()
         light_state = ()
 
@@ -154,14 +167,11 @@ class StageOrchestrationServer(object):
             json_state_continuous = {
                 'deviceid': self.DEVICEID_VISULISATION,
                 'func': 'lightState',
+                'playing': self.playing,
                 'timecode': frame / self.options['framerate'] if frame and frame > 0 else 0,
                 'state': self.device_collection.todict(),
                 **self.current_sequence,
             }
-        if frame and frame == FRAME_NUMBER_COMPLETE:
-            log.debug('final frame - natural end')
-            self.device_collection.reset()
-            json_state_continuous['playing'] = False
 
         light_state = {
             'json_state_continuous': (json_state_continuous, ),
