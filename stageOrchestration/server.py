@@ -6,8 +6,11 @@ import json
 import traceback
 
 from calaldees.net.client_reconnect import SubscriptionClient
-from calaldees.misc import file_scan_diff_thread, multiprocessing_process_event_queue, fast_scan, fast_scan_regex_filter, parse_rgb_color
-from calaldees.process import SingleOutputStopableProcess
+from calaldees.files.scan import fast_scan, fast_scan_regex_filter
+from calaldees.files.scan_thread import file_scan_diff_thread
+from calaldees.multiprocessing.multiple_queues import multiprocessing_process_event_queue
+from calaldees.color import parse_rgb_color
+from calaldees.multiprocessing.single_process import SingleOutputStopableProcess
 from calaldees.timecode import next_frame_from_timecode
 
 from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE

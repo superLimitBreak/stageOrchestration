@@ -1,6 +1,6 @@
 from itertools import chain
 
-from calaldees.misc import one_to_limit
+from calaldees.limit import one_to_limit
 
 
 def FlatPar(rgb_light):

@@ -22,6 +22,7 @@ def create_timeline(dc, t, tl, el):
         #"src": "/tracks/my-body-is-dry/audio.ogg",
         "src": "logo/superLimitBreak_live.mp4",
         #"duration": get_media_duration("logo/superLimitBreak_live.mp4"),
+        #"duration": 10, # TEMP REMOVE!!!!!
         "timestamp": t('0.0.0'),
     })
 

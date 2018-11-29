@@ -1,7 +1,7 @@
 import logging
 import yaml
 
-from calaldees.misc import postmortem
+from calaldees.debug import postmortem
 
 VERSION = 'v2.0.0dev'
 

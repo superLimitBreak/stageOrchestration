@@ -7,7 +7,8 @@ from itertools import chain
 
 import PIL.Image
 
-from calaldees.misc import random_string, one_to_limit
+from calaldees.string_tools import random_string
+from calaldees.limit import one_to_limit
 from calaldees.net.http_dispatch import http_dispatch
 
 from stageOrchestration.sequence_manager import SequenceManager
