@@ -1,5 +1,6 @@
+**/*.py[cod]
 _env*
 .pytest_cache
 .vscode
-webtools/node_modules
+**/node_modules
 **/*.md
