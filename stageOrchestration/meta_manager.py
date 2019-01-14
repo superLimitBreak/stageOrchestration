@@ -3,7 +3,7 @@ import copy
 import os.path
 from functools import reduce
 from functools import partial
-from calaldees.timecode import get_time, parse_timesigniture
+from calaldees.timecode import timecode_to_seconds, parse_timesigniture
 
 import yaml
 
@@ -36,7 +36,7 @@ class MetaManager():
             meta = self._load_meta(sequence)
 
         # Create functions
-        meta['get_time_func'] = partial(get_time, timesigniture=parse_timesigniture(meta['timesignature']), bpm=meta['bpm'])
+        meta['get_time_func'] = partial(timecode_to_seconds, bpm=meta['bpm'], timesigniture=parse_timesigniture(meta['timesignature']))
 
         return meta
 
