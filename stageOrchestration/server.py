@@ -11,7 +11,7 @@ from calaldees.files.scan_thread import file_scan_diff_thread
 from calaldees.multiprocessing.multiple_queues import multiprocessing_process_event_queue
 from calaldees.color import parse_rgb_color
 from calaldees.multiprocessing.single_process import SingleOutputStopableProcess
-from calaldees.timecode import next_frame_from_timecode
+from calaldees.timecode import next_frame_from_timestamp
 
 from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
 from .lighting.output.realtime.dmx import RealtimeOutputDMX
@@ -118,7 +118,7 @@ class StageOrchestrationServer(object):
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
         if func == 'lights.seek':
             if not self.playing:
-                self.frame_event(frame=next_frame_from_timecode(event.get('timecode'), self.options['framerate']))
+                self.frame_event(frame=next_frame_from_timestamp(event.get('timecode'), self.options['framerate']))
             else:
                 func = 'lights.start_sequence'
         if func == 'lights.start_sequence':
