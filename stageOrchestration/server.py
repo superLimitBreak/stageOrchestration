@@ -115,6 +115,7 @@ class StageOrchestrationServer(object):
         func = event.get('func')
         #try:
         if func == 'lights.load_sequence' or (not self.current_sequence['module_name'] and event.get('sequence_module_name')):
+            assert event.get('sequence_module_name'), f'explicit lights.load_sequence command received without sequence_module_name'
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
         if func == 'lights.seek':
             if not self.playing:
