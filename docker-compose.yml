@@ -6,14 +6,14 @@ version: '3.6'
 
 services:
   stage_orchestration:
+    image: superlimitbreak/stageorchestration
     build:
       context: ./
-      dockerfile: stageOrchestration.dockerfile
+      dockerfile: Dockerfile
     volumes:
       - .:/stageOrchestration:ro
     ports:
       - 23487:23487
     links:
       - multisocket_subscription_server
-    working_dir: /stageOrchestration
-    command: python3 server.py --config config.development.yaml --displaytrigger_host multisocket_subscription_server
+    command: --config config.docker.yaml --displaytrigger_host multisocket_subscription_server
