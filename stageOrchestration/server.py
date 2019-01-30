@@ -82,9 +82,13 @@ class StageOrchestrationServer(object):
         )
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
-        self.current_sequence = {'module_name': '', 'module_hash': ''}
+
         self.frame_reader = None
         self.triggerline_renderer = None
+        self.current_sequence = {}
+
+        self.clear_sequence()
+
 
     # Properties ---------------------------------------------------------------
 
@@ -114,7 +118,7 @@ class StageOrchestrationServer(object):
         log.debug(f'network_event {event}')
         func = event.get('func')
         #try:
-        if func == 'lights.load_sequence' or (not self.current_sequence['module_name'] and event.get('sequence_module_name')):
+        if func == 'lights.load_sequence' or (not self.current_sequence['sequence_module_name'] and event.get('sequence_module_name')):
             assert event.get('sequence_module_name'), f'explicit lights.load_sequence command received without sequence_module_name'
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
         if func == 'lights.seek':
@@ -128,8 +132,6 @@ class StageOrchestrationServer(object):
             self.pause_sequence()
         if func == 'lights.clear':
             self.clear_sequence()
-            self.current_sequence['module_name'] = ''
-            self.current_sequence['module_hash'] = ''
             self.frame_event()
         if func == 'lights.set':
             rgb = parse_rgb_color(event.get('value'))
@@ -142,7 +144,7 @@ class StageOrchestrationServer(object):
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
         self.sequence_manager.reload_sequences(sequence_files)
-        self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(self.current_sequence['module_name'])
+        self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(self.current_sequence['sequence_module_name'])
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
             'func': 'scan_update_event',
@@ -187,12 +189,17 @@ class StageOrchestrationServer(object):
     # Render Loop --------------------------------------------------------------
 
     def load_sequence(self, sequence_module_name=None):
-        sequence_module_name = sequence_module_name or self.current_sequence['module_name']
+        sequence_module_name = sequence_module_name or self.current_sequence['sequence_module_name']
 
         self.clear_sequence()
 
-        self.current_sequence['module_name'] = sequence_module_name
+        self.current_sequence['sequence_module_name'] = sequence_module_name
         self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(sequence_module_name)
+        self.current_sequence.update({
+            k:v
+            for k, v in self.sequence_manager.get_meta(sequence_module_name).items()
+            if k in ['bpm', 'timesignature']
+        })
         log.info(f'load_sequence: {sequence_module_name}')
         # frame_reader points at sequence binary file
         self.frame_reader = FrameReader(
@@ -205,7 +212,7 @@ class StageOrchestrationServer(object):
             self.triggerline_renderer = self.triggerline.get_render()
 
     def start_sequence(self, sequence_module_name=None, timecode=None):
-        sequence_module_name = sequence_module_name or self.current_sequence['module_name']
+        sequence_module_name = sequence_module_name or self.current_sequence['sequence_module_name']
         timecode = timecode or 0
 
         self.load_sequence(sequence_module_name=sequence_module_name)
@@ -224,3 +231,4 @@ class StageOrchestrationServer(object):
         if self.frame_reader:
             self.frame_reader.close()
             self.frame_reader = None
+        self.current_sequence = {'sequence_module_name': '', 'module_hash': ''}

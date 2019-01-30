@@ -54,7 +54,7 @@ class SequenceManager(object):
         """
         if hasattr(sequence, '_sequence_name'):
             sequence = sequence._sequence_name
-        if not os.path.exists(sequence):
+        if not os.path.isfile(sequence):
             sequence = os.path.join(self.tempdir, f'{sequence}{suffix}')
         return sequence
 
@@ -67,6 +67,9 @@ class SequenceManager(object):
         if assert_exists:
             assert os.path.exists(sequence)
         return PersistentFramePacker(self.device_collection, sequence)
+
+    def get_meta(self, sequence):
+        return self.meta_manager.get_meta(self.sequence_modules.get(sequence, sequence))
 
     def reload_sequences(self, sequence_files=None):
         """
