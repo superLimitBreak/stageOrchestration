@@ -4,6 +4,7 @@ import tempfile
 import time
 import json
 import traceback
+import os.path
 
 from calaldees.net.client_reconnect import SubscriptionClient
 from calaldees.files.scan import fast_scan, fast_scan_regex_filter
@@ -64,6 +65,7 @@ class StageOrchestrationServer(object):
 
         # get_media_duration_func
         if self.options.get('path_media'):
+            assert os.path.isdir(self.options.get('path_media')), f'''path_media {self.options.get('path_media')} does not exist'''
             from .events.media_utils import MediaInfo
             media_info = MediaInfo(self.options.get('path_media'))
             self.options['get_media_duration_func'] = lambda filename: media_info.metadata(filename).get('duration')

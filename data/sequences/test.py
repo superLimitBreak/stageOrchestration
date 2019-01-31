@@ -14,13 +14,13 @@ def create_timeline(dc, t, tl, el):
         tl_intermediate.staggerTo(rgb_strip_lights, duration=t('4.1.1'), values={'red': 0, 'green': 1, 'blue': 0}, item_delay=t('2.1.1'))
         tl_intermediate.set_(rgb_strip_lights, values={'red': 0, 'green': 0, 'blue': 0})
         tl &= tl_intermediate
-    tl = tl * 5
+    tl = tl * 4
 
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
         #"src": "/tracks/my-body-is-dry/audio.ogg",
-        "src": "logo/superLimitBreak_live.mp4",
+        "src": "bad-apple/badApple_withClick.ogg",
         #"duration": get_media_duration("logo/superLimitBreak_live.mp4"),
         #"duration": 10, # TEMP REMOVE!!!!!
         "timestamp": t('1.1.1'),
