@@ -1,6 +1,6 @@
 displaytrigger_host: localhost
 
-framerate: 1.0
+framerate: 30.0
 scaninterval: 5
 
 path_sequences: data/sequences
