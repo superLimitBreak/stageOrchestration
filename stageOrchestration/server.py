@@ -181,7 +181,7 @@ class StageOrchestrationServer(object):
             })
 
         def overlay_playing_state_key(net_message):
-            net_message['playing'] = self.playing
+            net_message['playing'] = bool(self.playing)
             return net_message
 
         self.net.send_message(*map(overlay_playing_state_key, net_messages))
