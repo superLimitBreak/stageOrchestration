@@ -49,6 +49,23 @@ def OrionLinkV2(rgb_strip_light):
     )
 
 
+def beamzLCB252(rgb_strip_light):
+    assert len(rgb_strip_light.lights) == 8
+    return bytes(chain(
+        *(
+            (
+                one_to_limit(value, limit=255)
+                for value in (
+                    rgb_light.red,  # * 1.0
+                    rgb_light.green,  # * 0.3,  TODO
+                    rgb_light.blue,  # * 0.5,  TODO
+                )
+            )
+            for rgb_light in rgb_strip_light.lights
+        )
+    ))
+
+
 def EuroLight200(rgb_effect_light):
     return b''
 

@@ -1,0 +1,51 @@
+devices:
+
+    floorRear1: RGBLight
+    floorRear2: RGBLight
+    floorRear3: RGBLight
+    floorRear4: RGBLight
+    rigRear1: RGBLight
+    rigRear2: RGBLight
+    rigRear3: RGBLight
+    rigRear4: RGBLight
+
+    floorFrontBarLeft:
+        device: RGBStripLight
+        size: 3
+    floorFrontBarCenter:
+        device: RGBStripLight
+        size: 8
+    floorFrontBarRight:
+        device: RGBStripLight
+        size: 3
+
+    rigFrontBarLeft:
+        device: RGBStripLight
+        size: 8
+    rigFrontBarCenter:
+        device: RGBStripLight
+        size: 8
+    rigFrontBarRight:
+        device: RGBStripLight
+        size: 8
+
+    effect1: EffectRGBLight
+    effect2: EffectRGBLight
+
+
+groups:
+    # Stage sections
+    sidesRig: [rigRear1, rigRear4, rigFrontBarLeft, rigFrontBarRight]
+    sidesFloor: [floorRear1, rigRear4, floorFrontBarLeft, floorFrontBarRight]
+    sides: [sidesRig, sidesFloor]
+
+    rearRig: [rigRear1, rigRear2, rigRear3, rigRear4]
+    rearFloor: [floorRear1, floorRear2, floorRear3, floorRear4]
+    rear: [rearRig, rearFloor]
+
+    frontRig: [rigFrontBarLeft, rigFrontBarCenter, rigFrontBarRight]
+    frontFloor: [floorFrontBarLeft, floorFrontBarCenter, floorFrontBarRight]
+    front: [frontRig, frontFloor]
+
+    centerRig: [rigFrontBarCenter, rigRear2, rigRear3]
+    centerFloor: [floorFrontBarCenter, floorRear2, floorRear3]

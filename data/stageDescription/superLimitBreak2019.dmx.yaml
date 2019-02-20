@@ -1,0 +1,67 @@
+floorRear1:
+    type: FlatPar
+    index: 0
+floorRear2:
+    type: FlatPar
+    index: 8
+floorRear3:
+    type: FlatPar
+    index: 16
+floorRear4:
+    type: FlatPar
+    index: 24
+rigRear1:
+    type: FlatPar
+    index: 32
+rigRear2:
+    type: FlatPar
+    index: 40
+rigRear3:
+    type: FlatPar
+    index: 48
+rigRear4:
+    type: FlatPar
+    index: 56
+
+floorFrontBarLeft:
+    type: neoNeonFloorSmall
+    index: 64
+floorFrontBarRight:
+    type: neoNeonFloorSmall
+    index: 75
+floor3:
+    type: neoNeonFloorSmall
+    index: 86
+floor4:
+    type: neoNeonFloorSmall
+    index: 97
+
+floorFrontBarCenter:
+    type: OrionLinkV2
+    index: 116
+rigFrontBarCenter:
+    type: OrionLinkV2
+    index: 143
+
+rigFrontBarLeft:
+    type: beamzLCB252
+    index: 160
+rigFrontBarRight:
+    type: beamzLCB252
+    index: 190
+
+
+smoke:
+    type: cauvetHuricane
+    index: 112
+
+effect1:
+    type: EuroLight200
+    index: 171
+effect2:
+    type: EuroLight200
+    index: 183
+
+
+# Special control
+dmx_size: 256

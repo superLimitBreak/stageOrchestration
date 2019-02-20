@@ -10,7 +10,7 @@ def create_timeline(dc, t, tl, el):
     #tl.set_(dc.get_device('floorLarge1'), values={'red': 0, 'green': 0, 'blue': 0})
     #tl.from_to(dc.get_devices('sidesFloor'), t('16.0.0'), {'red': 1, 'green':0}, {'red': 0, 'green': 1})
 
-    devices = (dc.get_device('floorLarge1'), dc.get_device('floorLarge2'))
+    #devices = (dc.get_device('floorLarge1'), dc.get_device('floorLarge2'))
 
     WHITE = {'red': 1, 'green': 1, 'blue': 1}
     BLACK = {'red': 0, 'green': 0, 'blue': 0}
@@ -27,7 +27,8 @@ def create_timeline(dc, t, tl, el):
             tl_intermediate.from_to(devices, valuesFrom=color, duration=duration)
         return tl_intermediate
 
-    tl &= tick_tock(dc.get_devices('floorLarge1'), (WHITE, BLACK)) & tick_tock(dc.get_devices('floorLarge2'), (RED, YELLOW))
+    tl &= tick_tock(dc.get_devices('rear'), (WHITE, BLACK))
+    tl &= tick_tock(dc.get_devices('front'), (RED, YELLOW))
 
     # for rgb_strip_lights in (dc.get_device(device_name).lights for device_name in ('floorLarge1', 'floorLarge2')):
     #     tl_intermediate = Timeline()
