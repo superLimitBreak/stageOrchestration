@@ -48,7 +48,7 @@ class DeviceCollection(CollectionPackerMixin):
                 if device not in devices_set:
                     devices_set.add(device)
                     return True
-            return tuple(filter(dedupe, devices_generator))
+            return set(filter(dedupe, devices_generator))
         return self._devices.values()
 
     def reset(self):

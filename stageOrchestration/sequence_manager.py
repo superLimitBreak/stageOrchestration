@@ -98,7 +98,7 @@ class SequenceManager(object):
 
     def _load_sequence_module(self, f_relative):
         f_relative = f_relative.strip('\\')
-        package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('\\','.').replace('/', '.')
+        package_name = REGEX_PY_EXTENSION.sub('', f_relative).replace('\\', '.').replace('/', '.')
         if package_name in self.sequence_modules:
             importlib.reload(self.sequence_modules[package_name])
         else:

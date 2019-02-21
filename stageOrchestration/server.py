@@ -23,7 +23,6 @@ from .events.model.triggerline import TriggerLine
 
 from .sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 
-
 log = logging.getLogger(__name__)
 
 
@@ -58,6 +57,7 @@ class StageOrchestrationServer(object):
                 search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES,
                 rescan_interval=self.options['scaninterval']
             )
+            # TODO: dev feature - monitor timeline_helpers.__path__ and re-render all modules when base libs change
 
         def load_device_collection():
             return device_collection_loader(kwargs['path_stage_description'])
@@ -146,7 +146,8 @@ class StageOrchestrationServer(object):
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
         self.sequence_manager.reload_sequences(sequence_files)
-        self.load_sequence()
+        if self.current_sequence['sequence_module_name']:  # TODO: Optimisation: We should only load_sequence() if sequence_files contains self.current_sequence
+            self.load_sequence()
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
             'func': 'scan_update_event',
