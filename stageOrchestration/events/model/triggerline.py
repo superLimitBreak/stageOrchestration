@@ -22,7 +22,8 @@ class TriggerLine():
             # Assert duration is present
             if not isinstance(trigger.get('duration'), Number):
                 raise AttributeError(f'trigger has no numerical duration {trigger}')
-                trigger['duration'] = 0
+            if not isinstance(trigger.setdefault('position', 0), Number):
+                raise AttributeError(f'trigger has no numerical position {trigger}')
             self._add_trigger(trigger)
 
     def _add_trigger(self, trigger):
@@ -30,6 +31,7 @@ class TriggerLine():
         >>> el = TriggerLine()
         >>> el._add_trigger({'deviceid': 'test1', 'duration': 10, 'position': 0, 'timestamp':5})
         >>> el._add_trigger({'deviceid': 'test2', 'duration': 10, 'position': 0, 'timestamp':10})
+        >>> el._add_trigger({'deviceid': 'test3', 'duration': 10, 'position': 5, 'timestamp':20})
         >>> el.get_triggers_at(0)
         ()
         >>> el.get_triggers_at(5)
@@ -42,12 +44,16 @@ class TriggerLine():
         ({'deviceid': 'test1', 'duration': 10, 'position': 7.0, 'timestamp': 5}, {'deviceid': 'test2', 'duration': 10, 'position': 2.0, 'timestamp': 10})
         >>> el.get_triggers_at(16)
         ({'deviceid': 'test2', 'duration': 10, 'position': 6.0, 'timestamp': 10},)
+        >>> el.get_triggers_at(21)
+        ({'deviceid': 'test3', 'duration': 10, 'position': 6.0, 'timestamp': 20},)
+        >>> el.get_triggers_at(26)
+        ()
         """
         self.triggers.append(copy.copy(trigger))
         self.tl.from_to(
             trigger,
-            trigger['duration'],
-            valuesFrom={'position': 0},
+            trigger['duration'] - trigger['position'],
+            valuesFrom={'position': trigger['position']},
             valuesTo={'position': trigger['duration']},
             timestamp=trigger['timestamp']
         )

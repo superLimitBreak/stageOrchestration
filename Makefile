@@ -62,7 +62,8 @@ run_production: $(CONFIG_PRODUCTION)
 
 .PHONY: test
 test:
-	PYTHONPATH=./ $(PYTEST) $(EXT) stageOrchestration tests --doctest-modules --pdb -x
+	PYTHONPATH=./ $(PYTEST) $(EXT) stageOrchestration tests --doctest-modules
+	# --pdb -x
 
 .PHONY: cloc
 cloc:

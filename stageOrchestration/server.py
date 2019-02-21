@@ -146,7 +146,7 @@ class StageOrchestrationServer(object):
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
         self.sequence_manager.reload_sequences(sequence_files)
-        self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(self.current_sequence['sequence_module_name'])
+        self.load_sequence()
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
             'func': 'scan_update_event',
@@ -192,6 +192,7 @@ class StageOrchestrationServer(object):
 
     def load_sequence(self, sequence_module_name=None):
         sequence_module_name = sequence_module_name or self.current_sequence['sequence_module_name']
+        assert sequence_module_name, f'load_sequence not provided with a sequence_module_name'
 
         self.clear_sequence()
 
@@ -217,7 +218,8 @@ class StageOrchestrationServer(object):
         sequence_module_name = sequence_module_name or self.current_sequence['sequence_module_name']
         timecode = timecode or 0
 
-        self.load_sequence(sequence_module_name=sequence_module_name)
+        if self.current_sequence['sequence_module_name'] != sequence_module_name:
+            self.load_sequence(sequence_module_name=sequence_module_name)
 
         log.info(f'start_sequence: {sequence_module_name} at {timecode}')
         # frame_count_process is bound to self.frame_event each frame tick

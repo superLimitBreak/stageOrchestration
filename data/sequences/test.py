@@ -12,6 +12,12 @@ def create_timeline(dc, t, tl, el):
 
     #devices = (dc.get_device('floorLarge1'), dc.get_device('floorLarge2'))
 
+    # for rgb_strip_lights in (dc.get_device(device_name).lights for device_name in ('floorLarge1', 'floorLarge2')):
+    #     tl_intermediate = Timeline()
+    #     tl_intermediate.staggerTo(rgb_strip_lights, duration=t('4.1.1'), values={'red': 0, 'green': 1, 'blue': 0}, item_delay=t('1.1.2'))
+    #     tl_intermediate.set_(rgb_strip_lights, values={'red': 0, 'green': 0, 'blue': 0})
+    #     tl &= tl_intermediate
+
     WHITE = {'red': 1, 'green': 1, 'blue': 1}
     BLACK = {'red': 0, 'green': 0, 'blue': 0}
     RED = {'red': 1, 'green': 0, 'blue': 0}
@@ -30,38 +36,21 @@ def create_timeline(dc, t, tl, el):
     tl &= tick_tock(dc.get_devices('rear'), (WHITE, BLACK))
     tl &= tick_tock(dc.get_devices('front'), (RED, YELLOW))
 
-    # for rgb_strip_lights in (dc.get_device(device_name).lights for device_name in ('floorLarge1', 'floorLarge2')):
-    #     tl_intermediate = Timeline()
-    #     tl_intermediate.staggerTo(rgb_strip_lights, duration=t('4.1.1'), values={'red': 0, 'green': 1, 'blue': 0}, item_delay=t('1.1.2'))
-    #     tl_intermediate.set_(rgb_strip_lights, values={'red': 0, 'green': 0, 'blue': 0})
-    #     tl &= tl_intermediate
-    tl = tl * 32
+    tl = tl * 128
 
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
-        #"src": "/tracks/my-body-is-dry/audio.ogg",
         "src": "bad-apple/badApple_withClick.ogg",
-        #"duration": get_media_duration("logo/superLimitBreak_live.mp4"),
-        #"duration": 10, # TEMP REMOVE!!!!!
         "timestamp": t('1.1.1'),
     })
-
     el.add_trigger({
-        "deviceid": "front",
+        "deviceid": "rear",
         "func": "video.start",
-        #"src": "/assets/gurren_lagann.mp4",
-        #"duration": 15,  # TEMP - To be removed with auto duration
-        "src": "/assets/a.mp4",
-        "duration": 15,  # TEMP - To be removed with auto duration
+        "src": "bad-apple/bad-apple_original.mp4",
+        "volume": 0.0,
+        "position": 1.3,
         "timestamp": t('1.1.1'),
     })
-    #el.add_trigger({
-    #    "deviceid": "rear",
-    #    "func": "video.start",
-    #    "src": "/assets/a.mp4",
-    #    "duration": 10,  # TEMP - To be removed with auto duration
-    #    "timestamp": t('8.0.0'),
-    #})
 
     return tl
