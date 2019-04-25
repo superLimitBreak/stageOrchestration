@@ -147,7 +147,7 @@ class StageOrchestrationServer(object):
         log.debug(f'scan_update_event {sequence_files}')
         self.sequence_manager.reload_sequences(sequence_files)
         if self.current_sequence['sequence_module_name']:  # TODO: Optimisation: We should only load_sequence() if sequence_files contains self.current_sequence
-            self.load_sequence()
+            self.load_sequence(pause=False)
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
             'func': 'scan_update_event',
@@ -191,11 +191,11 @@ class StageOrchestrationServer(object):
 
     # Render Loop --------------------------------------------------------------
 
-    def load_sequence(self, sequence_module_name=None):
+    def load_sequence(self, sequence_module_name=None, pause=True):
         sequence_module_name = sequence_module_name or self.current_sequence['sequence_module_name']
         assert sequence_module_name, f'load_sequence not provided with a sequence_module_name'
 
-        self.clear_sequence()
+        self.clear_sequence(pause=pause)
 
         self.current_sequence['sequence_module_name'] = sequence_module_name
         self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(sequence_module_name)
@@ -230,8 +230,9 @@ class StageOrchestrationServer(object):
         self.frame_count_process.stop()
         self.device_collection.reset()
 
-    def clear_sequence(self):
-        self.pause_sequence()
+    def clear_sequence(self, pause=True):
+        if pause:
+            self.pause_sequence()
         self.triggerline_renderer = None  # self.triggerline_renderer.reset()
         if self.frame_reader:
             self.frame_reader.close()

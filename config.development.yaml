@@ -1,7 +1,7 @@
 displaytrigger_host: localhost
 
 framerate: 30
-scaninterval: 2
+scaninterval: 1
 
 path_sequences: data/sequences
 path_stage_description: data/stageDescription/superLimitBreak2019.yaml
