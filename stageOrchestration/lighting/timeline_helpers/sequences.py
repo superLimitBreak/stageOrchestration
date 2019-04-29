@@ -37,11 +37,10 @@ def sweep(devices, color, duration, tail=3, color_cleanup=colors.BLACK):
     #     tl &= tl_intermediate
 
 
-def pop(devices, color, duration, attack_decay_split=0.25, color_cleanup=colors.BLACK):
+def pop(devices, duration_attack, duration_decay, valuesTo, tween=pytweening.easeInQuad, tween_out=pytweening.easeOutQuad, valuesFrom=colors.BLACK):
+    #tween_out = tween_out or Timeline.Tween.tween_invert(tween)
     return (
-        Timeline().set_(devices, values=color_cleanup)
+        Timeline().from_to(devices, duration_attack, valuesFrom=valuesFrom, valuesTo=valuesTo, tween=tween) # timestamp=-duration_attack
         +
-        Timeline().to(devices, duration=duration * attack_decay_split, values=color, tween=pytweening.easeOutQuad)
-        +
-        Timeline().to(devices, duration=duration * (1 - attack_decay_split), values=color_cleanup, tween=pytweening.easeInQuad)
+        Timeline().from_to(devices, duration=duration_decay, valuesFrom=valuesTo, valuesTo=valuesFrom, tween=tween_out) # timestamp=0
     )
