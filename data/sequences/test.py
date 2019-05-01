@@ -19,9 +19,12 @@ from calaldees.data import get_index_float_blend, set_attr_or_item_all, blend
 
 
 def light_cycle(devices, colors, duration, tween=Timeline.Tween.tween_linear):
+    """
+    Sweep across the devices with the colors (in order)
+    """
     colors = tuple(colors)
 
-    def render_item_func(pos):
+    def _render_item_func(pos):
         for device_index, device in enumerate(devices):
             set_attr_or_item_all(
                 source=get_index_float_blend(device_index + (pos * len(devices)), colors),
@@ -29,15 +32,33 @@ def light_cycle(devices, colors, duration, tween=Timeline.Tween.tween_linear):
             )
 
     t = Timeline()
-    t.animation_item(0, duration, render_item_func, tween)
+    t.animation_item(0, duration, _render_item_func, tween)
+    return t
+
+
+def light_random_frame_fuzz(devices, states, duration):
+    """
+    Set each device to a random state from states every single frame render
+    """
+    def _render_item_func(pos):
+        for device in devices:
+            set_attr_or_item_all(source=random.choice(states), target=device)
+
+    t = Timeline()
+    t.animation_item(0, duration, _render_item_func)
     return t
 
 
 def light_random_state(devices, states, durations, max_active_devices=1, randomize_on='devices'):
+    assert isinstance(devices, set)
+    #if not hasattr(devices, '__iter__'):
+    #    devices = (devices, )
     if not hasattr(states, '__iter__'):
         states = (states, )
     if not hasattr(durations, '__iter__'):
         durations = (durations, )
+    #if not hasattr(devices, 'index'):
+    #    devices = tuple(devices)
 
     devices_original_states = {device: device.todict() for device in devices}
     _active_devices = set()
@@ -50,9 +71,10 @@ def light_random_state(devices, states, durations, max_active_devices=1, randomi
     assert randomize_on in _cycle_iters
     def _get_next(local_variable_name):
         if local_variable_name == randomize_on:
+            nonlocal devices
             values = locals()[local_variable_name]
             if randomize_on == 'devices':
-                values = set(values) - _active_devices
+                values = tuple(values - _active_devices)
             return random.choice(values)
         return next(_cycle_iters[local_variable_name])
 
@@ -62,6 +84,9 @@ def light_random_state(devices, states, durations, max_active_devices=1, randomi
             _device = _active_devices.pop()
             t.set_(_device, devices_original_states[_device])
         _device, _state = _get_next('devices'), _get_next('states')
+        #if not isinstance(_state, dict):
+        #    import pdb ; pdb.set_trace()
+        assert isinstance(_state, dict)
         t.from_to(_device, duration, valuesFrom=_state, valuesTo=_state)
         _active_devices.add(_device)
 
@@ -75,12 +100,13 @@ def create_timeline(dc, t, tl, el):
 
     #devices = (dc.get_device('floorLarge1'), dc.get_device('floorLarge2'))
 
-    rythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 3 + (t('1.1.2'),) * 8
+    rhythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 3 + (t('1.1.2'),) * 8
 
 
     tl &= pop(dc.get_devices('rear'), duration_attack=t('1.1.2'), duration_decay=t('1.1.4'), valuesTo=color.WHITE, tween=None, tween_out=None) * 2
     tl &= hard_cycle(dc.get_devices('front') - {dc.get_device('floorFrontBarCenter'),}, (color.RED, color.YELLOW), t('1.2.1'))
     #tl += sweep(dc.get_device('floorFrontBarCenter').lights, color.RED, t('1.2.1')) + sweep(reversed(dc.get_device('floorFrontBarCenter').lights), color.RED, t('1.2.1'))
+
     RED_DARK = blend(color.BLACK, color.RED, blend=0.6)
     colors = (RED_DARK, color.RED, RED_DARK) + ((color.BLACK,) * 5)
     tl &= (
@@ -89,7 +115,9 @@ def create_timeline(dc, t, tl, el):
         light_cycle(dc.get_device('floorFrontBarCenter').lights, colors=colors, duration=t('1.2.1'), tween=Timeline.Tween.tween_invert(easeInOutQuint))
     )
 
-    tl = tl * 24
+    tl = tl * 16
+
+    tl += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm) * 16
 
     el.add_trigger({
         "deviceid": "audio",

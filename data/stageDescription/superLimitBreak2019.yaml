@@ -49,3 +49,5 @@ groups:
 
     centerRig: [rigFrontBarCenter, rigRear2, rigRear3]
     centerFloor: [floorFrontBarCenter, floorRear2, floorRear3]
+
+    allLights: [rear, front]
