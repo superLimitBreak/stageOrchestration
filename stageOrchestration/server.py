@@ -125,7 +125,11 @@ class StageOrchestrationServer(object):
             self.load_sequence(sequence_module_name=event.get('sequence_module_name'))
         if func == 'lights.seek':
             if not self.playing:
-                self.frame_event(frame=next_frame_from_timestamp(event.get('timecode'), self.options['framerate']))
+                self.frame_event(frame=next_frame_from_timestamp(
+                    timestamp=event.get('timecode'),
+                    frame_rate=self.options['framerate'],
+                    frame_offset=event.get('frame_offset', 0),
+                ))
             else:
                 func = 'lights.start_sequence'
         if func == 'lights.start_sequence':

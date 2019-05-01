@@ -1,7 +1,8 @@
 import logging
 import yaml
 
-from calaldees.debug import postmortem
+from calaldees.debug import postmortem, init_vscode_debuger
+from calaldees.sigterm import init_sigterm_handler
 
 VERSION = 'v2.0.0dev'
 
@@ -67,11 +68,10 @@ def main(**kwargs):
 if __name__ == "__main__":
     kwargs = get_args()
     logging.basicConfig(level=kwargs['log_level'])
+    init_sigterm_handler()
 
     if kwargs.get('vscode_debugger'):
-        import ptvsd
-        ptvsd.enable_attach("my_secret", address=('0.0.0.0', 3000))
-        #ptvsd.wait_for_attach()
+        init_vscode_debuger()
 
     def launch():
         main(**kwargs)
