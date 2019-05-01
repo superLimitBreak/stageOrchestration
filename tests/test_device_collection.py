@@ -27,9 +27,9 @@ def test_device_collection(packer_class):
     })
     device_collection.add_group('all', ('light1', 'light2'))
 
-    assert device_collection.get_devices('light1') == (light1, )
-    assert device_collection.get_devices('light2') == (light2, )
-    assert device_collection.get_devices('all') == (light1, light2)
+    assert device_collection.get_devices('light1') == {light1, }
+    assert device_collection.get_devices('light2') == {light2, }
+    assert device_collection.get_devices('all') == {light1, light2}
 
     device_collection_frame_packer = packer_class(device_collection)
 

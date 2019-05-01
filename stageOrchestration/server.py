@@ -160,6 +160,9 @@ class StageOrchestrationServer(object):
         })
 
     def frame_event(self, frame=None):
+        """
+        Render a frame to known devices (dmx/json)
+        """
         timecode = frame / self.options['framerate'] if frame and frame > 0 else 0
 
         if frame and frame == FRAME_NUMBER_COMPLETE:

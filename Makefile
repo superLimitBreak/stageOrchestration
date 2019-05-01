@@ -1,6 +1,6 @@
 ENV=_env
 PYTHON_VERSION:=3.6
-DEPENDENCIES_PYTHON:=docker/stageOrchestration.pip
+DEPENDENCIES_PYTHON:=requirements.pip
 PYTHON:=$(ENV)/bin/python$(PYTHON_VERSION)
 PIP:=$(ENV)/bin/pip$(PYTHON_VERSION)
 PYTEST:=$(ENV)/bin/py.test
@@ -62,12 +62,11 @@ run_production: $(CONFIG_PRODUCTION)
 
 .PHONY: test
 test:
-	PYTHONPATH=./ $(PYTEST) $(EXT) stageOrchestration tests --doctest-modules
-	# --pdb -x
+	$(PYTEST) --doctest-modules
 
 .PHONY: cloc
 cloc:
-	cloc --exclude-dir=$(ENV),$(EXT) ./
+	cloc --exclude-dir=$(ENV) ./
 
 
 # Clean ------------------------------------------------------------------------
@@ -79,5 +78,4 @@ clean_cache:
 
 clean: clean_cache
 	rm -rf $(ENV)
-	rm -rf $(EXT)
-	#rm -rf $(CONFIG)
+	#rm -rf $(CONFIG_DEVELOPMENT)
