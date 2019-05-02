@@ -1,5 +1,5 @@
 import random
-from itertools import cycle
+from itertools import cycle, chain
 
 from pytweening import easeInOutQuint
 
@@ -18,16 +18,17 @@ META = {
 from calaldees.data import get_index_float_blend, set_attr_or_item_all, blend
 
 
-def light_cycle(devices, colors, duration, tween=Timeline.Tween.tween_linear):
+def light_cycle(devices, states, duration, tween=Timeline.Tween.tween_linear):
     """
-    Sweep across the devices with the colors (in order)
+    Sweep across the devices with the states (in order)
     """
-    colors = tuple(colors)
+    devices = tuple(devices)
+    states = tuple(states)
 
     def _render_item_func(pos):
         for device_index, device in enumerate(devices):
             set_attr_or_item_all(
-                source=get_index_float_blend(device_index + (pos * len(devices)), colors),
+                source=get_index_float_blend(device_index + (pos * len(devices)), states),
                 target=device,
             )
 
@@ -36,13 +37,18 @@ def light_cycle(devices, colors, duration, tween=Timeline.Tween.tween_linear):
     return t
 
 
-def light_random_frame_fuzz(devices, states, duration):
+def light_random_frame_fuzz(devices, duration, render_device_func=None, states=None):
     """
     Set each device to a random state from states every single frame render
     """
+    assert bool(render_device_func) ^ bool(states)
+    if not render_device_func:
+        # TODO: assert states is a hard list?
+        states = tuple(states)
+        render_device_func = lambda: random.choice(states)
     def _render_item_func(pos):
         for device in devices:
-            set_attr_or_item_all(source=random.choice(states), target=device)
+            set_attr_or_item_all(source=render_device_func(), target=device)
 
     t = Timeline()
     t.animation_item(0, duration, _render_item_func)
@@ -60,7 +66,7 @@ def light_random_state(devices, states, durations, max_active_devices=1, randomi
     #if not hasattr(devices, 'index'):
     #    devices = tuple(devices)
 
-    devices_original_states = {device: device.todict() for device in devices}
+    devices_original_states = {device: color.BLACK for device in devices}  # TODO: implement original state rollback #device.todict()
     _active_devices = set()
 
     _cycle_iters = {
@@ -110,14 +116,23 @@ def create_timeline(dc, t, tl, el):
     RED_DARK = blend(color.BLACK, color.RED, blend=0.6)
     colors = (RED_DARK, color.RED, RED_DARK) + ((color.BLACK,) * 5)
     tl &= (
-        light_cycle(dc.get_device('floorFrontBarCenter').lights, colors=colors, duration=t('1.2.1'), tween=easeInOutQuint)
+        light_cycle(dc.get_device('floorFrontBarCenter').lights, states=colors, duration=t('1.2.1'), tween=easeInOutQuint)
         +
-        light_cycle(dc.get_device('floorFrontBarCenter').lights, colors=colors, duration=t('1.2.1'), tween=Timeline.Tween.tween_invert(easeInOutQuint))
+        light_cycle(dc.get_device('floorFrontBarCenter').lights, states=colors, duration=t('1.2.1'), tween=Timeline.Tween.tween_invert(easeInOutQuint))
     )
 
     tl = tl * 16
 
-    tl += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm) * 16
+    tl += light_random_frame_fuzz(
+        devices=tuple(chain.from_iterable(strip_light.lights for strip_light in dc.get_devices('floorFrontBarLeft', 'floorFrontBarCenter', 'floorFrontBarRight'))),
+        duration=t('3.1.1'),
+        states=(
+            color.CYAN, color.BLUE, color.MAGENTA, color.WHITE, color.YELLOW,
+        )
+    )
+
+    for x in range(4):
+        tl += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm)
 
     el.add_trigger({
         "deviceid": "audio",
