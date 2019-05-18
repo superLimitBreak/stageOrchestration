@@ -1,9 +1,12 @@
-FROM python:3
+FROM python:alpine
 
-RUN pip3 install --upgrade pip setuptools virtualenv
-
+# https://blog.sneawo.com/blog/2017/09/07/how-to-install-pillow-psycopg-pylibmc-packages-in-pythonalpine-image/
+RUN apk add --no-cache jpeg-dev zlib-dev
 COPY requirements.pip requirements.pip
-RUN pip3 install -r requirements.pip
+RUN apk add --no-cache \
+        --virtual .build-deps build-base linux-headers git &&\
+    pip3 install -r requirements.pip &&\
+    apk del .build-deps
 
 WORKDIR /stageOrchestration
 ENTRYPOINT ["python3", "server.py"]

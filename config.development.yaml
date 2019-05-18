@@ -3,15 +3,16 @@ displaytrigger_host: localhost
 framerate: 30
 scaninterval: 1
 
+path_media: /c/Users/calal/syncthing/superLimitBreak/assets/visuals/
+
 path_sequences: data/sequences
 path_stage_description: data/stageDescription/superLimitBreak2019.yaml
-path_media: /c/Users/calal/syncthing/superLimitBreak/assets/visuals/
 
 dmx_host: localhost
 dmx_mapping: data/stageDescription/superLimitBreak2019.dmx.yaml
 
-output_mode: json_state_continuous
 http_png_port: 23487
 
+output_mode: json_state_continuous
 postmortem: True
 log_level: 10
