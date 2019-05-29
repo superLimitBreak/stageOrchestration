@@ -34,10 +34,17 @@ $(CONFIG_DEVELOPMENT):
 #$(CONFIG_PRODUCTION):
 #	cp $(CONFIG_DIST) $@
 
+../libs/:
+	git clone https://github.com/calaldees/libs.git
+../config-merger/:
+	git clone https://github.com/calaldees/config-merger.git
+../multisocketServer/:
+	git clone https://github.com/SuperLimitBreak/multisocketServer.git
 .PHONY: link_local_libs
-link_local_libs: $(ENV)
-	# Local link of 'calaldees' python libs
+link_local_libs: $(ENV) ../libs/ ../config-merger/ ../multisocketServer/
 	$(PIP) install -e ../libs/
+	$(PIP) install -e ../config-merger/
+	$(PIP) install -e ../multisocketServer/
 
 
 # Python Dependencys -----------------------------------------------------------

@@ -3,7 +3,7 @@ displaytrigger_host: localhost
 framerate: 30.0
 scaninterval: 0
 
-#path_media: /srv/media/
+#PATH_HOST_media: /srv/media/
 #http_png_port: 23487
 
 path_sequences: data/sequences

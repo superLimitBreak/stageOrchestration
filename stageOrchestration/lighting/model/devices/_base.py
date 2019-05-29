@@ -3,6 +3,7 @@ from collections import namedtuple
 from calaldees.attribute_packer import AttributePackerMixin
 from calaldees.json import json_object_handler
 
+
 class BaseDevice(AttributePackerMixin):
     DeviceAttribute = namedtuple('Attribute', ('name', 'default', 'and_func', 'packer_type'))
 

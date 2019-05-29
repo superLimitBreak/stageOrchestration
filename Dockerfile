@@ -5,7 +5,7 @@ RUN apk add --no-cache jpeg-dev zlib-dev
 COPY requirements.pip requirements.pip
 RUN apk add --no-cache \
         --virtual .build-deps build-base linux-headers git &&\
-    pip3 install -r requirements.pip &&\
+    pip3 install --no-cache-dir -r requirements.pip &&\
     apk del .build-deps
 
 WORKDIR /stageOrchestration

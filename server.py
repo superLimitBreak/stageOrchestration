@@ -1,5 +1,8 @@
 import logging
 import yaml
+import os
+
+from config_merger import merge
 
 from calaldees.debug import postmortem, init_vscode_debuger
 from calaldees.sigterm import init_sigterm_handler
@@ -35,7 +38,7 @@ def get_args():
     parser.add_argument('--dmx_host', action='store', help='ArtNet3 ip address')
     parser.add_argument('--dmx_mapping', action='store', help='map lighting model to dmx address')
 
-    parser.add_argument('--path_media', action='store', help='Path for media - used in local dev for finding duration of media clips for stageViewer')
+    parser.add_argument('--PATH_HOST_media', action='store', help='Path for media - used in local dev for finding duration of media clips for stageViewer')
     parser.add_argument('--path_sequences', action='store', help='Path for lighting sequences')
     parser.add_argument('--path_stage_description', action='store', help='Path for a single stage configuration file')
     parser.add_argument('--scaninterval', action='store', type=float, help='seconds to scan datafiles for changes')
@@ -50,13 +53,7 @@ def get_args():
 
     kwargs = vars(parser.parse_args())
 
-    # Overlay config defaults from file
-    with open(kwargs['config'], 'rt') as config_filehandle:
-        config = yaml.load(config_filehandle)
-        kwargs = {k: v if v is not None else config.get(k) for k, v in kwargs.items()}
-        kwargs.update({k: v for k, v in config.items() if k not in kwargs})
-
-    return kwargs
+    return merge(kwargs['config'], os.environ, kwargs, none_values_are_transparent=True)
 
 
 # Main -------------------------------------------------------------------------

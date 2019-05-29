@@ -4,9 +4,10 @@ decorator
 pysistence
 progressbar2
 pillow
-hachoir3
 
 pytest
 ptvsd
 
 git+https://github.com/calaldees/libs.git@master#egg=calaldees
+git+https://github.com/superLimitBreak/multisocketServer.git@master#egg=multisocketServer
+git+https://github.com/calaldees/config-merger.git@master#egg=config-merger

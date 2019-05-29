@@ -6,7 +6,8 @@ import json
 import traceback
 import os.path
 
-from calaldees.net.client_reconnect import SubscriptionClient
+from multisocketServer.client.client_reconnect import SubscriptionClient
+
 from calaldees.files.scan import fast_scan, fast_scan_regex_filter
 from calaldees.files.scan_thread import file_scan_diff_thread
 from calaldees.multiprocessing.multiple_queues import multiprocessing_process_event_queue
@@ -64,14 +65,14 @@ class StageOrchestrationServer(object):
         self.options['load_device_collection'] = load_device_collection
 
         # get_media_duration_func
-        if self.options.get('path_media'):
-            assert os.path.isdir(self.options.get('path_media')), f'''path_media {self.options.get('path_media')} does not exist'''
+        if self.options.get('PATH_HOST_media'):
+            assert os.path.isdir(self.options.get('PATH_HOST_media')), f'''PATH_HOST_media {self.options.get('PATH_HOST_media')} does not exist'''
             from .events.media_utils import MediaInfo
-            media_info = MediaInfo(self.options.get('path_media'))
+            media_info = MediaInfo(self.options.get('PATH_HOST_media'))
             self.options['get_media_duration_func'] = lambda filename: media_info.metadata(filename).get('duration')
         else:
             def _get_media_duration_func(filename):
-                raise Exception('path_media not provided in config')
+                raise Exception('PATH_HOST_media not provided in config')
             self.options['get_media_duration_func'] = _get_media_duration_func
 
         self.device_collection = load_device_collection()

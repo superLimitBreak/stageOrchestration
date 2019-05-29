@@ -3,7 +3,8 @@ displaytrigger_host: localhost
 framerate: 30
 scaninterval: 1
 
-path_media: /c/Users/calal/syncthing/superLimitBreak/assets/visuals/
+#PATH_HOST_media: SET_ME
+PATH_HOST_media: /Users/allancallaghan/Sync/superLimitBreak/assets/visuals
 
 path_sequences: data/sequences
 path_stage_description: data/stageDescription/superLimitBreak2019.yaml
