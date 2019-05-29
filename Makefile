@@ -53,6 +53,12 @@ link_local_libs: $(ENV) ../libs/ ../config-merger/ ../multisocketServer/
 upgrade_pip:
 	$(PIP) install --upgrade pip ; $(PIP) install --upgrade -r $(DEPENDENCIES_PYTHON)
 
+# Build ------------------------------------------------------------------------
+
+.PHONY: build
+build:
+	docker build --tag superlimitbreak/stageorchestration .
+
 
 # Run --------------------------------------------------------------------------
 
