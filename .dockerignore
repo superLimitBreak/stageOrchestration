@@ -1,6 +1,9 @@
+**/.git
 **/*.py[cod]
-_env*
-.pytest_cache
-.vscode
-**/node_modules
+**/_env/
+**/.pytest_cache/
+**/__pycache__/
+**/node_modules/
 **/*.md
+**/.vscode
+**/*.egg
