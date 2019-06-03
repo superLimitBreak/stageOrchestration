@@ -1,10 +1,8 @@
 displaytrigger_host: localhost
+mediainfo_host: localhost:8331
 
 framerate: 30
 scaninterval: 1
-
-#PATH_HOST_media: SET_ME
-PATH_HOST_media: /Users/allancallaghan/Sync/superLimitBreak/assets/visuals
 
 path_sequences: data/sequences
 path_stage_description: data/stageDescription/superLimitBreak2019.yaml

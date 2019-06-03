@@ -5,6 +5,7 @@ import time
 import json
 import traceback
 import os.path
+import urllib
 
 from multisocketServer.client.client_reconnect import SubscriptionClient
 
@@ -14,6 +15,7 @@ from calaldees.multiprocessing.multiple_queues import multiprocessing_process_ev
 from calaldees.color import parse_rgb_color
 from calaldees.multiprocessing.single_process import SingleOutputStopableProcess
 from calaldees.timecode import next_frame_from_timestamp
+from calaldees.url import build_url
 
 from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
 from .lighting.output.realtime.dmx import RealtimeOutputDMX
@@ -64,15 +66,20 @@ class StageOrchestrationServer(object):
             return device_collection_loader(kwargs['path_stage_description'])
         self.options['load_device_collection'] = load_device_collection
 
-        # get_media_duration_func
-        if self.options.get('PATH_HOST_media'):
-            assert os.path.isdir(self.options.get('PATH_HOST_media')), f'''PATH_HOST_media {self.options.get('PATH_HOST_media')} does not exist'''
-            from .events.media_utils import MediaInfo
-            media_info = MediaInfo(self.options.get('PATH_HOST_media'))
-            self.options['get_media_duration_func'] = lambda filename: media_info.metadata(filename).get('duration')
+        if self.options.get('mediainfo_host'):
+            def get_media_duration_func(filename):
+                url = build_url(
+                    host=self.options.get('mediainfo_host'),
+                    path=filename,
+                )
+                try:
+                    return json.loads(urllib.request.urlopen(url)).get('duration')
+                except urllib.error.URLError as ex:
+                    raise Exception(f'Unable to obtain mediainfo from {url}')
+            self.options['get_media_duration_func'] = get_media_duration_func
         else:
             def _get_media_duration_func(filename):
-                raise Exception('PATH_HOST_media not provided in config')
+                raise Exception('mediainfo_host not specified')
             self.options['get_media_duration_func'] = _get_media_duration_func
 
         self.device_collection = load_device_collection()
