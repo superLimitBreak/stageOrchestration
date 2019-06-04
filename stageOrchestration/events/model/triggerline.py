@@ -18,7 +18,7 @@ class TriggerLine():
                 assert required_field in trigger, f'{required_field} is required for a valid media event'
             # Auto derive duration of media
             if trigger.get('src') and not trigger.get('duration'):
-                trigger['duration'] = self.get_media_duration_func(trigger.get('src')).total_seconds()
+                trigger['duration'] = self.get_media_duration_func(trigger.get('src'))
             # Assert duration is present
             if not isinstance(trigger.get('duration'), Number):
                 raise AttributeError(f'trigger has no numerical duration {trigger}')

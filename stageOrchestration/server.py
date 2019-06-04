@@ -66,15 +66,14 @@ class StageOrchestrationServer(object):
             return device_collection_loader(kwargs['path_stage_description'])
         self.options['load_device_collection'] = load_device_collection
 
-        if self.options.get('mediainfo_host'):
+        mediainfo_host = self.options.get('mediainfo_host')
+        if mediainfo_host:
             def get_media_duration_func(filename):
-                url = build_url(
-                    host=self.options.get('mediainfo_host'),
-                    path=filename,
-                )
+                url = urllib.parse.urljoin(mediainfo_host, filename)
                 try:
-                    return json.loads(urllib.request.urlopen(url)).get('duration')
+                    return json.loads(urllib.request.urlopen(url).read()).get('duration')
                 except urllib.error.URLError as ex:
+                    # TODO: assertain the difference between 404 and ConnectionFailed and print appropriate error
                     raise Exception(f'Unable to obtain mediainfo from {url}')
             self.options['get_media_duration_func'] = get_media_duration_func
         else:

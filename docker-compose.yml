@@ -15,5 +15,5 @@ services:
     ports:
       - 23487:23487
     links:
-      - multisocket_subscription_server
-    command: --config config.docker.yaml --displaytrigger_host multisocket_subscription_server
+      -
+    command: --config config.docker.yaml --displaytrigger_host subscriptionserver --mediainfo_host mediainfoservice

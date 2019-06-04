@@ -1,4 +1,5 @@
-displaytrigger_host: localhost
+displaytrigger_host: ${subscriptionserver}
+mediainfo_host: http://${mediainfoservice}/mediainfo/
 
 framerate: 30.0
 scaninterval: 0
