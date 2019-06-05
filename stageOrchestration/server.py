@@ -5,7 +5,8 @@ import time
 import json
 import traceback
 import os.path
-import urllib
+import urllib.request
+import urllib.error
 
 from multisocketServer.client.client_reconnect import SubscriptionClient
 
@@ -66,10 +67,10 @@ class StageOrchestrationServer(object):
             return device_collection_loader(kwargs['path_stage_description'])
         self.options['load_device_collection'] = load_device_collection
 
-        mediainfo_host = self.options.get('mediainfo_host')
-        if mediainfo_host:
+        mediainfo_url = self.options.get('mediainfo_url')
+        if mediainfo_url:
             def get_media_duration_func(filename):
-                url = urllib.parse.urljoin(mediainfo_host, filename)
+                url = os.path.join(mediainfo_url, filename)
                 try:
                     return json.loads(urllib.request.urlopen(url).read()).get('duration')
                 except urllib.error.URLError as ex:
@@ -78,7 +79,7 @@ class StageOrchestrationServer(object):
             self.options['get_media_duration_func'] = get_media_duration_func
         else:
             def _get_media_duration_func(filename):
-                raise Exception('mediainfo_host not specified')
+                raise Exception('mediainfo_url not specified')
             self.options['get_media_duration_func'] = _get_media_duration_func
 
         self.device_collection = load_device_collection()

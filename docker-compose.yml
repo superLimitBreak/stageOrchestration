@@ -6,7 +6,7 @@ version: '3.6'
 
 services:
   stage_orchestration:
-    image: superlimitbreak/stageorchestration
+    image: superlimitbreak/stageorchestration:latest
     build:
       context: ./
       dockerfile: Dockerfile
@@ -16,4 +16,4 @@ services:
       - 23487:23487
     links:
       -
-    command: --config config.docker.yaml --displaytrigger_host subscriptionserver --mediainfo_host mediainfoservice
+    command: --config config.docker.yaml --displaytrigger_host subscriptionserver --mediainfo_url http://mediainfoservice:8331/

@@ -1,5 +1,5 @@
 displaytrigger_host: localhost
-mediainfo_host: http://localhost/mediainfo/
+mediainfo_url: http://localhost/mediainfo/
 
 framerate: 30
 scaninterval: 1
