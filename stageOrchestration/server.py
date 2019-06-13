@@ -79,6 +79,9 @@ class StageOrchestrationServer(object):
             self.options['get_media_duration_func'] = get_media_duration_func
         else:
             def _get_media_duration_func(filename):
+                if 'single' in self.options['output_mode']:
+                    log.debug('null get_media_duration_func in production mode')
+                    return 0
                 raise Exception('mediainfo_url not specified')
             self.options['get_media_duration_func'] = _get_media_duration_func
 
