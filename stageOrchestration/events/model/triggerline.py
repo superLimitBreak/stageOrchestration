@@ -13,17 +13,11 @@ class TriggerLine():
 
     def add_trigger(self, *triggers):
         for trigger in triggers:
-            #assert issubclass(trigger, dict)
-            for required_field in ('deviceid', 'func', 'timestamp'):
-                assert required_field in trigger, f'{required_field} is required for a valid media event'
             # Auto derive duration of media
             if trigger.get('src') and not trigger.get('duration'):
                 trigger['duration'] = self.get_media_duration_func(trigger.get('src'))
-            # Assert duration is present
-            if not isinstance(trigger.get('duration'), Number):
-                raise AttributeError(f'trigger has no numerical duration {trigger}')
-            if not isinstance(trigger.setdefault('position', 0), Number):
-                raise AttributeError(f'trigger has no numerical position {trigger}')
+            for required_field in ('func', ):
+                assert required_field in trigger, f'{required_field} is required for a valid media event'
             self._add_trigger(trigger)
 
     def _add_trigger(self, trigger):
@@ -32,6 +26,7 @@ class TriggerLine():
         >>> el._add_trigger({'deviceid': 'test1', 'duration': 10, 'position': 0, 'timestamp':5})
         >>> el._add_trigger({'deviceid': 'test2', 'duration': 10, 'position': 0, 'timestamp':10})
         >>> el._add_trigger({'deviceid': 'test3', 'duration': 10, 'position': 5, 'timestamp':20})
+        >>> el._add_trigger({'deviceid': 'test4', 'duration': 0, 'position': 5, 'timestamp':25})
         >>> el.get_triggers_at(0)
         ()
         >>> el.get_triggers_at(5)
@@ -49,6 +44,17 @@ class TriggerLine():
         >>> el.get_triggers_at(26)
         ()
         """
+        # Validate input ---
+        for required_field in ('deviceid', 'timestamp'):
+            assert required_field in trigger, f'{required_field} is required for a valid media event'
+        # Assert duration is present
+        if not isinstance(trigger.get('duration'), Number):
+            raise AttributeError(f'trigger has no numerical duration {trigger}')
+        if not isinstance(trigger.setdefault('position', 0), Number):
+            raise AttributeError(f'trigger has no numerical position {trigger}')
+        # Auto restrict position to max of duration
+        trigger['position'] = min(trigger['duration'], trigger['position'])
+
         self.triggers.append(copy.copy(trigger))
         self.tl.from_to(
             trigger,
