@@ -26,7 +26,7 @@ class RealtimeOutputDMX(object):
         log.info(f'Init DMX Output {host}')
         self.artnet = ArtNet3(host)
         with open(mapping_config_filename, 'rt') as filehandle:
-            self.mapping = make_dict(yaml.load(filehandle))
+            self.mapping = make_dict(yaml.safe_load(filehandle))
         assert self.mapping, f'No DMX Mappings loaded from {mapping_config_filename}'
         self.buffer = bytearray(self.mapping.get('dmx_size', 512))
 

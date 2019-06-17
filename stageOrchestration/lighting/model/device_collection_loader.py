@@ -25,7 +25,7 @@ def device_collection_loader(path=None, data=None):
     if path:
         log.debug(f'Loading device_collection: {path}')
         with open(path, 'rt') as filehandle:
-            data = yaml.load(filehandle)
+            data = yaml.safe_load(filehandle)
     data = make_dict(data)
 
     def create_device(device_spec):

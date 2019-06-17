@@ -47,6 +47,6 @@ class MetaManager():
             if os.path.exists(filename):
                 log.debug(f'Open meta {filename}')
                 with open(filename, 'rt') as filehandle:
-                    accu.update(yaml.load(filehandle))
+                    accu.update(yaml.safe_load(filehandle))
             return accu
         return reduce(meta_yaml_reducer, ('_default', sequence_name), copy.copy(DEFAULT_META))
