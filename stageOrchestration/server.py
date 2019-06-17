@@ -45,8 +45,8 @@ class StageOrchestrationServer(object):
         self.options['tempdir'] = self.tempdir.name
 
         self.network_event_queue = multiprocessing.Queue()
-        if kwargs.get('displaytrigger_host'):
-            self.net = SubscriptionClient(host=kwargs['displaytrigger_host'], subscriptions=('lights', 'all'))
+        if kwargs.get('subscriptionserver_host'):
+            self.net = SubscriptionClient(host=kwargs['subscriptionserver_host'], subscriptions=('lights', 'all'))
             self.net.receive_message = lambda msg: self.network_event_queue.put(msg)
         else:
             class NullSubscriptionClient:

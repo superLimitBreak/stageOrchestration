@@ -1,4 +1,5 @@
-displaytrigger_host: localhost
+subscriptionserver_host: localhost
+media_url: http://localhost/media/
 mediainfo_url: http://localhost/mediainfo/
 
 framerate: 30

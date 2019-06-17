@@ -18,7 +18,7 @@ FROM base as test
 RUN pytest --doctest-modules
 
 FROM base
-#--config config.development.yaml --displaytrigger_host display_trigger_server
+#--config config.development.yaml --subscriptionserver_host display_trigger_server
 
 # docker run --rm -it -p 23487:23487 superlimitbreak/stageorchestration --config config.production.yaml
 

@@ -16,4 +16,4 @@ services:
       - 23487:23487
     links:
       -
-    command: --config config.docker.yaml --displaytrigger_host subscriptionserver --mediainfo_url http://mediainfoservice:8331/
+    command: --config config.docker.yaml --subscriptionserver_host subscriptionserver --media_url http://displaytrigger/media/ --mediainfo_url http://mediainfoservice:8331/
