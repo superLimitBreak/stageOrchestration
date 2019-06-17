@@ -53,12 +53,12 @@ class TriggerLine():
         if not isinstance(trigger.setdefault('position', 0), Number):
             raise AttributeError(f'trigger has no numerical position {trigger}')
         # Auto restrict position to max of duration
-        trigger['position'] = min(trigger['duration'], trigger['position'])
+        #trigger['position'] = min(trigger['duration'], trigger['position'])
 
         self.triggers.append(copy.copy(trigger))
         self.tl.from_to(
             trigger,
-            trigger['duration'] - trigger['position'],
+            max(0, trigger['duration'] - trigger['position']),
             valuesFrom={'position': trigger['position']},
             valuesTo={'position': trigger['duration']},
             timestamp=trigger['timestamp']
