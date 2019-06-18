@@ -21,7 +21,7 @@ from calaldees.url import build_url
 from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
 from .lighting.output.realtime.dmx import RealtimeOutputDMX
 from .lighting.output.realtime.frame_reader import FrameReader
-from .lighting.output.static.png import StaticOutputPNG
+from .http_server import HTTPServer
 from .lighting.model.device_collection_loader import device_collection_loader
 from .events.model.triggerline import TriggerLine
 
@@ -88,7 +88,7 @@ class StageOrchestrationServer(object):
         self.device_collection = load_device_collection()
         self.sequence_manager = SequenceManager(**self.options)
         self.sequence_manager.reload_sequences()
-        self.static_png_server = StaticOutputPNG(self.options) if self.options.get('http_png_port') else None
+        self.http_server = HTTPServer(self.options) if self.options.get('http_png_port') else None
         self.dmx = RealtimeOutputDMX(
             host=self.options['dmx_host'],
             mapping_config_filename=self.options['dmx_mapping'],
@@ -123,8 +123,8 @@ class StageOrchestrationServer(object):
     def close(self):
         self.clear_sequence()
         self.frame_event()
-        if self.static_png_server:
-            self.static_png_server.close()
+        if self.http_server:
+            self.http_server.close()
         self.tempdir.cleanup()
 
     def network_event(self, event):

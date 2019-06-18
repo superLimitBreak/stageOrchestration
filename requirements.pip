@@ -1,9 +1,9 @@
 pyyaml
 pytweening
-decorator
 pysistence
 progressbar2
 pillow
+falcon
 
 pytest
 ptvsd

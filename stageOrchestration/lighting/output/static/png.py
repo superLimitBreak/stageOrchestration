@@ -1,19 +1,17 @@
 import os
-import logging
-from multiprocessing import Process
 from io import BytesIO
 from collections import ChainMap
 from itertools import chain
 
 import PIL.Image
 
-from calaldees.string_tools import random_string
 from calaldees.limit import one_to_limit
-from calaldees.net.http_dispatch import http_dispatch
 
 from stageOrchestration.sequence_manager import SequenceManager
 
+import logging
 log = logging.getLogger(__name__)
+
 
 DEFAULT_render_png_kwargs = {
     'framerate': 30,
@@ -23,25 +21,10 @@ DEFAULT_render_png_kwargs = {
 }
 
 
-class StaticOutputPNG(object):
-    def __init__(self, options):
-        self.process = Process(target=serve_png, args=(options,))
-        self.process.start()
-
-    def close(self):
-        self.process.join()
-
-
-def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
+def get_serve_light_png_function(options):
     sequence_manager = SequenceManager(**options)
-    SALT = random_string() if options.get('postmortem') else ''  # Cachebust in development mode
 
-    def func_dispatch(request_dict, response_dict):
-        request_dict['query'] = {k: ', '.join(v) for k, v in request_dict['query'].items()}  # Flatten querystring
-        response_dict.update({
-            'Server': 'stageOrchestration/0.0.0 (Python3)',
-        })
-
+    def serve_png(request_dict, response_dict):
         # Exists
         sequence_filename = sequence_manager.get_rendered_filename(request_dict['path'].strip('/'))
         if not os.path.isfile(sequence_filename):
@@ -61,14 +44,14 @@ def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
 
         # Etag
         sequence_hash = '|'.join(
-            chain((SALT, request_dict['query'].get('cachebust') or sequence_manager.get_rendered_hash(sequence_filename)),
+            chain((request_dict['SALT'], request_dict['query'].get('cachebust') or sequence_manager.get_rendered_hash(sequence_filename)),
             map(str, render_png_kwargs.values()))
         )
         if sequence_hash in request_dict.get('If-None-Match', ''):
             response_dict.update({'_status': '304 Not Modified'})
             return response_dict
         else:
-            response_dict.update({'Etag': f'\W {sequence_hash}', 'Cache-Control': f'max-age={CACHE_CONTROL_SECONDS}'})
+            response_dict.update({'Etag': f'\W {sequence_hash}', 'Cache-Control': f'max-age={request_dict["CACHE_CONTROL_SECONDS"]}'})
 
         # Render body
         if request_dict['method'] == 'GET':
@@ -83,7 +66,6 @@ def serve_png(options, CACHE_CONTROL_SECONDS=60 * 60):
 
         return response_dict
 
-    http_dispatch(func_dispatch, port=options.get('http_png_port'))
 
 
 def render_png(packer, device_collection, framerate=None, pixels_per_second=DEFAULT_render_png_kwargs['pixels_per_second'], frame_start=0, frame_end=None):
@@ -113,4 +95,5 @@ def render_png(packer, device_collection, framerate=None, pixels_per_second=DEFA
 
 
 if __name__ == "__main__":
-    serve_png({'required': 'test_options_are_missing'})
+    #serve_png({'required': 'test_options_are_missing'})
+    pass
