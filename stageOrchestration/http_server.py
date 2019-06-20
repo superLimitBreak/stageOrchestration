@@ -2,7 +2,8 @@ from multiprocessing import Process
 
 import falcon
 
-from stageOrchestration.lighting.output.static.timeline_image import HttpLightTimelineRenderer
+from stageOrchestration.lighting.output.static.timeline_image import HttpImageLightTimelineRenderer
+from stageOrchestration.events.output.static.timeline_image import HttpImageMediaTimelineRenderer
 
 import logging
 log = logging.getLogger(__name__)
@@ -29,6 +30,6 @@ def serve_process(options):
 
 def create_wsgi_app(options):
     app = falcon.API()
-    app.add_route('/lights/{sequence_name}', HttpLightTimelineRenderer(options))
-    #app.add_route('/media', )
+    app.add_route('/lights/{sequence_name}', HttpImageLightTimelineRenderer(options))
+    app.add_route('/media/{sequence_name}', HttpImageMediaTimelineRenderer(options))
     return app

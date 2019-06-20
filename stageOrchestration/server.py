@@ -161,7 +161,7 @@ class StageOrchestrationServer(object):
     def scan_update_event(self, sequence_files):
         log.debug(f'scan_update_event {sequence_files}')
         self.sequence_manager.reload_sequences(sequence_files)
-        if self.current_sequence['sequence_module_name']:  # TODO: Optimisation: We should only load_sequence() if sequence_files contains self.current_sequence
+        if self.current_sequence['sequence_module_name']:  # TODO: Optimization: We should only load_sequence() if sequence_files contains self.current_sequence
             self.load_sequence(pause=False)
         self.net.send_message({
             'deviceid': self.DEVICEID_VISULISATION,
@@ -251,6 +251,7 @@ class StageOrchestrationServer(object):
     def clear_sequence(self, pause=True):
         if pause:
             self.pause_sequence()
+        self.triggerline = None
         self.triggerline_renderer = None  # self.triggerline_renderer.reset()
         if self.frame_reader:
             self.frame_reader.close()

@@ -1,22 +1,18 @@
-import os
 from io import BytesIO
-from itertools import chain
 
-import falcon
 import PIL.Image
 
-from calaldees.string_tools import random_string
 from calaldees.limit import one_to_limit
 
-from stageOrchestration.sequence_manager import SequenceManager
+from stageOrchestration.http_image import HTTPImageRenderMixin
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class HttpLightTimelineRenderer():
+class HttpImageLightTimelineRenderer(HTTPImageRenderMixin):
 
-    DEFAULT_render_png_kwargs = {
+    DEFAULT_kwargs = {
         'framerate': 30,
         'pixels_per_second': 8,
         'frame_start': 0,
@@ -24,69 +20,26 @@ class HttpLightTimelineRenderer():
         'image_format': 'png',
     }
 
-    def __init__(self, options):
-        self.sequence_manager = SequenceManager(**options)
-        self.options = options
-        self.instance_id = random_string() if options.get('postmortem') else ''
-
-    def on_get(self, request, response, sequence_name=None):
-        #import pdb ; pdb.set_trace()
-        # Exists
-        sequence_filename = self.sequence_manager.get_rendered_filename(sequence_name)
-        if not os.path.isfile(sequence_filename):
-            response.media = {'error': 'file not found'}
-            response.status = falcon.HTTP_400
-            return
-
-        # Args
-        render_png_kwargs = {
-            k: v
-            for k, v in {
-                **self.DEFAULT_render_png_kwargs,
-                **self.options,
-                **request.params,
-            }.items()
-            if k in self.DEFAULT_render_png_kwargs.keys()
-        }
-
-        # ETag
-        content_etag = '|'.join(chain(
-            (
-                self.instance_id,
-                request.params.get('cachebust') or self.sequence_manager.get_rendered_hash(sequence_filename),
-            ),
-            map(str, render_png_kwargs.values()),
-        ))
-        if content_etag in (request.if_none_match or ''):
-            response.status = falcon.HTTP_304
-            return
-        response.etag = content_etag
-
-        # Render
-        response.content_type = 'image/png'
-        try:
-            response.body = render_light_timeline_image(
-                self.sequence_manager.get_packer(sequence_filename),
-                self.sequence_manager.device_collection,
-                **render_png_kwargs,
-            )
-        except Exception as ex:
-            #response.media = {'error': 'unable to extract metadata', 'reason': str(ex)}
-            response.status = falcon.HTTP_500
-            return
-        response.status = falcon.HTTP_200
+    def render(self, sequence_name=None, **kwargs):
+        assert sequence_name
+        return render_light_timeline_image(
+            self.sequence_manager.get_packer(sequence_name),
+            self.sequence_manager.device_collection,
+            **kwargs,
+        )
 
 
 def render_light_timeline_image(
         packer,
         device_collection,
         framerate=None,
-        pixels_per_second=HttpLightTimelineRenderer.DEFAULT_render_png_kwargs['pixels_per_second'],
+        pixels_per_second=HttpImageLightTimelineRenderer.DEFAULT_kwargs['pixels_per_second'],
         frame_start=0,
         frame_end=None,
-        image_format='png',
+        image_format=HttpImageLightTimelineRenderer.DEFAULT_kwargs['image_format'],
 ):
-    log.debug(f'render_png - framerate:{framerate} pixels_per_second:{pixels_per_second} frame_start:{frame_start} frame_end:{frame_end}')
+    log.debug(f'render_light_timeline_image - framerate:{framerate} pixels_per_second:{pixels_per_second} frame_start:{frame_start} frame_end:{frame_end}')
+
     framerate = float(framerate)
     pixels_per_second = float(pixels_per_second)
     assert framerate > 0

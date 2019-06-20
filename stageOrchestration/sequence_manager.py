@@ -61,6 +61,9 @@ class SequenceManager(object):
     def get_rendered_hash(self, sequence):
         return hashfile(self.get_rendered_filename(sequence)) + hashfile(self.get_rendered_trigger_filename(sequence))
 
+    def exists(self, sequence):
+        return os.path.isfile(self.get_rendered_filename(sequence))
+
     def get_packer(self, sequence, assert_exists=True):
         # TODO: make this a context manager?
         sequence = self.get_rendered_filename(sequence)
