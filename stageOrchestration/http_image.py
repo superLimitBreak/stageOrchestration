@@ -63,7 +63,8 @@ class HTTPImageRenderMixin():
         try:
             response.body = self.render(**kwargs)
         except Exception as ex:
-            response.media = {'error': 'unable to render image', 'reason': str(ex), 'kwargs': kwargs}
+            log.exception(ex)
+            response.media = {'error': 'unable to render image', 'reason': f'{type(ex)} {str(ex)}', 'kwargs': kwargs}
             response.status = falcon.HTTP_500
             return
 
