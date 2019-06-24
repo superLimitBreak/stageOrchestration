@@ -20,6 +20,9 @@ class HttpImageLightTimelineRenderer(HTTPImageRenderMixin):
         'image_format': 'png',
     }
 
+    def get_etag(self, sequence_name):
+        return self.sequence_manager.get_rendered_hash_lights(sequence_name)
+
     def render(self, sequence_name=None, **kwargs):
         assert sequence_name
         return render_light_timeline_image(

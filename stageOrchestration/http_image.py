@@ -20,6 +20,10 @@ class HTTPImageRenderMixin():
         self.options = options
         self.instance_id = random_string() if options.get('postmortem') else ''
 
+    def get_etag(self, sequence_name):
+        # Hash fallback - should not be used as lights and media have differing hashs
+        return self.sequence_manager.get_rendered_hash(sequence_name)
+
     def on_get(self, request, response, sequence_name=None):
         # Args
         sequence_name, file_extension = file_ext(sequence_name)
@@ -47,9 +51,10 @@ class HTTPImageRenderMixin():
             (
                 self.instance_id,
                 (
+                    # TODO: this dosnt look right? cachebust will always trump sequence hash?
                     request.params.get('cachebust')
                     or
-                    self.sequence_manager.get_rendered_hash(kwargs['sequence_name'])
+                    self.get_etag(kwargs['sequence_name'])
                 ),
             ),
             map(str, kwargs.values()),

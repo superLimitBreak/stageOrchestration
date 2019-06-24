@@ -27,6 +27,9 @@ class HttpImageMediaTimelineRenderer(HTTPImageRenderMixin):
         super().__init__(options)
         self.media_url = options['media_url']
 
+    def get_etag(self, sequence_name):
+        return self.sequence_manager.get_rendered_hash_media(sequence_name)
+
     def render(self, sequence_name=None, **kwargs):
         assert sequence_name, 'sequence_name not provided'
         with open(self.sequence_manager.get_rendered_trigger_filename(sequence_name), 'rt') as filehandle:

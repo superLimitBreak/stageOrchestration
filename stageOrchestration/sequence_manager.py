@@ -58,8 +58,12 @@ class SequenceManager(object):
             sequence = os.path.join(self.tempdir, f'{sequence}{suffix}')
         return sequence
 
+    def get_rendered_hash_lights(self, sequence):
+        return hashfile(self.get_rendered_filename(sequence))
+    def get_rendered_hash_media(self, sequence):
+        return hashfile(self.get_rendered_trigger_filename(sequence))
     def get_rendered_hash(self, sequence):
-        return hashfile(self.get_rendered_filename(sequence)) + hashfile(self.get_rendered_trigger_filename(sequence))
+        return self.get_rendered_hash_lights(sequence) + self.get_rendered_hash_media(sequence)
 
     def exists(self, sequence):
         return os.path.isfile(self.get_rendered_filename(sequence))
