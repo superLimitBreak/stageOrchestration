@@ -74,13 +74,13 @@ def render_media_timeline_image(
                 trigger['position'] * pixels_per_second
             )), 0,
             int(max(
-                media_image.width,
+                0,
                 (trigger['duration'] - trigger['position']) * pixels_per_second
             )), media_image.height
         ))
         return (
             tracks.index(trigger['deviceid']),
-            int(trigger['timestamp'] * pixels_per_second),
+            int((trigger['timestamp'] - trigger['position']) * pixels_per_second),
             media_image
         )
 
