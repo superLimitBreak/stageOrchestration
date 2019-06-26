@@ -68,24 +68,32 @@ def render_media_timeline_image(
             log.warn(f'unable to load image {url}')
             return (0, 0, None)
 
+        # ffmpeg with `--rate` seems to continuiously sample 1 second behind the expect.
+        # This constant is BAD. My options were.
+        # Have the first frame positioned and timed correctly OR
+        # Have all other frames correct and the slightly crop the first frame.
+        FFMPEG_CORRECT_CONSTANT = pixels_per_second
+
+        x1 = int(min(
+            media_image.width,
+            trigger['position'] * pixels_per_second
+        ))
+        x2 = int(max(
+            0,
+            (trigger['duration'] - trigger['position']) * pixels_per_second
+        ))
         media_image = media_image.crop((
-            int(min(
-                media_image.width,
-                trigger['position'] * pixels_per_second
-            )), 0,
-            int(max(
-                0,
-                (trigger['duration'] - trigger['position']) * pixels_per_second
-            )), media_image.height
+            x1 + FFMPEG_CORRECT_CONSTANT, 0,
+            x2, media_image.height,
         ))
         return (
             tracks.index(trigger['deviceid']),
-            int((trigger['timestamp'] - trigger['position']) * pixels_per_second),
+            int(trigger['timestamp'] * pixels_per_second),
             media_image
         )
 
     trigger_media_list = tuple(map(trigger_to_image, triggerline.triggers))
-    width = int(max((x+img.width for _, x, img in trigger_media_list if img)))
+    width = max((x+img.width for _, x, img in trigger_media_list if img))
     image = PIL.Image.new('RGB', (width, len(tracks) * track_height))
 
     for (row, x, img) in trigger_media_list:
