@@ -47,22 +47,24 @@ class HTTPImageRenderMixin():
             return
 
         # ETag
-        content_etag = '|'.join(chain(
-            (
-                self.instance_id,
+        _content_etag = self.get_etag(kwargs['sequence_name'])
+        if _content_etag:
+            content_etag = '|'.join(chain(
                 (
-                    # TODO: this dosnt look right? cachebust will always trump sequence hash?
-                    request.params.get('cachebust')
-                    or
-                    self.get_etag(kwargs['sequence_name'])
+                    self.instance_id,
+                    (
+                        # TODO: this dosnt look right? cachebust will always trump sequence hash?
+                        request.params.get('cachebust')
+                        or
+                        _content_etag
+                    ),
                 ),
-            ),
-            map(str, kwargs.values()),
-        ))
-        if content_etag in (request.if_none_match or ''):
-            response.status = falcon.HTTP_304
-            return
-        response.etag = content_etag
+                map(str, kwargs.values()),
+            ))
+            if content_etag in (request.if_none_match or ''):
+                response.status = falcon.HTTP_304
+                return
+            response.etag = content_etag
 
         # Render
         try:
