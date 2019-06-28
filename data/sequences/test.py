@@ -106,10 +106,19 @@ def create_timeline(dc, t, tl, el):
 
     #devices = (dc.get_device('floorLarge1'), dc.get_device('floorLarge2'))
 
-    rhythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 3 + (t('1.1.2'),) * 8
+    rhythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 2 + (t('1.1.1.3'),) * 16
 
 
-    tl &= pop(
+    #tl += sweep(dc.get_device('floorFrontBarCenter').lights, color.RED, t('1.2.1')) + sweep(reversed(dc.get_device('floorFrontBarCenter').lights), color.RED, t('1.2.1'))
+
+
+    for x in range(4):
+        tl += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm)
+
+    tl2 = Timeline()
+
+
+    tl2 &= pop(
         dc.get_devices('rear'),
         duration_attack=t('1.1.2'),
         duration_decay=t('1.1.4'),
@@ -118,24 +127,23 @@ def create_timeline(dc, t, tl, el):
         tween_out=None
     ) * 2
 
-    tl &= hard_cycle(
+    tl2 &= hard_cycle(
         dc.get_devices('front') - {dc.get_device('floorFrontBarCenter'),},
         (color.RED, color.YELLOW),
         t('1.2.1'),
     )
-    #tl += sweep(dc.get_device('floorFrontBarCenter').lights, color.RED, t('1.2.1')) + sweep(reversed(dc.get_device('floorFrontBarCenter').lights), color.RED, t('1.2.1'))
 
     RED_DARK = blend(color.BLACK, color.RED, blend=0.6)
     colors = (RED_DARK, color.RED, RED_DARK) + ((color.BLACK,) * 5)
-    tl &= (
+    tl2 &= (
         light_cycle(dc.get_device('floorFrontBarCenter').lights, states=colors, duration=t('1.2.1'), tween=easeInOutQuint)
         +
         light_cycle(dc.get_device('floorFrontBarCenter').lights, states=colors, duration=t('1.2.1'), tween=Timeline.Tween.tween_invert(easeInOutQuint))
     )
 
-    tl = tl * 16
+    tl2 = tl2 * 16
 
-    tl += light_random_frame_fuzz(
+    tl2 += light_random_frame_fuzz(
         devices=tuple(chain.from_iterable(strip_light.lights for strip_light in dc.get_devices('floorFrontBarLeft', 'floorFrontBarCenter', 'floorFrontBarRight'))),
         duration=t('3.1.1'),
         states=(
@@ -143,8 +151,7 @@ def create_timeline(dc, t, tl, el):
         )
     )
 
-    for x in range(4):
-        tl += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm)
+    tl += tl2
 
     el.add_trigger({
         "deviceid": "audio",
