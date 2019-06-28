@@ -72,18 +72,18 @@ def render_media_timeline_image(
         # This constant is BAD. My options were.
         # Have the first frame positioned and timed correctly OR
         # Have all other frames correct and the slightly crop the first frame.
-        FFMPEG_CORRECT_CONSTANT = pixels_per_second
+        FFMPEG_CORRECT_CONSTANT = int(pixels_per_second)
 
         x1 = int(min(
             media_image.width,
             trigger['position'] * pixels_per_second
-        ))
+        )) + FFMPEG_CORRECT_CONSTANT
         x2 = int(max(
-            0,
+            x1,
             (trigger['duration'] - trigger['position']) * pixels_per_second
         ))
         media_image = media_image.crop((
-            x1 + FFMPEG_CORRECT_CONSTANT, 0,
+            x1, 0,
             x2, media_image.height,
         ))
         return (
