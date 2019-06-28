@@ -109,8 +109,20 @@ def create_timeline(dc, t, tl, el):
     rhythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 3 + (t('1.1.2'),) * 8
 
 
-    tl &= pop(dc.get_devices('rear'), duration_attack=t('1.1.2'), duration_decay=t('1.1.4'), valuesTo=color.WHITE, tween=None, tween_out=None) * 2
-    tl &= hard_cycle(dc.get_devices('front') - {dc.get_device('floorFrontBarCenter'),}, (color.RED, color.YELLOW), t('1.2.1'))
+    tl &= pop(
+        dc.get_devices('rear'),
+        duration_attack=t('1.1.2'),
+        duration_decay=t('1.1.4'),
+        valuesTo=color.WHITE,
+        tween=None,
+        tween_out=None
+    ) * 2
+
+    tl &= hard_cycle(
+        dc.get_devices('front') - {dc.get_device('floorFrontBarCenter'),},
+        (color.RED, color.YELLOW),
+        t('1.2.1'),
+    )
     #tl += sweep(dc.get_device('floorFrontBarCenter').lights, color.RED, t('1.2.1')) + sweep(reversed(dc.get_device('floorFrontBarCenter').lights), color.RED, t('1.2.1'))
 
     RED_DARK = blend(color.BLACK, color.RED, blend=0.6)

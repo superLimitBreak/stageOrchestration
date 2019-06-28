@@ -17,6 +17,7 @@ from calaldees.color import parse_rgb_color
 from calaldees.multiprocessing.single_process import SingleOutputStopableProcess
 from calaldees.timecode import next_frame_from_timestamp
 from calaldees.url import build_url
+from calaldees.wait_for import wait_for
 
 from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
 from .lighting.output.realtime.dmx import RealtimeOutputDMX
@@ -69,6 +70,7 @@ class StageOrchestrationServer(object):
 
         mediainfo_url = self.options.get('mediainfo_url')
         if mediainfo_url:
+            wait_for(lambda: urllib.request.urlopen(mediainfo_url))
             def get_media_duration_func(filename):
                 url = os.path.join(mediainfo_url, filename)
                 try:
