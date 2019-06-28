@@ -70,7 +70,7 @@ class StageOrchestrationServer(object):
 
         mediainfo_url = self.options.get('mediainfo_url')
         if mediainfo_url:
-            wait_for(lambda: urllib.request.urlopen(mediainfo_url))
+            wait_for(lambda: urllib.request.urlopen(mediainfo_url), ignore_exceptions=True)
             def get_media_duration_func(filename):
                 url = os.path.join(mediainfo_url, filename)
                 try:
