@@ -106,7 +106,7 @@ def create_timeline(dc, t, tl, el):
 
     #devices = (dc.get_device('floorLarge1'), dc.get_device('floorLarge2'))
 
-    rhythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 2 + (t('1.1.1.3'),) * 16
+    rhythm = (t('1.2.1'),) * 3 + (t('1.1.2'),) * 4 + (t('1.2.1'),) * 3 + (t('1.1.3'),) * 2
 
 
     #tl += sweep(dc.get_device('floorFrontBarCenter').lights, color.RED, t('1.2.1')) + sweep(reversed(dc.get_device('floorFrontBarCenter').lights), color.RED, t('1.2.1'))
