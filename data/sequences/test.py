@@ -111,14 +111,15 @@ def create_timeline(dc, t, tl, el):
 
     #tl += sweep(dc.get_device('floorFrontBarCenter').lights, color.RED, t('1.2.1')) + sweep(reversed(dc.get_device('floorFrontBarCenter').lights), color.RED, t('1.2.1'))
 
-
+    # Intro 1 ------------------------------------------------------------------
+    tl_intro_1 = Timeline()
     for x in range(4):
-        tl += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm)
+        tl_intro_1 += light_random_state(dc.get_devices('allLights'), (color.WHITE, ), rhythm)
 
-    tl2 = Timeline()
+    # Intro 2 ------------------------------------------------------------------
+    tl_intro_2 = Timeline()
 
-
-    tl2 &= pop(
+    tl_intro_2 &= pop(
         dc.get_devices('rear'),
         duration_attack=t('1.1.2'),
         duration_decay=t('1.1.4'),
@@ -127,7 +128,7 @@ def create_timeline(dc, t, tl, el):
         tween_out=None
     ) * 2
 
-    tl2 &= hard_cycle(
+    tl_intro_2 &= hard_cycle(
         dc.get_devices('front') - {dc.get_device('floorFrontBarCenter'),},
         (color.RED, color.YELLOW),
         t('1.2.1'),
@@ -135,15 +136,16 @@ def create_timeline(dc, t, tl, el):
 
     RED_DARK = blend(color.BLACK, color.RED, blend=0.6)
     colors = (RED_DARK, color.RED, RED_DARK) + ((color.BLACK,) * 5)
-    tl2 &= (
+    tl_intro_2 &= (
         light_cycle(dc.get_device('floorFrontBarCenter').lights, states=colors, duration=t('1.2.1'), tween=easeInOutQuint)
         +
         light_cycle(dc.get_device('floorFrontBarCenter').lights, states=colors, duration=t('1.2.1'), tween=Timeline.Tween.tween_invert(easeInOutQuint))
     )
 
-    tl2 = tl2 * 16
+    tl_intro_2 = tl_intro_2 * 16
 
-    tl2 += light_random_frame_fuzz(
+    # Fuzz ---------------------------------------------------------------------
+    tl_fuzz = light_random_frame_fuzz(
         devices=tuple(chain.from_iterable(strip_light.lights for strip_light in dc.get_devices('floorFrontBarLeft', 'floorFrontBarCenter', 'floorFrontBarRight'))),
         duration=t('3.1.1'),
         states=(
@@ -151,7 +153,12 @@ def create_timeline(dc, t, tl, el):
         )
     )
 
-    tl += tl2
+    # Main ---------------------------------------------------------------------
+    tl = (
+        tl_intro_1 +
+        tl_intro_2 +
+        tl_fuzz
+    )
 
     el.add_trigger({
         "deviceid": "audio",
