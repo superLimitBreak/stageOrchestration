@@ -177,15 +177,14 @@ class StageOrchestrationServer(object):
         Render a frame to known devices (dmx/json)
         """
         framerate = self.options['framerate']
-        frame_lights = frame
         timecode = frame_to_timecode(frame, framerate)
-        timecode_media = timecode
-        if self.playing:
-            # If we are playing we need to offset lights and media with calibration offsets
-            frame_lights = next_frame_from_timestamp(
-                timecode + self.options['timeoffset_lights_seconds'],
-                framerate
-            )
+
+        if not self.playing:
+            # If seeking to individual frame - do not apply timing offsets
+            frame_lights = frame
+            timecode_media = timecode
+        else:
+            frame_lights = next_frame_from_timestamp(timecode + self.options['timeoffset_lights_seconds'], framerate)
             timecode_media = timecode + self.options['timeoffset_media_seconds']
 
         if frame and frame == FRAME_NUMBER_COMPLETE:
