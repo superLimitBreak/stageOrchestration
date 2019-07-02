@@ -34,6 +34,9 @@ def get_args():
     parser.add_argument('--subscriptionserver_host', action='store', help='display-trigger server to recieve events from')
 
     parser.add_argument('--framerate', action='store', help='Frames per second', type=float)
+    parser.add_argument('--timeoffset_lights_seconds', action='store', help='networks have delay. Calibrate lights. positive will fire values early. values less than one frame have no effect', type=float, default=0.0)
+    parser.add_argument('--timeoffset_media_seconds', action='store', help='', type=float, default=0.0)
+
     parser.add_argument('--dmx_host', action='store', help='ArtNet3 ip address')
     parser.add_argument('--dmx_mapping', action='store', help='map lighting model to dmx address')
 

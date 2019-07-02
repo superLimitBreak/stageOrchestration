@@ -15,7 +15,7 @@ from calaldees.files.scan_thread import file_scan_diff_thread
 from calaldees.multiprocessing.multiple_queues import multiprocessing_process_event_queue
 from calaldees.color import parse_rgb_color
 from calaldees.multiprocessing.single_process import SingleOutputStopableProcess
-from calaldees.timecode import next_frame_from_timestamp
+from calaldees.timecode import next_frame_from_timestamp, frame_to_timecode
 from calaldees.url import build_url
 from calaldees.wait_for import wait_for
 
@@ -176,7 +176,17 @@ class StageOrchestrationServer(object):
         """
         Render a frame to known devices (dmx/json)
         """
-        timecode = frame / self.options['framerate'] if frame and frame > 0 else 0
+        framerate = self.options['framerate']
+        frame_lights = frame
+        timecode = frame_to_timecode(frame, framerate)
+        timecode_media = timecode
+        if self.playing:
+            # If we are playing we need to offset lights and media with calibration offsets
+            frame_lights = next_frame_from_timestamp(
+                timecode + self.options['timeoffset_lights_seconds'],
+                framerate
+            )
+            timecode_media = timecode + self.options['timeoffset_media_seconds']
 
         if frame and frame == FRAME_NUMBER_COMPLETE:
             log.debug('final frame - natural end')
@@ -185,12 +195,12 @@ class StageOrchestrationServer(object):
         net_messages = []
 
         if frame and frame > 0:
-            self.device_collection.unpack(self.frame_reader.read_frame(frame), 0)
+            self.device_collection.unpack(self.frame_reader.read_frame(frame_lights), 0)  # TODO: what is this 0? why is this here? can 0 be a default arg?
             get_triggers_at = {
                 'json_state_continuous': self.triggerline.get_triggers_at,
                 'json_single_triggers': self.triggerline_renderer.get_triggers_at,
             }.get(self.options['output_mode'])
-            net_messages.extend(get_triggers_at(timecode))
+            net_messages.extend(get_triggers_at(timecode_media))
 
         if self.options['output_mode'] == 'json_state_continuous':
             net_messages.append({
