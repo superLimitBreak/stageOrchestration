@@ -5,12 +5,13 @@ from .rgb_light import RGBLight
 
 
 class RGBStripLight(CollectionPackerMixin):
-    def __init__(self, size=0, red=0, green=0, blue=0, lights=()):
+    def __init__(self, size=0, red=0, green=0, blue=0, lights=(), invert_light_order=False):
         assert bool(size) ^ bool(lights), 'Either provide a size or a template of lights to copy'
         if lights:
             self.lights = tuple(copy(light) for light in lights)
         else:
             self.lights = tuple(RGBLight(red=red, green=green, blue=blue) for i in range(size))
+        self.invert_light_order = invert_light_order
         CollectionPackerMixin.__init__(self, self.lights)
 
     def __copy__(self):
@@ -21,6 +22,17 @@ class RGBStripLight(CollectionPackerMixin):
     def _set_group_attr(self, attr, value):
         for light in self.lights:
             setattr(light, attr, value)
+
+    @property
+    def lights_ordered(self):
+        """
+        Sometimes DMX bar lights can be mounted upside down.
+        We need a way to configure fliping the order.
+        This is used when the DMX drivers output the light.
+        """
+        if self.invert_light_order:
+            return reversed(self.lights)
+        return self.lights
 
     @property
     def red(self):

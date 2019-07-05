@@ -21,7 +21,7 @@ def neoNeonFloorSmall(rgb_strip_light):
         (50, 0),  # '50' is a constant for 3 light mode
         (
             one_to_limit(value, limit=255)
-            for rgb_light in rgb_strip_light.lights
+            for rgb_light in rgb_strip_light.lights_ordered
             for value in rgb_light.rgb
         )
     ))
@@ -39,7 +39,7 @@ def OrionLinkV2(rgb_strip_light):
                     rgb_light.blue * 0.5,
                 )
             )
-            for rgb_light in rgb_strip_light.lights
+            for rgb_light in rgb_strip_light.lights_ordered
         )
     )) + bytes(
         (
@@ -61,7 +61,7 @@ def beamzLCB252(rgb_strip_light):
                     rgb_light.blue,  # * 0.5,  TODO
                 )
             )
-            for rgb_light in rgb_strip_light.lights
+            for rgb_light in rgb_strip_light.lights_ordered
         )
     ))
 
