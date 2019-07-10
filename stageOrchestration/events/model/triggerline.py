@@ -6,7 +6,13 @@ from calaldees.animation.timeline import Timeline
 class TriggerLine():
 
     def __init__(self, triggers=(), get_media_duration_func=None):
-        self.get_media_duration_func = get_media_duration_func
+        if get_media_duration_func:
+            assert callable(get_media_duration_func)
+            self.get_media_duration_func = get_media_duration_func
+        else:
+            def _get_media_duration_func(*args, **kwargs):
+                raise Exception('get_media_duration_func is not defined. This is bad? Why has this flow been triggered. Its time to cry.')
+            self.get_media_duration_func = _get_media_duration_func
         self.tl = Timeline()
         self.triggers = []
         self.add_trigger(*triggers)
@@ -14,7 +20,7 @@ class TriggerLine():
     def add_trigger(self, *triggers):
         for trigger in triggers:
             # Auto derive duration of media
-            if trigger.get('src') and not trigger.get('duration'):
+            if trigger.get('src') and not isinstance(trigger.get('duration'), Number):
                 trigger['duration'] = self.get_media_duration_func(trigger.get('src'))
             for required_field in ('func', ):
                 assert required_field in trigger, f'{required_field} is required for a valid media event'
@@ -43,12 +49,19 @@ class TriggerLine():
         ({'deviceid': 'test3', 'duration': 10, 'position': 6.0, 'timestamp': 20},)
         >>> el.get_triggers_at(26)
         ()
+
+        >>> el = TriggerLine()
+        >>> el._add_trigger({'deviceid': 'test5', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg'})
+        >>> el.get_triggers_at(0)
+        ({'deviceid': 'test5', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg', 'duration': 0, 'position': 0},)
+        >>> el.get_triggers_at(0.1)
+        ()
         """
         # Validate input ---
         for required_field in ('deviceid', 'timestamp'):
             assert required_field in trigger, f'{required_field} is required for a valid media event'
         # Assert duration is present
-        if not isinstance(trigger.get('duration'), Number):
+        if not isinstance(trigger.setdefault('duration', 0), Number):
             raise AttributeError(f'trigger has no numerical duration {trigger}')
         if not isinstance(trigger.setdefault('position', 0), Number):
             raise AttributeError(f'trigger has no numerical position {trigger}')

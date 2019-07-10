@@ -58,15 +58,18 @@ def render_media_timeline_image(
     track_height = int(track_height)
     assert track_height > 0
 
-
+    _IMAGE_NONE = (0, 0, None)
     def trigger_to_image(trigger):
-        media_src = trigger['src']
-        url = f'{os.path.join(media_url, media_src)}.{mediaTimelineImageExt}'
+        assert isinstance(trigger, dict)
+        if not trigger.get('src'):
+            log.debug(f'no src for trigger. skipping')
+            return _IMAGE_NONE
+        url = f"{os.path.join(media_url, trigger['src'])}.{mediaTimelineImageExt}"
         try:
             media_image = PIL.Image.open(urllib.request.urlopen(url))
         except Exception:
             log.warn(f'unable to load image {url}')
-            return (0, 0, None)
+            return _IMAGE_NONE
 
         # ffmpeg with `--rate` seems to continuiously sample 1 second behind the expect.
         # This constant is BAD. My options were.

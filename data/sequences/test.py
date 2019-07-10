@@ -174,5 +174,31 @@ def create_timeline(dc, t, tl, el):
         "position": 1.3,
         "timestamp": t('1.1.1'),
     })
+    el.add_trigger({
+        "deviceid": "front",
+        "func": "video.start",
+        "src": "bad-apple/bad_apple_front_screen_wip1.mp4",
+        "volume": 0.0,
+        "position": 1.3,
+        "timestamp": t('1.1.1'),
+    })
+    el.add_trigger({
+        "deviceid": "side",
+        "func": "text.html_bubble",
+        "html": """
+            <h1>Bad Apple</h1>
+            <p>Touhou</p>
+            <p>Masayoshi Minoshima and Haruka</p>
+            <p>Arrangement: Joe</p>
+            <p>Translation: Del</p>
+        """,
+        "timestamp": t('1.1.1'),
+    })
+    el.add_trigger({
+        "deviceid": "side",
+        "func": "image.start",
+        "src": "tracks/bad-apple/image.png",
+        "timestamp": t('1.1.1'),
+    })
 
     return tl

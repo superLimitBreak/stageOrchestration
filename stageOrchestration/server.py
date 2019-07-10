@@ -74,7 +74,7 @@ class StageOrchestrationServer(object):
             def get_media_duration_func(filename):
                 url = os.path.join(mediainfo_url, filename)
                 try:
-                    return json.loads(urllib.request.urlopen(url).read()).get('duration')
+                    return json.loads(urllib.request.urlopen(url).read()).get('duration', 0)
                 except urllib.error.URLError as ex:
                     # TODO: assertain the difference between 404 and ConnectionFailed and print appropriate error
                     raise Exception(f'Unable to obtain mediainfo from {url}')
