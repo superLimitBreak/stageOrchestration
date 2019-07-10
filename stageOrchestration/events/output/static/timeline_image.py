@@ -6,6 +6,8 @@ from collections import namedtuple
 
 import PIL.Image
 
+from calaldees.string_tools import substring_in
+
 from stageOrchestration.http_image import HTTPImageRenderMixin
 from stageOrchestration.events.model.triggerline import TriggerLine
 
@@ -18,7 +20,7 @@ class HttpImageMediaTimelineRenderer(HTTPImageRenderMixin):
     DEFAULT_kwargs = {
         'pixels_per_second': 8,
         'image_format': 'png',
-        'tracks': ('audio', 'front', 'rear'),
+        'tracks': ('audio', 'front', 'rear', 'side'),
         'track_height': 64,
         'mediaTimelineImageExt': 'png',
     }
@@ -64,27 +66,44 @@ def render_media_timeline_image(
         if not trigger.get('src'):
             log.debug(f'no src for trigger. skipping')
             return _IMAGE_NONE
-        url = f"{os.path.join(media_url, trigger['src'])}.{mediaTimelineImageExt}"
+
+        # Load Image
+        is_image_single = substring_in(('image',), (trigger.get('func', ''),))
+        is_image_timeline = substring_in(('audio', 'video'), (trigger.get('func', ''),))
+        assert is_image_single ^ is_image_timeline
+        if is_image_single:
+            url = os.path.join(media_url, trigger['src'])
+        if is_image_timeline:
+            url = f"{os.path.join(media_url, trigger['src'])}.{mediaTimelineImageExt}"
         try:
             media_image = PIL.Image.open(urllib.request.urlopen(url))
         except Exception:
             log.warn(f'unable to load image {url}')
             return _IMAGE_NONE
-
-        # ffmpeg with `--rate` seems to continuiously sample 1 second behind the expect.
-        # This constant is BAD. My options were.
-        # Have the first frame positioned and timed correctly OR
-        # Have all other frames correct and the slightly crop the first frame.
-        FFMPEG_CORRECT_CONSTANT = int(pixels_per_second)
-
-        x1 = int(min(
-            media_image.width,
-            trigger['position'] * pixels_per_second
-        )) + FFMPEG_CORRECT_CONSTANT
-        x2 = int(max(
-            x1,
-            (trigger['duration'] - trigger['position']) * pixels_per_second
-        ))
+        if is_image_single:
+            media_image = media_image.resize((
+                int((media_image.height/media_image.width) * track_height),
+                track_height,
+            ))
+        assert media_image.height == track_height
+        
+        if is_image_single:
+            x1 = 0
+            x2 = media_image.width
+        if is_image_timeline:
+            # ffmpeg with `--rate` seems to continuiously sample 1 second behind the expect.
+            # This constant is BAD. My options were.
+            # Have the first frame positioned and timed correctly OR
+            # Have all other frames correct and the slightly crop the first frame.
+            FFMPEG_CORRECT_CONSTANT = int(pixels_per_second)
+            x1 = int(min(
+                media_image.width,
+                trigger['position'] * pixels_per_second
+            )) + FFMPEG_CORRECT_CONSTANT
+            x2 = int(max(
+                x1,
+                (trigger['duration'] - trigger['position']) * pixels_per_second
+            ))
         media_image = media_image.crop((
             x1, 0,
             x2, media_image.height,

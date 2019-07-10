@@ -192,13 +192,13 @@ def create_timeline(dc, t, tl, el):
             <p>Arrangement: Joe</p>
             <p>Translation: Del</p>
         """,
-        "timestamp": t('1.1.1'),
+        "timestamp": t('2.1.1'),
     })
     el.add_trigger({
         "deviceid": "side",
         "func": "image.start",
         "src": "tracks/bad-apple/image.png",
-        "timestamp": t('1.1.1'),
+        "timestamp": t('2.1.1'),
     })
 
     return tl
