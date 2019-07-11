@@ -199,6 +199,7 @@ def create_timeline(dc, t, tl, el):
         "func": "image.start",
         "src": "tracks/bad-apple/image.png",
         "timestamp": t('2.1.1'),
+        "duration": 120,
     })
 
     return tl

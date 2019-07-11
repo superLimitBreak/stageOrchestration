@@ -56,6 +56,15 @@ class TriggerLine():
         ({'deviceid': 'test5', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg', 'duration': 0, 'position': 0},)
         >>> el.get_triggers_at(0.1)
         ()
+
+        >>> el = TriggerLine()
+        >>> el._add_trigger({'deviceid': 'test6', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg', 'duration': 10})
+        >>> el.get_triggers_at(0)
+        ({'deviceid': 'test6', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg', 'duration': 10, 'position': 0.0},)
+        >>> el.get_triggers_at(5)
+        ({'deviceid': 'test6', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg', 'duration': 10, 'position': 5.0},)
+        >>> el.get_triggers_at(15)
+        ()
         """
         # Validate input ---
         for required_field in ('deviceid', 'timestamp'):
