@@ -76,7 +76,10 @@ class StageOrchestrationServer(object):
                 try:
                     return json.loads(urllib.request.urlopen(url).read()).get('duration', 0)
                 except urllib.error.URLError as ex:
-                    # TODO: assertain the difference between 404 and ConnectionFailed and print appropriate error
+                    if ex.code == 404:
+                        log.warning(f'mediainfo missing file {url}')
+                        return 0
+                    log.exception(ex)
                     raise Exception(f'Unable to obtain mediainfo from {url}')
             self.options['get_media_duration_func'] = get_media_duration_func
         else:
