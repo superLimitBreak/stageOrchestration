@@ -19,12 +19,20 @@ class TriggerLine():
 
     def add_trigger(self, *triggers):
         for trigger in triggers:
+            for required_field in ('func', ):
+                assert required_field in trigger, f'{required_field} is required for a valid media event'
             # Auto derive duration of media
             if trigger.get('src') and not isinstance(trigger.get('duration'), Number):
                 trigger['duration'] = self.get_media_duration_func(trigger.get('src'))
-            for required_field in ('func', ):
-                assert required_field in trigger, f'{required_field} is required for a valid media event'
+            # If Image - Auto add second image.clear trigger after duration
             self._add_trigger(trigger)
+            if trigger.get('func') == 'image.show' and trigger.get('duration'):
+                self._add_trigger({
+                    'deviceid': trigger.get('deviceid'),
+                    'func': 'image.empty',
+                    'timestamp': trigger.get('timestamp') + trigger.get('duration'),
+                })
+
 
     def _add_trigger(self, trigger):
         """
