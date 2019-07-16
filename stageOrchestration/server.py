@@ -226,6 +226,10 @@ class StageOrchestrationServer(object):
 
         self.clear_sequence(pause=pause)
 
+        if not self.sequence_manager.exists(sequence_module_name):
+            log.warning(f'sequence does not exist {sequence_module_name}')
+            return
+
         self.current_sequence['sequence_module_name'] = sequence_module_name
         self.current_sequence['module_hash'] = self.sequence_manager.get_rendered_hash(sequence_module_name)
         self.current_sequence.update({
