@@ -7,8 +7,10 @@ from calaldees.animation.timeline import Timeline
 import stageOrchestration.lighting.timeline_helpers.colors as color
 from stageOrchestration.lighting.timeline_helpers.sequences import *
 
+
+name = __name__.split('.')[-1]
 META = {
-    'name': 'bad-apple',
+    'name': name,
     'bpm': 138,
     'timesignature': '4:4',
 }
@@ -77,13 +79,13 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
-        "src": "bad-apple/badApple_withClick.ogg",
+        "src": f"{name}/badApple_withClick.ogg",
         "timestamp": t('1.1.1'),
     })
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
-        "src": "bad-apple/bad-apple_original.mp4",
+        "src": f"{name}/bad-apple_original.mp4",
         "volume": 0.0,
         "position": 1.3,
         "timestamp": t('1.1.1'),
@@ -91,7 +93,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "front",
         "func": "video.start",
-        "src": "bad-apple/bad_apple_front_screen_wip1.mp4",
+        "src": f"{name}/bad_apple_front_screen_wip1.mp4",
         "volume": 0.0,
         "position": 1.3,
         "timestamp": t('1.1.1'),
@@ -111,7 +113,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "side",
         "func": "image.show",
-        "src": "tracks/bad-apple/image.png",
+        "src": f"{name}/image.png",
         "timestamp": t('2.1.1'),
         "duration": t('10.1.1'),
     })

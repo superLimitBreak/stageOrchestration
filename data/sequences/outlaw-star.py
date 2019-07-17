@@ -3,9 +3,9 @@ from calaldees.animation.timeline import Timeline
 import stageOrchestration.lighting.timeline_helpers.colors as color
 from stageOrchestration.lighting.timeline_helpers.sequences import *
 
-
+name = __name__.split('.')[-1]
 META = {
-    'name': 'outlaw-star',
+    'name': name,
     'bpm': 108,
     'timesignature': '4:4',
 }
@@ -18,13 +18,13 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
-        "src": "outlaw-star/audio.ogg",
+        "src": f"{name}/audio.ogg",
         "timestamp": t('1.1.1'),
     })
     el.add_trigger({
         "deviceid": "front",
         "func": "video.start",
-        "src": "outlaw-star/front.mp4",
+        "src": f"{name}/front.mp4",
         "volume": 0.0,
         "position": 0,
         "timestamp": t('1.1.1'),
@@ -32,7 +32,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
-        "src": "outlaw-star/rear.mp4",
+        "src": f"{name}/rear.mp4",
         "volume": 0.0,
         "position": 0,
         "timestamp": t('1.1.1'),

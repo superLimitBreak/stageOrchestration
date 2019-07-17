@@ -4,8 +4,9 @@ import stageOrchestration.lighting.timeline_helpers.colors as color
 from stageOrchestration.lighting.timeline_helpers.sequences import *
 
 
+name = __name__.split('.')[-1]
 META = {
-    'name': 'again',
+    'name': name,
     'bpm': 120,
     'timesignature': '4:4',
 }
@@ -19,13 +20,13 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
-        "src": "again/audio.ogg",
+        "src": f"{name}/audio.ogg",
         "timestamp": t('1.1.1'),
     })
     el.add_trigger({
         "deviceid": "front",
         "func": "video.start",
-        "src": "again/front.mp4",
+        "src": f"{name}/front.mp4",
         "volume": 0.0,
         "position": 0,
         "timestamp": t('1.1.1'),
@@ -33,7 +34,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
-        "src": "again/rear.mp4",
+        "src": f"{name}/rear.mp4",
         "volume": 0.0,
         "position": 0,
         "timestamp": t('1.1.1'),
