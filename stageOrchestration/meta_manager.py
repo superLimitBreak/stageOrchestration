@@ -40,7 +40,7 @@ class MetaManager():
 
         return meta
 
-    def _load_meta(sequence_name):
+    def _load_meta(self, sequence_name):
         # Load/overlay yaml files
         def meta_yaml_reducer(accu, filename):
             filename = os.path.join(self.path_sequences, f'{filename}.yaml')
