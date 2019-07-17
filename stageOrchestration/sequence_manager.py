@@ -123,7 +123,7 @@ class SequenceManager(object):
         log.debug('Rendering sequence_module {}'.format(sequence_module._sequence_name))
 
         packer = self.get_packer(sequence_module, assert_exists=False)
-        timeline, triggerline = render_sequence(
+        _rendered_sequence = render_sequence(
             packer=packer,
             sequence_module=sequence_module,
             device_collection=self.device_collection,
@@ -132,6 +132,11 @@ class SequenceManager(object):
             frame_rate=self.framerate,  # TODO: correct inconsistent naming
         )
         packer.close()
+        if not _rendered_sequence:
+            #log.warning()  # warning should have been raised when returning None
+            return
+
+        timeline, triggerline = _rendered_sequence
         assert os.path.exists(packer.filename), f'Should have generated sequence file {packer.filename}'
 
         with open(self.get_rendered_trigger_filename(sequence_module), 'wt') as filehandle:

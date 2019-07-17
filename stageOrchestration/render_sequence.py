@@ -21,7 +21,11 @@ def render_sequence(packer, sequence_module, device_collection, get_time_func, g
 
     timeline = timeline or Timeline()
     triggerline = triggerline or TriggerLine(get_media_duration_func=get_media_duration_func)
-    getattr(sequence_module, RENDER_FUNCTION)(device_collection, get_time_func, timeline, triggerline)
+    _render_function = getattr(sequence_module, RENDER_FUNCTION, None)
+    if not callable(_render_function):
+        log.warning(f'{sequence_module.__name__} does not have {RENDER_FUNCTION} to render a timeline')
+        return
+    _render_function(device_collection, get_time_func, timeline, triggerline)
     assert timeline.duration, f'{sequence_module.__name__} timeline does not contain any items to animate'
 
     log.debug(f'Rendering {sequence_module._sequence_name}')
