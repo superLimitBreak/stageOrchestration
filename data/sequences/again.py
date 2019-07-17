@@ -5,26 +5,27 @@ from stageOrchestration.lighting.timeline_helpers.sequences import *
 
 
 META = {
-    'name': 'outlaw-star',
-    'bpm': 108,
+    'name': 'again',
+    'bpm': 120,
     'timesignature': '4:4',
 }
 
 
 def create_timeline(dc, t, tl, el):
-    tl.set_(dc.get_devices(), color.CYAN, 0)
-    tl.set_(dc.get_devices(), color.RED, t('123.1.1'))
+    tl.set_(dc.get_devices(), color.GREEN, 0)
+    tl.set_(dc.get_devices(), color.BLACK, t('100.1.1'))
+
 
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
-        "src": "outlaw-star/audio.ogg",
+        "src": "again/audio.ogg",
         "timestamp": t('1.1.1'),
     })
     el.add_trigger({
         "deviceid": "front",
         "func": "video.start",
-        "src": "outlaw-star/front.mp4",
+        "src": "again/front.mp4",
         "volume": 0.0,
         "position": 0,
         "timestamp": t('1.1.1'),
@@ -32,7 +33,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
-        "src": "outlaw-star/rear.mp4",
+        "src": "again/rear.mp4",
         "volume": 0.0,
         "position": 0,
         "timestamp": t('1.1.1'),
@@ -41,8 +42,8 @@ def create_timeline(dc, t, tl, el):
         "deviceid": "side",
         "func": "text.html_bubble",
         "html": """
-            <h1>(title)</h1>
-            <p>Outlaw Star</p>
+            <h1>Again</h1>
+            <p>Full Metal Alchemist Brotherhood</p>
             <p>(artist)</p>
             <p>Arrangement: Joe</p>
             <p>Translation: superLimitBreak</p>
