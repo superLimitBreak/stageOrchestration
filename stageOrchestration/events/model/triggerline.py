@@ -13,7 +13,7 @@ class TriggerLine():
             def _get_media_duration_func(*args, **kwargs):
                 raise Exception('get_media_duration_func is not defined. This is bad? Why has this flow been triggered. Its time to cry.')
             self.get_media_duration_func = _get_media_duration_func
-        self.single_frame_duration = (1/framerate) + 0.001 if framerate else 0
+        self.single_frame_duration = (1/framerate) if framerate else 0
         self.tl = Timeline()
         self.triggers = []
         self.add_trigger(*triggers)
