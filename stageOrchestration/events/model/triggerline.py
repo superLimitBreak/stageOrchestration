@@ -13,8 +13,7 @@ class TriggerLine():
             def _get_media_duration_func(*args, **kwargs):
                 raise Exception('get_media_duration_func is not defined. This is bad? Why has this flow been triggered. Its time to cry.')
             self.get_media_duration_func = _get_media_duration_func
-        assert isinstance(framerate, Number)
-        self.single_frame_duration = (1/framerate) + 0.001
+        self.single_frame_duration = (1/framerate) + 0.001 if framerate else 0
         self.tl = Timeline()
         self.triggers = []
         self.add_trigger(*triggers)
@@ -34,14 +33,14 @@ class TriggerLine():
             # this ensures that single triggers are activated
             if not trigger.get('duration') and self.single_frame_duration:
                 trigger['duration'] = self.single_frame_duration
-            assert trigger.get('duration') >= self.single_frame_duration, 'All triggers must have a minimum duration of 1 frame'
+            assert trigger.get('duration', -1) >= self.single_frame_duration, 'All triggers must have a minimum duration of 1 frame. `add_trigger` has been called without providing timeline with a framerate'
             self._add_trigger(trigger)
             # If Image - Auto add second image.clear trigger after duration
             if trigger.get('func') == 'image.show' and trigger.get('duration'):
                 self._add_trigger({
                     'deviceid': trigger.get('deviceid'),
                     'func': 'image.empty',
-                    'timestamp': trigger.get('timestamp') + trigger.get('duration'),
+                    'timestamp': trigger.get('timestamp') + trigger.get('duration') + self.single_frame_duration,
                     'duration': self.single_frame_duration,
                 })
 
