@@ -5,7 +5,7 @@ Reference for creating lighting sequences.
 
 ## Files
 * `__init__.py` must be be present (and empty)
-* all `.py` files will be rendered as sequences
+* all `.py` files will be rendered as sequences on system startup
 * `.py` files prefixed with `_` will NOT be rendered (these should be used for your own helper functions)
 
 
@@ -21,7 +21,11 @@ JSON Example
 
 ```json
     {
-
+        "name": "test-of-tests",
+        "events": ["note_on-D1"],
+        "payload": [
+            {"deviceid": "lights", "func": "lights.start_sequence", "sequence_module_name": "test-of-tests"}
+        ]
     }
 ```
 
@@ -29,6 +33,7 @@ JSON Example
 
 ```python
     from calaldees.animation.timeline import Timeline
+    import stageOrchestration.lighting.timeline_helpers.colors as color
     #from stageOrchestration.lighting.timeline_functions import thing
 
     META = {
@@ -38,16 +43,15 @@ JSON Example
     }
 
     def create_timeline(dc, t, tl, el):
-        tl2 = tl_intermediate = Timeline()
-        tl = tl + tl2
+        tl2 = Timeline()
+        tl2.to(dc.get_devices('allLights'), t('4.1.1'), color.RED)
+        tl2.to(dc.get_devices('allLights'), t('2.1.1'), color.BLACK)
+        tl += tl2
 
         el.add_trigger({
             "deviceid": "front",
             "func": "video.start",
             "src": "/folder/test.mp4",
-            "duration": 15,  # TEMP - To be removed with auto duration
-            "timestamp": t('0.0.0'),
+            "timestamp": t('1.1.1'),  # Timing is based on beats/bars, 1.1.1 is 0.0
         })
-
-        return tl
 ```

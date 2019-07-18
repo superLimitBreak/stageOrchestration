@@ -78,7 +78,7 @@ def render_media_timeline_image(
         try:
             media_image = PIL.Image.open(urllib.request.urlopen(url))
         except Exception:
-            log.warn(f'unable to load image {url}')
+            log.warning(f'unable to load image {url}')
             return _IMAGE_NONE
         if is_image_single:
             media_image = media_image.resize((
@@ -86,7 +86,7 @@ def render_media_timeline_image(
                 track_height,
             ))
         assert media_image.height == track_height
-        
+
         if is_image_single:
             x1 = 0
             x2 = media_image.width
