@@ -14,6 +14,8 @@ from calaldees.attribute_packer import PersistentFramePacker
 
 from stageOrchestration.meta_manager import MetaManager
 from stageOrchestration.render_sequence import render_sequence
+from stageOrchestration.events.model.triggerline import TriggerLine
+
 
 REGEX_PY_EXTENSION = re.compile(r'\.py$')
 FAST_SCAN_REGEX_FILTER_FOR_PY_FILES = fast_scan_regex_filter(file_regex=REGEX_PY_EXTENSION, ignore_regex=r'^_')
@@ -74,6 +76,10 @@ class SequenceManager(object):
         if assert_exists:
             assert os.path.exists(sequence)
         return PersistentFramePacker(self.device_collection, sequence)
+
+    def get_triggerline(self, sequence):
+        with open(self.get_rendered_trigger_filename(sequence), 'rt') as filehandle:
+            return TriggerLine(json.load(filehandle))  # framerate and media_duration func are not needed for rendered triggerlines
 
     def get_meta(self, sequence):
         return self.meta_manager.get_meta(self.sequence_modules.get(sequence, sequence))

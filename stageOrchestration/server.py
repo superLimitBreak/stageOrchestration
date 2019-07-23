@@ -24,7 +24,6 @@ from .lighting.output.realtime.dmx import RealtimeOutputDMX
 from .lighting.output.realtime.frame_reader import FrameReader
 from .http_server import HTTPServer
 from .lighting.model.device_collection_loader import device_collection_loader
-from .events.model.triggerline import TriggerLine
 
 from .sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 
@@ -246,10 +245,8 @@ class StageOrchestrationServer(object):
             self.sequence_manager.get_rendered_filename(sequence_module_name),
             self.device_collection.pack_size,
         )
-        # triggerline holds a list of upcoming triggers in a timeline
-        with open(self.sequence_manager.get_rendered_trigger_filename(sequence_module_name), 'rt') as filehandle:
-            self.triggerline = TriggerLine(json.load(filehandle))
-            self.triggerline_renderer = self.triggerline.get_render()
+        self.triggerline = self.sequence_manager.get_triggerline(sequence_module_name)
+        self.triggerline_renderer = self.triggerline.get_render()
 
     def start_sequence(self, sequence_module_name=None, timecode=None):
         sequence_module_name = sequence_module_name or self.current_sequence['sequence_module_name']

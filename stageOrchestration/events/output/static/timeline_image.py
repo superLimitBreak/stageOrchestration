@@ -34,10 +34,11 @@ class HttpImageMediaTimelineRenderer(HTTPImageRenderMixin):
 
     def render(self, sequence_name=None, **kwargs):
         assert sequence_name, 'sequence_name not provided'
-        with open(self.sequence_manager.get_rendered_trigger_filename(sequence_name), 'rt') as filehandle:
-            triggerline = TriggerLine(json.load(filehandle))
-
-        return render_media_timeline_image(triggerline, media_url=self.media_url, **kwargs)
+        return render_media_timeline_image(
+            triggerline=self.sequence_manager.get_triggerline(sequence_name),
+            media_url=self.media_url,
+            **kwargs
+        )
 
 
 TimelineImage = namedtuple('TimelineImage', ('row', 'x', 'image'))
