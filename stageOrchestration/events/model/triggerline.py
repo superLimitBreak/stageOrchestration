@@ -182,10 +182,25 @@ class _TriggerRenderWrapper():
     def get_triggers_at(self, timecode):
         """
         Will only trigger items once
+
+        >>> el = TriggerLine()
+        >>> el.add_trigger({'deviceid': 'test1', 'func': 'video.start', 'timestamp': 10, 'src': 'test.mp4', 'duration': 10})
+        >>> r = el.get_render()
+        >>> r.get_triggers_at(0)
+        ()
+        >>> r.get_triggers_at(10)
+        ({'deviceid': 'test1', 'func': 'video.start', 'timestamp': 10, 'src': 'test.mp4', 'duration': 10, 'position': 0.0},)
+        >>> r.get_triggers_at(11)
+        ()
+        >>> r.reset()
+        >>> r.get_triggers_at(11)
+        ({'deviceid': 'test1', 'func': 'video.start', 'timestamp': 10, 'src': 'test.mp4', 'duration': 10, 'position': 1.0},)
+        >>> r.get_triggers_at(11)
+        ()
         """
         self.renderer.render(timecode)
         current_active_item_ids = set(map(id, self.renderer._active))
         new_active_item_ids = current_active_item_ids - self.rendered_ids
         new_active_items = tuple(i.element for i in self.renderer._active if id(i) in new_active_item_ids)
-        self.rendered_ids &= current_active_item_ids
+        self.rendered_ids |= current_active_item_ids
         return new_active_items
