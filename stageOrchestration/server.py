@@ -63,10 +63,6 @@ class StageOrchestrationServer(object):
             )
             # TODO: dev feature - monitor timeline_helpers.__path__ and re-render all modules when base libs change
 
-        def load_device_collection():
-            return device_collection_loader(kwargs['path_stage_description'])
-        self.options['load_device_collection'] = load_device_collection
-
         mediainfo_url = self.options.get('mediainfo_url')
         if mediainfo_url:
             wait_for(lambda: urllib.request.urlopen(mediainfo_url), ignore_exceptions=True)
@@ -89,14 +85,22 @@ class StageOrchestrationServer(object):
                 raise Exception('mediainfo_url not specified')
             self.options['get_media_duration_func'] = _get_media_duration_func
 
+        def load_device_collection():
+            return device_collection_loader(kwargs['path_stage_description'])
+        self.options['load_device_collection'] = load_device_collection
         self.device_collection = load_device_collection()
+
         self.sequence_manager = SequenceManager(**self.options)
         self.sequence_manager.reload_sequences()
-        self.http_server = HTTPServer(self.options) if self.options.get('http_png_port') else None
+
+        self.http_server = HTTPServer(
+            self.options
+        ) if self.options.get('http_png_port') else None
+
         self.dmx = RealtimeOutputDMX(
             host=self.options['dmx_host'],
             mapping_config_filename=self.options['dmx_mapping'],
-        )
+        ) if self.options.get('dmx_host') else None
 
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
 
@@ -186,8 +190,8 @@ class StageOrchestrationServer(object):
             frame_lights = frame
             timecode_media = timecode
         else:
-            frame_lights = next_frame_from_timestamp(timecode + self.options['timeoffset_lights_seconds'], framerate)
-            timecode_media = timecode + self.options['timeoffset_media_seconds']
+            frame_lights = next_frame_from_timestamp(timecode + self.options.get('timeoffset_lights_seconds', 0), framerate)
+            timecode_media = timecode + self.options.get('timeoffset_media_seconds', 0)
 
         if frame and frame == FRAME_NUMBER_COMPLETE:
             log.debug('final frame - natural end')
@@ -217,7 +221,8 @@ class StageOrchestrationServer(object):
             return net_message
 
         self.net.send_message(*map(overlay_playing_state_key, net_messages))
-        self.dmx.send(self.device_collection)
+        if self.dmx:
+            self.dmx.send(self.device_collection)
 
 
     # Render Loop --------------------------------------------------------------
