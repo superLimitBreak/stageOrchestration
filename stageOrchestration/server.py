@@ -38,6 +38,10 @@ def serve(**kwargs):
 class StageOrchestrationServer():
     DEVICEID_VISULISATION = 'light_visulisation'
 
+    class NullSubscriptionClient:
+        def send_message(self, *args, **kwargs):
+            pass
+
     def __init__(self, **kwargs):
         self.options = kwargs
         self.options.setdefault('framerate', 30)
@@ -51,10 +55,7 @@ class StageOrchestrationServer():
             self.net = SubscriptionClient(host=kwargs['subscriptionserver_host'], subscriptions=('lights', 'all'))
             self.net.receive_message = lambda msg: self.network_event_queue.put(msg)
         else:
-            class NullSubscriptionClient:
-                def send_message(self, *args, **kwargs):
-                    pass
-            self.net = NullSubscriptionClient()
+            self.net = self.NullSubscriptionClient()
 
         self.scan_update_event_queue = multiprocessing.Queue()
         if 'scaninterval' in kwargs:
