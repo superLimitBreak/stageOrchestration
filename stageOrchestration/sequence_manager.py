@@ -29,7 +29,7 @@ class SequenceManager(object):
         assert os.path.isdir(path_sequences)
         assert os.path.exists(tempdir)
         assert framerate
-        assert kwargs['get_media_duration_func'].__call__
+        assert callable(kwargs.get('get_media_duration_func'))
 
         self.path_sequences = PurePath(path_sequences)
         sys.path.append(str(self.path_sequences.parent))  # Can't load modules from path. Must add a system path. Thanks Python.

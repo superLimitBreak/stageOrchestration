@@ -19,13 +19,12 @@ from calaldees.timecode import next_frame_from_timestamp, frame_to_timecode
 from calaldees.url import build_url
 from calaldees.wait_for import wait_for
 
-from .frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
-from .lighting.output.realtime.dmx import RealtimeOutputDMX
-from .lighting.output.realtime.frame_reader import FrameReader
-from .http_server import HTTPServer
-from .lighting.model.device_collection_loader import device_collection_loader
-
-from .sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
+from stageOrchestration.frame_count_loop import frame_count_loop, FRAME_NUMBER_COMPLETE
+from stageOrchestration.lighting.output.realtime.dmx import RealtimeOutputDMX
+from stageOrchestration.lighting.output.realtime.frame_reader import FrameReader
+from stageOrchestration.http_server import HTTPServer
+from stageOrchestration.lighting.model.device_collection_loader import device_collection_loader
+from stageOrchestration.sequence_manager import SequenceManager, FAST_SCAN_REGEX_FILTER_FOR_PY_FILES
 
 log = logging.getLogger(__name__)
 
@@ -36,11 +35,14 @@ def serve(**kwargs):
     server.run()
 
 
-class StageOrchestrationServer(object):
+class StageOrchestrationServer():
     DEVICEID_VISULISATION = 'light_visulisation'
 
     def __init__(self, **kwargs):
         self.options = kwargs
+        self.options.setdefault('framerate', 30)
+        self.options.setdefault('output_mode', 'json_single_triggers')
+
         self.tempdir = tempfile.TemporaryDirectory()
         self.options['tempdir'] = self.tempdir.name
 
@@ -86,7 +88,7 @@ class StageOrchestrationServer(object):
             self.options['get_media_duration_func'] = _get_media_duration_func
 
         def load_device_collection():
-            return device_collection_loader(kwargs['path_stage_description'])
+            return device_collection_loader(kwargs.get('path_stage_description'))
         self.options['load_device_collection'] = load_device_collection
         self.device_collection = load_device_collection()
 

@@ -12,7 +12,8 @@ DEVICE_REQUIRED_ATTRS = ('__iand__', '__and__', '__copy__')
 
 class DeviceCollection(CollectionPackerMixin):
 
-    def __init__(self, devices):
+    def __init__(self, devices=None):
+        devices = devices or {}
         for device_name, device in devices.items():
             for attr in DEVICE_REQUIRED_ATTRS:
                 assert hasattr(device, attr), f'{deivce_name} does not support the mandatory {attr}'

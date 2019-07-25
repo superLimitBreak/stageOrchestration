@@ -6,6 +6,7 @@ pillow
 falcon
 
 pytest
+pytest-mock
 ptvsd
 
 git+https://github.com/calaldees/libs.git@master#egg=calaldees

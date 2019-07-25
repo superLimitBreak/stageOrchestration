@@ -21,6 +21,9 @@ DEVICE_TYPES = make_dict({
 
 
 def device_collection_loader(path=None, data=None):
+    if not path and not data:
+        log.warning('device_collection_loader passed no path or data')
+        return DeviceCollection()
     assert bool(path) ^ bool(data), 'Provide either a path or data'
     if path:
         log.debug(f'Loading device_collection: {path}')
