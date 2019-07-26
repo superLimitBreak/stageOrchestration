@@ -19,10 +19,6 @@ def test_network_event__load_sequence(mocker):
 
 
 def test_scan_update_event():
-    #mocker.patch('stageOrchestration.events.model.triggerline.TriggerLine')
-    #from stageOrchestration.events.model.triggerline import TriggerLine
-    #tt = TriggerLine()
-    #assert False
     pass
 
 

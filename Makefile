@@ -57,7 +57,10 @@ upgrade_pip:
 
 .PHONY: build
 build:
-	docker build --tag superlimitbreak/stageorchestration .
+	docker build --tag superlimitbreak/stageorchestration:latest .
+.PHONY: push
+push:
+	docker push superlimitbreak/stageorchestration:latest
 
 
 # Run --------------------------------------------------------------------------
