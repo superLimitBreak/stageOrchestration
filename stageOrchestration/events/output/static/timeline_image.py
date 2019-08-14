@@ -3,6 +3,7 @@ import json
 from io import BytesIO
 import urllib.request
 from collections import namedtuple
+from itertools import chain
 
 import PIL.Image
 
@@ -116,7 +117,7 @@ def render_media_timeline_image(
         )
 
     trigger_media_list = tuple(map(trigger_to_image, triggerline.triggers))
-    width = max((x+img.width for _, x, img in trigger_media_list if img))
+    width = max(chain((x+img.width for _, x, img in trigger_media_list if img), (1, )))
     image = PIL.Image.new('RGB', (width, len(tracks) * track_height))
 
     for (row, x, img) in trigger_media_list:
