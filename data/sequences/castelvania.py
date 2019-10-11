@@ -59,9 +59,12 @@ def create_timeline(dc, t, tl, el):
 
     t2 = partial(timecode_to_seconds, bpm=232)
     T2_START = 62.0
-    DEFAULT_DURATION = t2('5.1.1')
-    DEFAULT_X_DIFF = 100
+    DEFAULT_DURATION = t2('2.1.1')
+    DEFAULT_X_DIFF = 50
 
+
+    # https://www.finalfantasykingdom.net/castlevania.php
+    # https://castlevania.fandom.com/wiki/Games
     IMAGES = {
         'cmap1': {"src": "castelvania/castelvania1/cmap1.png", "width": 3600, "height": 350},
         'cmap2': {"src": "castelvania/castelvania1/cmap2.png", "width": 2050, "height": 725},
@@ -76,6 +79,14 @@ def create_timeline(dc, t, tl, el):
         'c3village': {"src": "castelvania/castelvania3/warakiyavillage.png", "width": 4096, "height": 864},
         'c3cave': {"src": "castelvania/castelvania3/alucardscave.png", "width": 4608, "height": 608},
         'c3causeway': {"src": "castelvania/castelvania3/causeway.png", "width": 3840, "height": 416},
+        'c3ship': {"src": "catselvania/castelvania3/hauntedshipoffools.png", "width": 2816, "height": 768},
+        'c3marsh': {"src": "catselvania/castelvania3/murkymarshofmorbidmoron.png", "width": 3840, "height": 768},
+        'c3_1a': {"src": "castelvania/castelvania3/1aundergroundcatacombs.png", "width": 1792, "height": 768},
+        'c3_1b': {"src": "castelvania/castelvania3/1bcastlecourtyard.png", "width": 2816, "height": 864},
+        'c3_2': {"src": "castelvania/castelvania3/2cliffsideentrance.png", "width": 2048, "height": 2784},
+        'c3_3': {"src": "castelvania/castelvania3/3mainhall.png", "width": 2560, "height": 768},
+        'c3_4': {"src": "castelvania/castelvania3/4innerhalls.png", "width": 1280, "height": 2592},
+        'c3_5': {"src": "castelvania/castelvania3/5castlekeep.png", "width": 2304, "height": 1104},
     }
 
     def scroll(image_name, timestamp=0, d=1, x=0, y=0, x_diff=DEFAULT_X_DIFF, y_diff=0, _duration=DEFAULT_DURATION):
@@ -101,6 +112,97 @@ def create_timeline(dc, t, tl, el):
     scroll('cmap1', timestamp=1, x=0, y=0, x_diff=480, _duration=58)
 
 
+    RIGHT = dict(x_diff=DEFAULT_X_DIFF, y_diff=0)
+    LEFT = dict(x_diff=-DEFAULT_X_DIFF, y_diff=0)
+    UP = dict(x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
+    DOWN = dict(x_diff=0, y_diff=DEFAULT_X_DIFF/2)
+    PATHS = [
+        ('cmap1', 768, 0, RIGHT),
+        ('cmap1', 2295, 0, RIGHT),
+        ('cmap1', 2320, 163, RIGHT),
+        ('cmap1', 2800, 0, RIGHT),
+        ('cmap2', 0, 160, RIGHT),
+        ('cmap2', 160, 0, LEFT),
+        ('cmap2', 458, 4, LEFT),
+        ('cmap3', 1157, 67, RIGHT),
+        ('cmap4', 6, 175, RIGHT),
+        ('cmap4', 2975, 0, RIGHT),
+        ('cmap4', 1438, 0, RIGHT),
+        ('cmap5', 736, 0, LEFT),
+        ('cmap5', 750, 335, RIGHT),
+        ('cmap5', 2000, 174, LEFT),
+        ('cmap6', 2832, 368, LEFT),
+        ('cmap6', 1275, 350, UP),
+        ('cmap6', 954, 190, DOWN),
+        ('cmap6', 554, 0, LEFT),
+        ('c3tower', 255, 2315, UP),
+        ('c3tower', 0, 0, RIGHT),
+        ('c3tower', 0, 662, RIGHT),
+        ('c3tower', 511, 1583, UP),
+        ('c3sunkcity', 3327, 414, LEFT),
+        ('c3sunkcity', 3327, 414, LEFT),
+        ('c3village', 1038, 192, RIGHT),
+        ('c3village', 1800, 192, RIGHT),
+        ('c3cave', 2847, 31, RIGHT),
+        ('c3cave', 4192, 224, LEFT),
+        ('c3cave', 3454, 224, LEFT),
+        ('c3cave', 2719, 414, LEFT),
+        ('c3cave', 318, 222, LEFT),
+        ('c3causeway', 0, 0, RIGHT),
+        ('c3causeway', 2545, 0, RIGHT),
+        ('c3causeway', 1000, 0, RIGHT),
+        ('c3clock', 256, 2480, UP),
+        ('c3clock', 768, 719, UP),
+        ('c3clock', 511, 910, RIGHT),
+        ('c3clock', 0, 1583, RIGHT),
+        ('c3forest', 0, 224, RIGHT),
+        ('c3forest', 2560, 415, RIGHT),
+        ('c3forest', 2304, 604, RIGHT),
+        ('c3_1a', 1522, 576, LEFT),
+        ('c3_1a', 896, 383, LEFT),
+        ('c3_1a', 512, 192, RIGHT),
+        ('c3_1b', 1792, 0, RIGHT),
+        ('c3_1b', 2302, 238, DOWN),
+        ('c3_1b', 32, 383, RIGHT),
+        ('c3_1b', 2335, 672, RIGHT),
+        ('c3_2', 1024, 2014, UP),
+        ('c3_2', 1320, 1342, LEFT),
+        ('c3_2', 0, 1084, UP),
+        ('c3_2', 0, 0, RIGHT),
+        ('c3_3', 0, 574, RIGHT),
+        ('c3_3', 1024, 192, RIGHT),
+        ('c3_4', 160, 2208, RIGHT),
+        ('c3_4', 1024, 2014, LEFT),
+        ('c3_4', 512, 1818, UP),
+        ('c3_4', 768, 1118, UP),
+        ('c3_4', 540, 184, LEFT),
+        ('c3_4', 354, 0, LEFT),
+        ('c3_5', 2050, 0, LEFT),
+        ('c3_5', 1791, 912, LEFT),
+        ('c3_5', 580, 686, LEFT),
+
+        ('c3village', 0, 672, RIGHT),
+        ('c3village', 768, 480, UP),
+
+    ]
+    DURATIONS = [
+        8, 4, 4, 2, 2, 1, 1, 2, 4, 4, 2, 2, 2, 1, 0.5, 0.5,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    ]
+    _next = T2_START
+    for (_map, x, y, direction), duration in zip_longest(PATHS, DURATIONS, fillvalue=4):
+        _next = scroll(_map, timestamp=_next, d=duration, x=x, y=y, **direction)
+
+
+    el.add_trigger({
+        "deviceid": "front",
+        "func": "image.show",
+        "src": f"castelvania/castelvania3/intro.gif",
+        "duration": t2('8.1.1'),
+        "timestamp": 138.5,
+    })
+
+
     # Walker - Front Screen
     walker_data = {
         "deviceid": "front",
@@ -122,69 +224,6 @@ def create_timeline(dc, t, tl, el):
             #["medusa_y", "repeat", 8]
         ],
         "duration": 60,
-        "timestamp": T2_START + (DEFAULT_DURATION * 8),
+        "timestamp": T2_START + (DEFAULT_DURATION * 24),
     }
-    #el.add_trigger(walker_data)
-
-    RIGHT = dict(x_diff=DEFAULT_X_DIFF, y_diff=0)
-    LEFT = dict(x_diff=-DEFAULT_X_DIFF, y_diff=0)
-    UP = dict(x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    DOWN = dict(x_diff=0, y_diff=DEFAULT_X_DIFF/2)
-    PATHS = [
-        ('cmap1', 768, 0, RIGHT),
-        ('cmap1', 2295, 0, RIGHT),
-        ('cmap1', 2320, 163, RIGHT),
-        ('cmap1', 2800, 0, RIGHT),
-        ('cmap2', 0, 160, RIGHT),
-        ('cmap2', 160, 0, LEFT),
-        ('cmap2', 458, 4, LEFT),
-        ('cmap3', 1157, 67, RIGHT),
-        ('cmap4', 6, 175, RIGHT),
-        ('cmap4', 2960, 0, RIGHT),
-        ('cmap4', 1438, 0, RIGHT),
-        ('cmap5', 736, 0, RIGHT),
-        ('cmap5', 750, 350, RIGHT),
-        ('cmap6', 2832, 368, LEFT),
-        ('cmap6', 1275, 350, UP),
-        ('cmap6', 954, 190, DOWN),
-        ('cmap6', 554, 0, LEFT),
-        ('c3tower', 255, 2495, UP),
-        ('c3tower', 0, 0, RIGHT),
-        ('c3tower', 0, 662, RIGHT),
-        ('c3tower', 511, 1583, UP),
-        ('c3sunkcity', 3327, 414, LEFT),
-        ('c3sunkcity', 3327, 414, LEFT),
-        ('c3village', 0, 672, RIGHT),
-        ('c3village', 768, 480, UP),
-        ('c3village', 1038, 192, RIGHT),
-        ('c3village', 1776, 192, RIGHT),
-        ('c3cave', 2847, 31, RIGHT),
-        ('c3cave', 4192, 224, LEFT),
-        ('c3cave', 3454, 224, LEFT),
-        ('c3cave', 2719, 414, LEFT),
-        ('c3cave', 318, 222, LEFT),
-        ('c3causeway', 0, 0, RIGHT),
-        ('c3causeway', 2545, 0, RIGHT),
-        ('c3causeway', 1000, 0, RIGHT),
-        ('c3clock', 256, 2480, UP),
-        ('c3clock', 767, 911, UP),
-        ('c3forest', 0, 224, RIGHT),
-        ('c3forest', 2560, 415, RIGHT),
-        ('c3forest', 2304, 604, RIGHT),
-    ]
-    DURATIONS = [
-        2, 1, 1, 1, 1, 1, 1, 1,
-    ]
-    _next = T2_START
-    for (_map, x, y, direction), duration in zip_longest(PATHS, DURATIONS, fillvalue=1):
-        _next = scroll(_map, timestamp=_next, d=duration, x=x, y=y, **direction)
-
-
-    el.add_trigger({
-        "deviceid": "front",
-        "func": "image.show",
-        "src": f"castelvania/castelvania3/intro.gif",
-        "duration": t2('8.1.1'),
-        "timestamp": 138.5,
-    })
-
+    el.add_trigger(walker_data)
