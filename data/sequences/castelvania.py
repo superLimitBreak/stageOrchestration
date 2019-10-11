@@ -1,4 +1,5 @@
 from functools import partial
+from itertools import zip_longest
 
 from calaldees.timecode import timecode_to_seconds
 from calaldees.animation.timeline import Timeline
@@ -73,6 +74,8 @@ def create_timeline(dc, t, tl, el):
         'c3sunkcity': {"src": "castelvania/castelvania3/sunkencityofpoltergeist.png", "width": 3584, "height": 800},
         'c3tower': {"src": "castelvania/castelvania3/towerofterror.png", "width": 768, "height": 2688},
         'c3village': {"src": "castelvania/castelvania3/warakiyavillage.png", "width": 4096, "height": 864},
+        'c3cave': {"src": "castelvania/castelvania3/alucardscave.png", "width": 4608, "height": 608},
+        'c3causeway': {"src": "castelvania/castelvania3/causeway.png", "width": 3840, "height": 416},
     }
 
     def scroll(image_name, timestamp=0, d=1, x=0, y=0, x_diff=DEFAULT_X_DIFF, y_diff=0, _duration=DEFAULT_DURATION):
@@ -99,7 +102,7 @@ def create_timeline(dc, t, tl, el):
 
 
     # Walker - Front Screen
-    el.add_trigger({
+    walker_data = {
         "deviceid": "front",
         "func": "gsap.start",
         #"source_screen_height": 96,
@@ -120,30 +123,62 @@ def create_timeline(dc, t, tl, el):
         ],
         "duration": 60,
         "timestamp": T2_START + (DEFAULT_DURATION * 8),
-    })
+    }
+    #el.add_trigger(walker_data)
 
-    _next = scroll('cmap1', timestamp=T2_START, d=2, x=768, y=4) #x2=2048
-    _next = scroll('cmap2', timestamp=_next, x=458, y=4, x_diff=-DEFAULT_X_DIFF)
-    _next = scroll('cmap3', timestamp=_next, x=1157, y=67)  # x2=3000
-    _next = scroll('cmap4', timestamp=_next, d=0.5, x=6, y=175)  # , x2=1282
-    _next = scroll('c3tower', timestamp=_next, d=0.5, x=255, y=2495, x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    _next = scroll('c3sunkcity', timestamp=_next, d=0.5, x=3327, y=414, x_diff=-DEFAULT_X_DIFF)
-    _next = scroll('cmap5', timestamp=_next, d=0.5, x=750, y=350)
-    _next = scroll('cmap6', timestamp=_next, d=2, x=2832, y=368, x_diff=-DEFAULT_X_DIFF)  # , x2=1564
+    RIGHT = dict(x_diff=DEFAULT_X_DIFF, y_diff=0)
+    LEFT = dict(x_diff=-DEFAULT_X_DIFF, y_diff=0)
+    UP = dict(x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
+    DOWN = dict(x_diff=0, y_diff=DEFAULT_X_DIFF/2)
+    PATHS = [
+        ('cmap1', 768, 0, RIGHT),
+        ('cmap1', 2295, 0, RIGHT),
+        ('cmap1', 2320, 163, RIGHT),
+        ('cmap1', 2800, 0, RIGHT),
+        ('cmap2', 0, 160, RIGHT),
+        ('cmap2', 160, 0, LEFT),
+        ('cmap2', 458, 4, LEFT),
+        ('cmap3', 1157, 67, RIGHT),
+        ('cmap4', 6, 175, RIGHT),
+        ('cmap4', 2960, 0, RIGHT),
+        ('cmap4', 1438, 0, RIGHT),
+        ('cmap5', 736, 0, RIGHT),
+        ('cmap5', 750, 350, RIGHT),
+        ('cmap6', 2832, 368, LEFT),
+        ('cmap6', 1275, 350, UP),
+        ('cmap6', 954, 190, DOWN),
+        ('cmap6', 554, 0, LEFT),
+        ('c3tower', 255, 2495, UP),
+        ('c3tower', 0, 0, RIGHT),
+        ('c3tower', 0, 662, RIGHT),
+        ('c3tower', 511, 1583, UP),
+        ('c3sunkcity', 3327, 414, LEFT),
+        ('c3sunkcity', 3327, 414, LEFT),
+        ('c3village', 0, 672, RIGHT),
+        ('c3village', 768, 480, UP),
+        ('c3village', 1038, 192, RIGHT),
+        ('c3village', 1776, 192, RIGHT),
+        ('c3cave', 2847, 31, RIGHT),
+        ('c3cave', 4192, 224, LEFT),
+        ('c3cave', 3454, 224, LEFT),
+        ('c3cave', 2719, 414, LEFT),
+        ('c3cave', 318, 222, LEFT),
+        ('c3causeway', 0, 0, RIGHT),
+        ('c3causeway', 2545, 0, RIGHT),
+        ('c3causeway', 1000, 0, RIGHT),
+        ('c3clock', 256, 2480, UP),
+        ('c3clock', 767, 911, UP),
+        ('c3forest', 0, 224, RIGHT),
+        ('c3forest', 2560, 415, RIGHT),
+        ('c3forest', 2304, 604, RIGHT),
+    ]
+    DURATIONS = [
+        2, 1, 1, 1, 1, 1, 1, 1,
+    ]
+    _next = T2_START
+    for (_map, x, y, direction), duration in zip_longest(PATHS, DURATIONS, fillvalue=1):
+        _next = scroll(_map, timestamp=_next, d=duration, x=x, y=y, **direction)
 
-    _next = scroll('c3village', timestamp=_next, d=2, x=0, y=672)
-    #scroll('cmap4', timestamp=6, x=1438, y=14)  #, x2=2742
-    #scroll('c3clock', timestamp=8, x=256, y=2480, x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    #scroll('c3clock', timestamp=9, x=767, y=911, x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    #scroll('c3forest', timestamp=10, x=0, y=224)
-    #scroll('c3forest', timestamp=11, x=2560, y=415)
-    #scroll('c3forest', timestamp=12, x=2304, y=604)
-    #scroll('c3sunkcity', timestamp=DEFAULT_DURATION * 9, x=3327, y=414, x_diff=-DEFAULT_X_DIFF)
-    #scroll('c3tower', timestamp=DEFAULT_DURATION * 10, x=255, y=2495, x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    #scroll('c3tower', timestamp=DEFAULT_DURATION * 11, x=511, y=1583, x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    #scroll('c3village', timestamp=DEFAULT_DURATION * 12, x=752, y=672, x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
-    #scroll('c3village', timestamp=DEFAULT_DURATION * 13, x=0, y=672)
-    #scroll('c3village', timestamp=DEFAULT_DURATION * 14, x=1775, y=192)
 
     el.add_trigger({
         "deviceid": "front",
