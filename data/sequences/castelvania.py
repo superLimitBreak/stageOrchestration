@@ -65,6 +65,7 @@ def create_timeline(dc, t, tl, el):
 
     # https://www.finalfantasykingdom.net/castlevania.php
     # https://castlevania.fandom.com/wiki/Games
+    # https://www.spriters-resource.com/nes/castlevania3draculascurse/?source=genre
     IMAGES = {
         'cmap1': {"src": "castelvania/castelvania1/cmap1.png", "width": 3600, "height": 350},
         'cmap2': {"src": "castelvania/castelvania1/cmap2.png", "width": 2050, "height": 725},
