@@ -1,3 +1,6 @@
+from copy import deepcopy
+import random
+
 import stageOrchestration.lighting.timeline_helpers.colors as color
 
 name = __name__.split('.')[-1]
@@ -19,13 +22,35 @@ def create_timeline(dc, t, tl, el):
     })
 
 
+    # el.add_trigger({
+    #     "deviceid": "rear",
+    #     "func": "image.show",
+    #     "src": f"logo/superLimitBreak_logo.svg",
+    #     "duration": t('10.1.1'),
+    #     "timestamp": t('2.1.1'),
+    # })
+
     el.add_trigger({
         "deviceid": "rear",
-        "func": "image.show",
-        "src": f"logo/superLimitBreak_logo.svg",
-        "duration": t('10.1.1'),
+        "func": "gsap.start",
         "timestamp": t('2.1.1'),
+        "duration": 120,
+        "elements": {
+            "logo": {"src": "logo/superLimitBreak_logo.svg", "height": "1vh", "className": "center"}
+        },
+        "gsap_timeline": [
+            ["logo_scroll", "to", "element::logo", 0, {"margin-top": "1vh"}],
+            ["logo_scroll", "to", "element::logo", 100, {"margin-top": "0vh"}],
+
+            ["logo_fade", "to", "element::logo", 0, {"opacity": 0}],
+            ["logo_fade", "to", "element::logo", 30, {"opacity": 1}],
+
+            ["logo_seepier", "to", "element::logo", 0, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
+            ["logo_seepier", "to", "element::logo", 60, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
+            ["logo_seepier", "to", "element::logo", 60, {"filter": "sepia(0) blur(0px)", "autoRound": False}]
+        ]
     })
+
 
     RAIN = {
         "func": "particles.start",
@@ -48,10 +73,21 @@ def create_timeline(dc, t, tl, el):
                     "addAtBack": False,
                     "spawnType": "rect",
                     "spawnRect": {"x": "-0.5vw", "y": "-0.2vh", "w": "1.5vw", "h": "0.1vh"}
-                }
+                },
+                "gsap_timeline": [
+                    ["to", "", 0, {"frequency": 1.000}],
+                    ["to", "", 10, {"frequency": 0.004}]
+                ]
             }
         }
     }
+    el.add_trigger({
+        "deviceid": "front",
+        #"duration": 100,#t('10.1.1'),
+        "timestamp": t('3.1.1'),
+        **RAIN,
+    })
+
 
     FIREWORK = {
         "func": "particles.start",
@@ -80,16 +116,19 @@ def create_timeline(dc, t, tl, el):
         }
     }
 
-    el.add_trigger({
-        "deviceid": "front",
-        "duration": t('10.1.1'),
-        "timestamp": t('3.1.1'),
-        **RAIN,
-    })
+    def firework(t, x=None, y=None):
+        assert t > 0
+        _firework = deepcopy(FIREWORK)
+        emitterConfig = _firework['emitters']['firework']['emitterConfig']
+        emitterConfig['pos']['x'] = f'{x or random.random()}vw'
+        emitterConfig['pos']['y'] = f'{y or random.random()}vh'
+        el.add_trigger({
+            "deviceid": "front",
+            "timestamp": t,
+            **_firework,
+        })
 
-    el.add_trigger({
-        "deviceid": "front",
-        "duration": t('1.1.1'),
-        "timestamp": t('4.1.1'),
-        **FIREWORK,
-    })
+    firework(t('4.1.1'))
+    firework(t('5.1.1'))
+    firework(t('6.1.1'))
+    firework(t('7.1.1'))
