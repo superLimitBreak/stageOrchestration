@@ -22,7 +22,7 @@ class TriggerLine():
                 raise Exception('get_media_duration_func is not defined. This is bad? Why has this flow been triggered. Its time to cry.')
             self.get_media_duration_func = _get_media_duration_func
         self.auto_video_preload_time = auto_video_preload_time
-        self.single_frame_duration = (1/framerate) if framerate else 0
+        self.single_frame_duration = (1/framerate)-0.00001 if framerate else 0  # the -0.00001 is to ensure single frames last '<' one frame. Without this, single frame triggers are triggered twice
         self.tl = Timeline()
         self.triggers = []
         for trigger in triggers:
@@ -46,7 +46,7 @@ class TriggerLine():
         >>> el = TriggerLine(framerate=20)
         >>> el.add_trigger({'deviceid': 'test1', 'func': 'text.html_bubble', 'timestamp': 10.0})
         >>> tuple(i.duration for i in el.tl._animation_items)
-        (0.05,)
+        (0.04999,)
 
         auto image.clear
         >>> el = TriggerLine()
