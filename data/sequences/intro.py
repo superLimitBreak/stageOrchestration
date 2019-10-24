@@ -33,8 +33,28 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "rear",
         "func": "gsap.start",
+        "elements": {
+            "hibana": {"src": "intro/hibanacon_logo.png", "width": "0.8vh", "className": "center"}
+        },
+        "duration": 40,
         "timestamp": t('2.1.1'),
-        "duration": 120,
+        "gsap_timeline": [
+            ["hibana_scroll", "to", "element::hibana", 0, {"margin-top": "1vh"}],
+            ["hibana_scroll", "to", "element::hibana", 40, {"margin-top": "0vh"}],
+
+            ["hibana_fade", "to", "element::hibana", 0, {"opacity": 0, "filter": "blur(20px)", "autoRound": False}],
+            ["hibana_fade", "to", "element::hibana", 10, {"opacity": 1, "filter": "blur(0px)", "autoRound": False}],
+            ["hibana_fade", "to", "element::hibana", 10, {"opacity": 1, "filter": "blur(0px)", "autoRound": False}],
+            ["hibana_fade", "to", "element::hibana", 10, {"opacity": 0, "filter": "blur(20px)", "autoRound": False}],
+        ]
+    })
+
+
+    el.add_trigger({
+        "deviceid": "rear",
+        "func": "gsap.start",
+        "timestamp": 30,
+        "duration": 100,
         "elements": {
             "logo": {"src": "logo/superLimitBreak_logo.svg", "height": "1vh", "className": "center"}
         },
@@ -47,7 +67,7 @@ def create_timeline(dc, t, tl, el):
 
             ["logo_seepier", "to", "element::logo", 0, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
             ["logo_seepier", "to", "element::logo", 60, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
-            ["logo_seepier", "to", "element::logo", 60, {"filter": "sepia(0) blur(0px)", "autoRound": False}]
+            ["logo_seepier", "to", "element::logo", 40, {"filter": "sepia(0) blur(0px)", "autoRound": False}]
         ]
     })
 
@@ -76,7 +96,10 @@ def create_timeline(dc, t, tl, el):
                 },
                 "gsap_timeline": [
                     ["to", "", 0, {"frequency": 1.000}],
-                    ["to", "", 10, {"frequency": 0.004}]
+                    ["to", "", 10, {"frequency": 0.004}],
+                    ["to", "", 20, {"frequency": 0.004}],
+                    ["to", "", 10, {"frequency": 1.000}],
+                    ["to", "", 1, {"frequency": 999.000}],
                 ]
             }
         }
