@@ -36,11 +36,11 @@ def create_timeline(dc, t, tl, el):
         "elements": {
             "hibana": {"src": "intro/hibanacon_logo.png", "width": "0.8vh", "className": "center"}
         },
-        "duration": 40,
-        "timestamp": t('2.1.1'),
+        "duration": 35,
+        "timestamp": 45,
         "gsap_timeline": [
             ["hibana_scroll", "to", "element::hibana", 0, {"margin-top": "1vh"}],
-            ["hibana_scroll", "to", "element::hibana", 40, {"margin-top": "0vh"}],
+            ["hibana_scroll", "to", "element::hibana", 35, {"margin-top": "0vh"}],
 
             ["hibana_fade", "to", "element::hibana", 0, {"opacity": 0, "filter": "blur(20px)", "autoRound": False}],
             ["hibana_fade", "to", "element::hibana", 10, {"opacity": 1, "filter": "blur(0px)", "autoRound": False}],
@@ -53,21 +53,22 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "rear",
         "func": "gsap.start",
-        "timestamp": 30,
-        "duration": 100,
+        "timestamp": 80,
+        "duration": 50,
         "elements": {
             "logo": {"src": "logo/superLimitBreak_logo.svg", "height": "1vh", "className": "center"}
         },
         "gsap_timeline": [
             ["logo_scroll", "to", "element::logo", 0, {"margin-top": "1vh"}],
-            ["logo_scroll", "to", "element::logo", 100, {"margin-top": "0vh"}],
+            ["logo_scroll", "to", "element::logo", 45, {"margin-top": "0vh"}],
 
             ["logo_fade", "to", "element::logo", 0, {"opacity": 0}],
-            ["logo_fade", "to", "element::logo", 30, {"opacity": 1}],
+            ["logo_fade", "to", "element::logo", 20, {"opacity": 1}],
 
-            ["logo_seepier", "to", "element::logo", 0, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
-            ["logo_seepier", "to", "element::logo", 60, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
-            ["logo_seepier", "to", "element::logo", 40, {"filter": "sepia(0) blur(0px)", "autoRound": False}]
+            ["logo_blur", "to", "element::logo", 0, {"filter": "sepia(1) blur(20px)", "autoRound": False}],
+            ["logo_blur", "to", "element::logo", 35, {"filter": "sepia(1) blur(10px)", "autoRound": False}],
+            ["logo_blur", "to", "element::logo", 10, {"filter": "sepia(1) blur(0px)", "autoRound": False}],
+            ["logo_blur", "to", "element::logo", 5, {"filter": "sepia(0) blur(0px)", "autoRound": False}]
         ]
     })
 
@@ -86,7 +87,7 @@ def create_timeline(dc, t, tl, el):
                     "rotationSpeed": {"min": 0, "max": 0},
                     "lifetime": {"min": 0.6, "max": 0.6},
                     "blendMode": "normal",
-                    "frequency": 0.004,
+                    "frequency": 0.5,
                     "emitterLifetime": 0,
                     "maxParticles": 1000,
                     "pos": {"x": 0, "y": 0},
@@ -95,11 +96,11 @@ def create_timeline(dc, t, tl, el):
                     "spawnRect": {"x": "-0.5vw", "y": "-0.2vh", "w": "1.5vw", "h": "0.1vh"}
                 },
                 "gsap_timeline": [
-                    ["to", "", 0, {"frequency": 1.000}],
-                    ["to", "", 10, {"frequency": 0.004}],
-                    ["to", "", 20, {"frequency": 0.004}],
-                    ["to", "", 10, {"frequency": 1.000}],
-                    ["to", "", 1, {"frequency": 999.000}],
+                    ["to", "", 0, {"frequency": 0.050}],
+                    ["to", "", 3, {"frequency": 0.050}],
+                    ["to", "", 5, {"frequency": 0.005}],
+                    ["to", "", 40, {"frequency": 0.010}],
+                    ["to", "", 10, {"frequency": 999.000}],
                 ]
             }
         }
@@ -107,7 +108,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "front",
         #"duration": 100,#t('10.1.1'),
-        "timestamp": t('3.1.1'),
+        "timestamp": 1, #t('3.1.1'),
         **RAIN,
     })
 
@@ -143,15 +144,13 @@ def create_timeline(dc, t, tl, el):
         assert t > 0
         _firework = deepcopy(FIREWORK)
         emitterConfig = _firework['emitters']['firework']['emitterConfig']
-        emitterConfig['pos']['x'] = f'{x or random.random()}vw'
-        emitterConfig['pos']['y'] = f'{y or random.random()}vh'
+        emitterConfig['pos']['x'] = f'{x or (random.random() * 0.7)+0.15}vw'
+        emitterConfig['pos']['y'] = f'{y or (random.random() * 0.7)+0.15}vh'
         el.add_trigger({
             "deviceid": "front",
             "timestamp": t,
             **_firework,
         })
 
-    firework(t('4.1.1'))
-    firework(t('5.1.1'))
-    firework(t('6.1.1'))
-    firework(t('7.1.1'))
+    for n in range(28):
+        firework(12 + (n * 4))
