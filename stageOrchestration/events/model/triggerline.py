@@ -3,7 +3,7 @@ from numbers import Number
 from calaldees.animation.timeline import Timeline
 
 
-DEFAULT_VIDEO_PRECACHE_TIME = 3.0
+DEFAULT_VIDEO_PRECACHE_TIME = 2.0
 
 
 class TriggerLine():
@@ -133,6 +133,15 @@ class TriggerLine():
         ({'deviceid': 'test6', 'timestamp': 0, 'func': 'image', 'src': 'file.jpg', 'duration': 10, 'position': 5.0},)
         >>> el.get_triggers_at(15)
         ()
+
+        In production all media has a duration of 0 therefor duration becomes a single frame (in seconds)
+        We need to ensure the start 'position' is respected in this case
+        See BUG note below
+        >>> el = TriggerLine()
+        >>> el._add_trigger({'deviceid': 'test7', 'timestamp': 0.1, 'func': 'video.start', 'src': 'test7.mp4', 'duration': 0.03, 'position': 10})
+        >>> el.get_triggers_at(0.1)
+        ({'deviceid': 'test7', 'timestamp': 0.1, 'func': 'video.start', 'src': 'test7.mp4', 'duration': 0.03, 'position': 10},)
+
         """
         # Validate input ---
         for required_field in ('deviceid', 'timestamp'):
@@ -148,10 +157,16 @@ class TriggerLine():
         self.triggers.append(copy.copy(trigger))
         self.tl.from_to(
             trigger,
-            max(0, trigger['duration'] - trigger['position']),
+            max(self.single_frame_duration, trigger['duration'] - trigger['position']),
             valuesFrom={'position': trigger['position']},
-            valuesTo={'position': trigger['duration']},
-            timestamp=trigger['timestamp']
+            # BUG
+            # When we restore triggers from JSON, we don't have self.single_frame_duration
+            # All triggers have enforced a minimum duration for 1 frame
+            # We need the ability for 'position' to propergate through
+            # The (duration > position) is a HACK that fix's 90% of the issues
+            # This is a deeper architectural problem
+            valuesTo={'position': trigger['duration'] if trigger['duration'] > trigger['position'] else trigger['position']},
+            timestamp=trigger['timestamp'],
         )
 
     @property
