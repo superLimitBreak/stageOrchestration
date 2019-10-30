@@ -58,7 +58,7 @@ def create_timeline(dc, t, tl, el):
     # Background Scroll --------------------------------------------------------
 
     t2 = partial(timecode_to_seconds, bpm=232)
-    T2_START = 62.0
+    T2_START = 61.8
     DEFAULT_DURATION = t2('2.1.1')
     DEFAULT_X_DIFF = 50
 

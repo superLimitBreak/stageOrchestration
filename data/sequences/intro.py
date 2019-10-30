@@ -37,7 +37,7 @@ def create_timeline(dc, t, tl, el):
             "hibana": {"src": "intro/hibanacon_logo.png", "width": "0.8vh", "className": "center"}
         },
         "duration": 35,
-        "timestamp": 45,
+        "timestamp": 43,
         "gsap_timeline": [
             ["hibana_scroll", "to", "element::hibana", 0, {"margin-top": "1vh"}],
             ["hibana_scroll", "to", "element::hibana", 35, {"margin-top": "0vh"}],
@@ -53,7 +53,7 @@ def create_timeline(dc, t, tl, el):
     el.add_trigger({
         "deviceid": "rear",
         "func": "gsap.start",
-        "timestamp": 80,
+        "timestamp": 78,
         "duration": 50,
         "elements": {
             "logo": {"src": "logo/superLimitBreak_logo.svg", "height": "1vh", "className": "center"}
@@ -153,4 +153,4 @@ def create_timeline(dc, t, tl, el):
         })
 
     for n in range(28):
-        firework(12 + (n * 4))
+        firework(10 + (n * 4))

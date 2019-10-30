@@ -87,8 +87,8 @@ def create_timeline(dc, t, tl, el):
         "func": "video.start",
         "src": f"{name}/bad-apple_original.mp4",
         "volume": 0.0,
-        "position": 1.3,
-        "timestamp": t('1.1.1'),
+        "position": 1.3 + 0.1,
+        "timestamp": t('1.1.1')+0.1,
     })
     el.add_trigger({
         "deviceid": "front",
