@@ -76,28 +76,30 @@ def create_timeline(dc, t, tl, el):
         tl_fuzz
     )
 
+    offset = 0.1
     el.add_trigger({
         "deviceid": "audio",
         "func": "audio.start",
         "src": f"{name}/badApple_withClick.ogg",
-        "timestamp": t('1.1.1'),
+        "position": offset,
+        "timestamp": t('1.1.1') + offset,
     })
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
         "src": f"{name}/bad-apple_original.mp4",
         "volume": 0.0,
-        "position": 1.3 + 0.1,
-        "timestamp": t('1.1.1')+0.1,
+        "position": 1.3 + offset,
+        "timestamp": t('1.1.1') + offset,
     })
-    el.add_trigger({
-        "deviceid": "front",
-        "func": "video.start",
-        "src": f"{name}/bad_apple_front_screen_wip1.mp4",
-        "volume": 0.0,
-        "position": 1.3,
-        "timestamp": t('1.1.1'),
-    })
+    # el.add_trigger({
+    #     "deviceid": "front",
+    #     "func": "video.start",
+    #     "src": f"{name}/bad_apple_front_screen_wip1.mp4",
+    #     "volume": 0.0,
+    #     "position": 1.3 + offset,
+    #     "timestamp": t('1.1.1') + offset,
+    # })
     el.add_trigger({
         "deviceid": "side",
         "func": "text.html_bubble",
@@ -110,10 +112,10 @@ def create_timeline(dc, t, tl, el):
         """,
         "timestamp": t('2.1.1'),
     })
-    el.add_trigger({
-        "deviceid": "side",
-        "func": "image.show",
-        "src": f"{name}/image.png",
-        "timestamp": t('2.1.1'),
-        "duration": t('10.1.1'),
-    })
+    # el.add_trigger({
+    #     "deviceid": "side",
+    #     "func": "image.show",
+    #     "src": f"{name}/image.png",
+    #     "timestamp": t('2.1.1'),
+    #     #"duration": t('10.1.1'),
+    # })

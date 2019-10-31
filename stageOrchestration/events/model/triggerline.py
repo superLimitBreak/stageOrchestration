@@ -3,7 +3,7 @@ from numbers import Number
 from calaldees.animation.timeline import Timeline
 
 
-DEFAULT_VIDEO_PRECACHE_TIME = 2.0
+DEFAULT_VIDEO_PRECACHE_TIME = 1.0
 
 
 class TriggerLine():

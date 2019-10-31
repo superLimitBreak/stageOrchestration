@@ -14,7 +14,7 @@ META = {
 
 def create_timeline(dc, t, tl, el):
     tl.set_(dc.get_devices(), color.YELLOW, 0)
-    tl.set_(dc.get_devices(), color.YELLOW, 60)
+    tl.set_(dc.get_devices(), color.YELLOW, 5)
 
     el.add_trigger({
         "deviceid": "rear",
@@ -24,4 +24,8 @@ def create_timeline(dc, t, tl, el):
         "elements": {
             "logo": {"src": "logo/superLimitBreak_logo.svg", "height": "1vh", "className": "center"}
         },
+        "gsap_timeline": [
+            ["logo", "to", "element::logo", 0, {"opacity": 0}],
+            ["logo", "to", "element::logo", 2, {"opacity": 1}]
+        ]
     })
