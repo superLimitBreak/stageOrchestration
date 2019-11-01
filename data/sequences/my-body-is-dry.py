@@ -7,7 +7,7 @@ from stageOrchestration.lighting.timeline_helpers.sequences import *
 name = __name__.split('.')[-1]
 META = {
     'name': name,
-    'bpm': 120,
+    'bpm': 249.5,
     'timesignature': '4:4',
 }
 

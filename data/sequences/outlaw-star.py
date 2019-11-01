@@ -51,7 +51,7 @@ def create_timeline(dc, t, tl, el):
     })
     el.add_trigger({
         "deviceid": "side",
-        "func": "image.show",
+        "func": "image.start",
         "src": f"{name}/outlaw_star_logo.png",
         "timestamp": t('2.1.1'),
     })

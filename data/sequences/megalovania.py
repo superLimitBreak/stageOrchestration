@@ -6,14 +6,14 @@ from stageOrchestration.lighting.timeline_helpers.sequences import *
 name = __name__.split('.')[-1]
 META = {
     'name': name,
-    'bpm': 108,
+    'bpm': 120,
     'timesignature': '4:4',
 }
 
 
 def create_timeline(dc, t, tl, el):
     tl.set_(dc.get_devices(), color.CYAN, 0)
-    tl.set_(dc.get_devices(), color.RED, t('123.1.1'))
+    tl.set_(dc.get_devices(), color.RED, t('12.1.1'))
 
     el.add_trigger({
         "deviceid": "audio",
@@ -53,6 +53,5 @@ def create_timeline(dc, t, tl, el):
         "func": "image.show",
         "src": f"megalovania/sans.gif",
         "timestamp": t('2.1.1'),
-        "duration": t('10.1.1'),
+        #"duration": t('10.1.1'),
     })
-

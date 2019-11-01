@@ -7,14 +7,14 @@ from stageOrchestration.lighting.timeline_helpers.sequences import *
 name = __name__.split('.')[-1]
 META = {
     'name': name,
-    'bpm': 120,
+    'bpm': 140,
     'timesignature': '4:4',
 }
 
 
 def create_timeline(dc, t, tl, el):
     tl.set_(dc.get_devices(), color.GREEN, 0)
-    tl.set_(dc.get_devices(), color.BLACK, t('100.1.1'))
+    tl.set_(dc.get_devices(), color.BLACK, t('4.1.1'))
 
 
     # el.add_trigger({
@@ -53,7 +53,7 @@ def create_timeline(dc, t, tl, el):
     })
     el.add_trigger({
         "deviceid": "side",
-        "func": "image.show",
-        "src": f"{name}/image.png",
+        "func": "image.start",
+        "src": "again/image.png",
         "timestamp": t('2.1.1'),
     })
