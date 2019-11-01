@@ -171,6 +171,7 @@ class StageOrchestrationServer():
                 device.rgb = rgb
             self.frame_event()
         if func == 'settings.update':
+            pass
             #TODO: update `self.options`? Useful for offset times?
         #except Exception as ex:
         #    traceback.print_exc()
