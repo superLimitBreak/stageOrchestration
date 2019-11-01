@@ -7,6 +7,7 @@ import traceback
 import os.path
 import urllib.request
 import urllib.error
+from pprint import pformat
 
 from multisocketServer.client.client_reconnect import SubscriptionClient
 
@@ -50,6 +51,8 @@ class StageOrchestrationServer():
         self.tempdir = tempfile.TemporaryDirectory()
         self.options['tempdir'] = self.tempdir.name
 
+        log.info(pformat(self.options, width=40, compact=True))
+
         self.network_event_queue = multiprocessing.Queue()
         if kwargs.get('subscriptionserver_host'):
             self.net = SubscriptionClient(host=kwargs['subscriptionserver_host'], subscriptions=('lights', 'all'))
@@ -58,7 +61,7 @@ class StageOrchestrationServer():
             self.net = self.NullSubscriptionClient()
 
         self.scan_update_event_queue = multiprocessing.Queue()
-        if 'scaninterval' in kwargs:
+        if self.options.get('scaninterval'):
             self.scan_update_event_queue = file_scan_diff_thread(
                 self.options['path_sequences'],
                 search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES,
@@ -105,7 +108,8 @@ class StageOrchestrationServer():
             mapping_config_filename=self.options['dmx_mapping'],
         ) if self.options.get('dmx_host') else None
 
-        self.frame_count_process = SingleOutputStopableProcess(frame_count_loop)
+        # TODO: queue_size=2 is a temp precaution - investigation needed
+        self.frame_count_process = SingleOutputStopableProcess(frame_count_loop, queue_size=2)
 
         self.frame_reader = None
         self.triggerline_renderer = None
@@ -166,6 +170,8 @@ class StageOrchestrationServer():
             for device in self.device_collection.get_devices(event.get('device')):
                 device.rgb = rgb
             self.frame_event()
+        if func == 'settings.update':
+            #TODO: update `self.options`? Useful for offset times?
         #except Exception as ex:
         #    traceback.print_exc()
 
