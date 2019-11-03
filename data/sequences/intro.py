@@ -106,7 +106,7 @@ def create_timeline(dc, t, tl, el):
         }
     }
     el.add_trigger({
-        "deviceid": "front",
+        "deviceid": "rear",
         #"duration": 100,#t('10.1.1'),
         "timestamp": 1, #t('3.1.1'),
         **RAIN,
@@ -147,7 +147,7 @@ def create_timeline(dc, t, tl, el):
         emitterConfig['pos']['x'] = f'{x or (random.random() * 0.7)+0.15}vw'
         emitterConfig['pos']['y'] = f'{y or (random.random() * 0.7)+0.15}vh'
         el.add_trigger({
-            "deviceid": "front",
+            "deviceid": "rear",
             "timestamp": t,
             **_firework,
         })

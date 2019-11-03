@@ -52,6 +52,7 @@ def create_timeline(dc, t, tl, el):
         "deviceid": "side",
         "func": "image.show",
         "src": f"megalovania/sans.gif",
-        "timestamp": t('2.1.1'),
-        #"duration": t('10.1.1'),
+        "className": "pixelated",
+        "timestamp": t('10.1.1'),
+        "duration": t('100.1.1'),
     })

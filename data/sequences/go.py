@@ -37,6 +37,18 @@ def create_timeline(dc, t, tl, el):
     #     "position": 0,
     #     "timestamp": t('1.1.1'),
     # })
+
+    el.add_trigger({
+        "deviceid": "rear",
+        "func": "video.start",
+        "src": f"{name}/rear.mp4",
+        "volume": 0.0,
+        "position": 0,
+        "timestamp": t('1.1.1') + 0.3,
+        "duration": 10,  # FUCKING HACK!!!!
+    })
+
+
     el.add_trigger({
         "deviceid": "side",
         "func": "text.html_bubble",

@@ -76,21 +76,22 @@ def create_timeline(dc, t, tl, el):
         tl_fuzz
     )
 
-    offset = 0.1
-    el.add_trigger({
-        "deviceid": "audio",
-        "func": "audio.start",
-        "src": f"{name}/badApple_withClick.ogg",
-        "position": offset,
-        "timestamp": t('1.1.1') + offset,
-    })
+    offset = 0.3
+    # el.add_trigger({
+    #     "deviceid": "audio",
+    #     "func": "audio.start",
+    #     "src": f"{name}/badApple_withClick.ogg",
+    #     "position": offset,
+    #     "timestamp": t('1.1.1') + offset,
+    # })
     el.add_trigger({
         "deviceid": "rear",
         "func": "video.start",
         "src": f"{name}/bad-apple_original.mp4",
         "volume": 0.0,
-        "position": 1.3 + offset,
+        "position": 0 + offset,
         "timestamp": t('1.1.1') + offset,
+        "duration": 20,  # FUCKING HACK!!!!
     })
     # el.add_trigger({
     #     "deviceid": "front",

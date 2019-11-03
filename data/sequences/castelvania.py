@@ -149,14 +149,13 @@ def create_timeline(dc, t, tl, el):
         ('c3forest', 2560, 415, RIGHT),
         ('c3sunkcity', 3327, 414, LEFT),
         ('c3_1b', 2302, 238, DOWN),
-        ('c3_2', 0, 1084, UP),
-        ('c3village', 1038, 192, RIGHT),
         ('c3cave', 2847, 31, RIGHT),
-        #('cmap2', 0, 160, RIGHT),
+        ('c3_5', 1791, 912, LEFT),
+        ('c3tower', 511, 1583, UP), # short
         ('c3cave', 4192, 224, LEFT),
-        ('c3tower', 511, 1583, UP),
-        ('c3cave', 3454, 224, LEFT),
         ('c3_4', 160, 2208, RIGHT),
+        ('c3cave', 3454, 224, LEFT),
+        ('c3causeway', 2545, 0, RIGHT),
         ('c3_4', 1024, 2014, LEFT),
         ('c3tower', 0, 0, RIGHT),
         ('c3_4', 540, 184, LEFT),
@@ -186,15 +185,18 @@ def create_timeline(dc, t, tl, el):
 
         ('c3forest', 2304, 604, RIGHT),
         ('c3_4', 512, 1818, UP),
-        ('c3causeway', 2545, 0, RIGHT),
+
         ('c3_4', 354, 0, LEFT),
         ('c3clock', 511, 910, RIGHT),
-        ('c3_5', 1791, 912, LEFT),
+
         ('c3_5', 580, 686, LEFT),
 
         ('c3village', 0, 672, RIGHT),
         ('c3village', 768, 480, UP),
+        #('cmap2', 0, 160, RIGHT),
+        ('c3_2', 0, 1084, UP), # short
 
+        ('c3village', 1038, 192, RIGHT),  # broken?
     ]
     DURATIONS = [
         8, 4, 4, 2, 2, 1, 1, 2, 4, 4, 2, 2, 2, 1, 0.5, 0.25, 0.25, 2,
@@ -212,7 +214,7 @@ def create_timeline(dc, t, tl, el):
 
 
     el.add_trigger({
-        "deviceid": "front",
+        "deviceid": "rear",
         "func": "image.show",
         "src": f"castelvania/castelvania3/intro.gif",
         "duration": t2('8.1.1'),
