@@ -49,7 +49,7 @@ def create_timeline(dc, t, tl, el):
         "deviceid": "side",
         "func": "image.show",
         "src": f"castelvania/castelvania1/title.gif",
-        "duration": t('40.1.1'),
+        "duration": 275 - t('10.1.1'),  # Hack
         "timestamp": t('10.1.1'),
     })
 
@@ -124,6 +124,7 @@ def create_timeline(dc, t, tl, el):
     LEFT = dict(x_diff=-DEFAULT_X_DIFF, y_diff=0)
     UP = dict(x_diff=0, y_diff=-DEFAULT_X_DIFF/2)
     DOWN = dict(x_diff=0, y_diff=DEFAULT_X_DIFF/2)
+    UP_SLOW = dict(x_diff=0, y_diff=-DEFAULT_X_DIFF/4)
     PATHS = [
         ('cmap1', 768, 0, RIGHT),
         ('cmap1', 2295, 0, RIGHT),
@@ -159,51 +160,65 @@ def create_timeline(dc, t, tl, el):
         ('c3_4', 1024, 2014, LEFT),
         ('c3tower', 0, 0, RIGHT),
         ('c3_4', 540, 184, LEFT),
+
         (None, None, None, None),
+
+        # Run 3
         ('c3cave', 2719, 414, LEFT),
         ('c3causeway', 0, 0, RIGHT),
         ('c3tower', 0, 662, RIGHT),
         ('c3causeway', 1000, 0, RIGHT),
         ('c3_5', 2050, 0, LEFT),
-        ('c3clock', 256, 2480, UP),
-        ('c3clock', 0, 1583, RIGHT),
-        ('c3forest', 0, 224, RIGHT),
-        ('c3_4', 768, 1118, UP),
-        ('c3_1a', 1522, 576, LEFT),
 
+        # Run 4
+        ('c3clock', 256, 2480, UP),
+        ('c3forest', 0, 224, RIGHT),
+        ('c3_1a', 1522, 576, LEFT),
+        ('c3clock', 0, 1583, RIGHT),
+        ('c3_4', 768, 1118, UP),
         ('c3_1b', 2335, 672, RIGHT),
+
+        # Run 5
         ('c3cave', 318, 222, LEFT),
         ('c3_1a', 512, 192, RIGHT),
         ('c3_1b', 1792, 0, RIGHT),
         ('c3sunkcity', 3327, 414, LEFT),
         ('c3_1b', 32, 383, RIGHT),
+
+        # Run 6
         ('c3_2', 1024, 2014, UP),
         ('c3_2', 1320, 1342, LEFT),
         ('c3village', 1800, 192, RIGHT),
         ('c3_2', 0, 0, RIGHT),
         ('c3_3', 0, 574, RIGHT),
 
-        ('c3forest', 2304, 604, RIGHT),
+        # Run 7
+        ('c3forest', 2304, 604, RIGHT),  # big run
         ('c3_4', 512, 1818, UP),
-
-        ('c3_4', 354, 0, LEFT),
         ('c3clock', 511, 910, RIGHT),
 
-        ('c3_5', 580, 686, LEFT),
+        # Final Pan
+        ('c3village', 768, 480, UP_SLOW),
+        (None, None, None, None),
 
-        ('c3village', 0, 672, RIGHT),
-        ('c3village', 768, 480, UP),
+        #('c3_4', 354, 0, LEFT),
+        #('c3_5', 580, 686, LEFT),
+        #('c3village', 0, 672, RIGHT),
         #('cmap2', 0, 160, RIGHT),
-        ('c3_2', 0, 1084, UP), # short
-
-        ('c3village', 1038, 192, RIGHT),  # broken?
+        #('c3_2', 0, 1084, UP), # short
+        #('c3village', 1038, 192, RIGHT),  # broken?
     ]
     DURATIONS = [
         8, 4, 4, 2, 2, 1, 1, 2, 4, 4, 2, 2, 2, 1, 0.5, 0.25, 0.25, 2,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        8,
-        4, 4, 4, 4, 2,
-        8, 8, 6, 6, 2,
+        8,  # Lightning break
+        4, 4, 4, 4, 2,  # Run 3
+        8, 8, 6, 2, 2, 4, # Run 4
+        4, 4, 4, 4, 8, # Run 5
+        2, 2, 4, 4, 4, # Run 6
+        16, 4, 4, # Run 7
+        8, # Final Pan
+        2,
     ]
     _next = T2_START
     for (_map, x, y, direction), duration in zip_longest(PATHS, DURATIONS, fillvalue=16):
@@ -246,3 +261,24 @@ def create_timeline(dc, t, tl, el):
         "timestamp": T2_START + (DEFAULT_DURATION * 24),
     }
     el.add_trigger(walker_data)
+
+
+
+    el.add_trigger({
+        "deviceid": "rear",
+        "func": "gsap.start",
+        "timestamp": 273,
+        "duration": 300,  # HACK
+        "elements": {
+            "logo": {"src": "logo/superLimitBreak_logo.svg", "height": "1vh", "className": "center"}
+        },
+        "gsap_timeline": [
+            ["logo", "to", "element::logo", 0, {}],
+        ]
+    })
+
+    el.add_trigger({
+        "deviceid": "side",
+        "func": "trigger.empty",
+        "timestamp": 274.8,
+    })
