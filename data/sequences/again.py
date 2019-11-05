@@ -56,4 +56,5 @@ def create_timeline(dc, t, tl, el):
         "func": "image.start",
         "src": "again/image.png",
         "timestamp": t('2.1.1'),
+        "width": "100%",
     })

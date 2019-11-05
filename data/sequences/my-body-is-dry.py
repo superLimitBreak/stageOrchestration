@@ -49,8 +49,9 @@ def create_timeline(dc, t, tl, el):
         "timestamp": t('2.1.1'),
     })
     el.add_trigger({
-        "deviceid": "main",
+        "deviceid": "side",
         "func": "image.start",
         "src": "my-body-is-dry/image.png",
         "timestamp": t('2.1.1'),
+        "width": "100%",
     })

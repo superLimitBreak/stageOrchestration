@@ -50,9 +50,9 @@ def create_timeline(dc, t, tl, el):
     })
     el.add_trigger({
         "deviceid": "side",
-        "func": "image.show",
+        "func": "image.start",
         "src": f"megalovania/sans.gif",
+        "height": "100%",
         "className": "pixelated",
         "timestamp": t('10.1.1'),
-        "duration": t('100.1.1'),
     })

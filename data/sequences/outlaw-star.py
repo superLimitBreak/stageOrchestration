@@ -54,4 +54,5 @@ def create_timeline(dc, t, tl, el):
         "func": "image.start",
         "src": f"{name}/outlaw_star_logo.png",
         "timestamp": t('2.1.1'),
+        "width": "100%",
     })

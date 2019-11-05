@@ -51,6 +51,8 @@ def create_timeline(dc, t, tl, el):
         "src": f"castelvania/castelvania1/title.gif",
         "duration": 275 - t('10.1.1'),  # Hack
         "timestamp": t('10.1.1'),
+        "width": "100%",
+        "height": "100%",
     })
 
 
@@ -234,6 +236,9 @@ def create_timeline(dc, t, tl, el):
         "src": f"castelvania/castelvania3/intro.gif",
         "duration": t2('8.1.1'),
         "timestamp": 138.5,
+        "width": "100%",
+        "height": "100%",
+        "className": "pixelated",
     })
 
 

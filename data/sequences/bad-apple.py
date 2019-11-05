@@ -113,10 +113,11 @@ def create_timeline(dc, t, tl, el):
         """,
         "timestamp": t('2.1.1'),
     })
-    # el.add_trigger({
-    #     "deviceid": "side",
-    #     "func": "image.show",
-    #     "src": f"{name}/image.png",
-    #     "timestamp": t('2.1.1'),
-    #     #"duration": t('10.1.1'),
-    # })
+    el.add_trigger({
+        "deviceid": "side",
+        "func": "image.start",
+        "src": f"{name}/image.png",
+        "timestamp": t('2.1.1'),
+        "width": "100%",
+        #"duration": t('10.1.1'),
+    })

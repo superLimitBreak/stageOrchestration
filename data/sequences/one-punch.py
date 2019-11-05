@@ -53,4 +53,5 @@ def create_timeline(dc, t, tl, el):
         "func": "image.start",
         "src": "one-punch/logo.jpg",
         "timestamp": t('2.1.1'),
+        "width": "100%",
     })
