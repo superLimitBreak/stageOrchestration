@@ -210,6 +210,9 @@ class StageOrchestrationServer():
         net_messages = []
 
         if frame and frame > 0:
+            if not self.frame_reader:
+                log.warning('Investigate - no self.frame_reader .. WTF!?')
+                return
             self.device_collection.unpack(self.frame_reader.read_frame(frame_lights), 0)  # TODO: what is this 0? why is this here? can 0 be a default arg?
             get_triggers_at = {
                 'json_state_continuous': self.triggerline.get_triggers_at,
