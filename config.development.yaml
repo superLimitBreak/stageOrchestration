@@ -1,4 +1,4 @@
-subscriptionserver_host: localhost
+subscriptionserver_uri: ws://localhost:9873
 media_url: http://localhost/media/
 mediainfo_url: http://localhost/mediainfo/
 

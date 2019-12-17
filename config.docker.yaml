@@ -1,4 +1,4 @@
-subscriptionserver_host: ${subscriptionserver}
+subscriptionserver_uri: ${subscriptionserver_uri}
 media_url: ${media_url}
 #mediainfo_url: http://${mediainfoservice}/mediainfo/
 

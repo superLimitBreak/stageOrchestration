@@ -9,7 +9,7 @@ import urllib.request
 import urllib.error
 from pprint import pformat
 
-from multisocketServer.client.client_reconnect import SubscriptionClient
+from subscriptionServer2.client import SubscriptionClient
 
 from calaldees.files.scan import fast_scan, fast_scan_regex_filter
 from calaldees.files.scan_thread import file_scan_diff_thread
@@ -42,6 +42,8 @@ class StageOrchestrationServer():
     class NullSubscriptionClient:
         def send_message(self, *args, **kwargs):
             pass
+        def close(self):
+            pass
 
     def __init__(self, **kwargs):
         self.options = kwargs
@@ -51,27 +53,35 @@ class StageOrchestrationServer():
         self.tempdir = tempfile.TemporaryDirectory()
         self.options['tempdir'] = self.tempdir.name
 
+        self._multiprocessing_process_event_queue = {}
+
         log.info(pformat(self.options, width=40, compact=True))
 
-        self.network_event_queue = multiprocessing.Queue()
-        if kwargs.get('subscriptionserver_host'):
-            self.net = SubscriptionClient(host=kwargs['subscriptionserver_host'], subscriptions=('lights', 'all'))
-            self.net.receive_message = lambda msg: self.network_event_queue.put(msg)
+        if kwargs.get('subscriptionserver_uri'):
+            self.net = SubscriptionClient(uri=kwargs['subscriptionserver_uri'], subscriptions=('lights', 'all'))
+            self.net.start_process()
+            self._registerQueueEventHandler(self.net.queue_recv, self.network_event)
         else:
             self.net = self.NullSubscriptionClient()
 
-        self.scan_update_event_queue = multiprocessing.Queue()
         if self.options.get('scaninterval'):
-            self.scan_update_event_queue = file_scan_diff_thread(
-                self.options['path_sequences'],
-                search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES,
-                rescan_interval=self.options['scaninterval']
+            self._registerQueueEventHandler(
+                file_scan_diff_thread(
+                    # TODO: dev feature - monitor timeline_helpers.__path__ and re-render all modules when base libs change
+                    self.options['path_sequences'],
+                    search_filter=FAST_SCAN_REGEX_FILTER_FOR_PY_FILES,
+                    rescan_interval=self.options['scaninterval']
+                ),
+                self.scan_update_event,
             )
-            # TODO: dev feature - monitor timeline_helpers.__path__ and re-render all modules when base libs change
 
         mediainfo_url = self.options.get('mediainfo_url')
         if mediainfo_url:
-            wait_for(lambda: urllib.request.urlopen(mediainfo_url), ignore_exceptions=True)
+            wait_for(
+                lambda: urllib.request.urlopen(mediainfo_url),
+                ignore_exceptions=True,
+                func_generate_exception=lambda response: Exception(f'mediainfo_url: {mediainfo_url} is unavailable'),
+            )
             def get_media_duration_func(filename):
                 url = os.path.join(mediainfo_url, filename)
                 try:
@@ -110,6 +120,7 @@ class StageOrchestrationServer():
 
         # TODO: queue_size=2 is a temp precaution - investigation needed
         self.frame_count_process = SingleOutputStopableProcess(frame_count_loop, queue_size=2)
+        self._registerQueueEventHandler(self.frame_count_process.queue, self.frame_event)
 
         self.frame_reader = None
         self.triggerline_renderer = None
@@ -126,18 +137,20 @@ class StageOrchestrationServer():
 
     # Event Handling -----------------------------------------------------------
 
+    def _registerQueueEventHandler(self, queue, func):
+        self._multiprocessing_process_event_queue[queue] = func
+
     def run(self):
-        multiprocessing_process_event_queue({
-            self.network_event_queue: self.network_event,
-            self.scan_update_event_queue: self.scan_update_event,
-            self.frame_count_process.queue: self.frame_event,
-        })
-        # Blocks infinitely and is terminated by ctrl+c or exit event
+        """
+        Blocks infinitely and is terminated by ctrl+c or exit event
+        """
+        multiprocessing_process_event_queue(self._multiprocessing_process_event_queue)
         self.close()
 
     def close(self):
         self.clear_sequence()
         self.frame_event()
+        self.net.close()
         if self.http_server:
             self.http_server.close()
         self.tempdir.cleanup()
