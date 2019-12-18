@@ -10,6 +10,10 @@ VERSION = 'v2.0.0dev'
 
 log = logging.getLogger(__name__)
 
+logger_subscriptionServer2 = logging.getLogger('subscriptionServer2.client')
+logger_subscriptionServer2.setLevel(logging.INFO)
+
+
 
 # Constants --------------------------------------------------------------------
 
