@@ -45,3 +45,8 @@ Setup
     make install
     make run
 ```
+
+Reference
+---------
+
+[Declarative animations](https://bollu.github.io/mathemagic/declarative/index.html)
