@@ -50,3 +50,7 @@ Reference
 ---------
 
 [Declarative animations](https://bollu.github.io/mathemagic/declarative/index.html)
+
+### TODO Read
+* [Developing a stage lighting system from scratch](https://dl.acm.org/doi/epdf/10.1145/507669.507652)
+* [glight](https://github.com/aroffringa/glight)
